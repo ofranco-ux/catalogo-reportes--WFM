@@ -376,188 +376,213 @@
 </head>
 <body>
 
-    <div class="container">
+<div class="container">
 
-        <!-- ===== ENCABEZADO ===== -->
-        <header class="header">
-            <div class="brand">
-                <div class="brand-line"></div>
-                <h1>📊 <span>Catálogo</span> de Reportes</h1>
-            </div>
-            <p class="subtitle" id="headerSubtitle">Cargando reportes...</p>
-        </header>
-
-        <!-- ===== BOTÓN VOLVER ===== -->
-        <button class="btn-back hidden" id="btnBack">← Volver al menú</button>
-
-        <!-- ===== MENÚ DE CATEGORÍAS ===== -->
-        <div id="menuCategorias" class="categorias-grid">
-            <!-- Generado por JavaScript -->
+    <!-- ===== ENCABEZADO ===== -->
+    <header class="header">
+        <div class="brand">
+            <div class="brand-line"></div>
+            <h1>📊 <span>Catálogo</span> de Reportes</h1>
         </div>
+        <p class="subtitle" id="headerSubtitle">Cargando reportes...</p>
+    </header>
 
-        <!-- ===== GRID DE REPORTES ===== -->
-        <div id="reportesContainer" class="reportes-grid hidden">
-            <!-- Generado por JavaScript -->
-        </div>
+    <!-- ===== BOTÓN VOLVER ===== -->
+    <button class="btn-back hidden" id="btnBack">← Volver al menú</button>
 
+    <!-- ===== MENÚ DE CATEGORÍAS ===== -->
+    <div id="menuCategorias" class="categorias-grid">
+        <!-- Generado por JavaScript -->
     </div>
 
-    <script>
-        // ================================================================
-        //  CARGAR DATOS DESDE JSON EXTERNO
-        // ================================================================
-        const menuCategorias = document.getElementById('menuCategorias');
-        const reportesContainer = document.getElementById('reportesContainer');
-        const btnBack = document.getElementById('btnBack');
-        const headerSubtitle = document.getElementById('headerSubtitle');
+    <!-- ===== GRID DE REPORTES ===== -->
+    <div id="reportesContainer" class="reportes-grid hidden">
+        <!-- Generado por JavaScript -->
+    </div>
 
-        let categorias = {}; // se llenará con los datos del JSON
+</div>
 
-        // Mostrar loader mientras carga
-        menuCategorias.innerHTML = `
-                <div class="loader">
-                    <span>⏳</span>
-                    Cargando reportes...
-                </div>
-            `;
+<script>
+    // ================================================================
+    //  CARGAR DATOS DESDE JSON EXTERNO (con fallback a ambos nombres)
+    // ================================================================
+    const menuCategorias = document.getElementById('menuCategorias');
+    const reportesContainer = document.getElementById('reportesContainer');
+    const btnBack = document.getElementById('btnBack');
+    const headerSubtitle = document.getElementById('headerSubtitle');
 
-        // Función para cargar el JSON
-        async function cargarDatos() {
-            try {
-                const response = await fetch('reportes.json');
-                if (!response.ok) throw new Error('No se pudo cargar el archivo JSON');
-                const data = await response.json();
+    let categorias = {}; // se llenará con los datos del JSON
 
-                // ---- FILTRO: eliminar reportes que contengan las frases prohibidas ----
-                const palabrasClave = ['tiempos de asignación', 'tracking de servicios'];
-                const categoriasFiltradas = {};
+    // Mostrar loader mientras carga
+    menuCategorias.innerHTML = `
+            <div class="loader">
+                <span>⏳</span>
+                Cargando reportes...
+            </div>
+        `;
 
-                for (const [nombreCat, info] of Object.entries(data.categorias)) {
-                    // Filtrar reportes de esta categoría
-                    const reportesFiltrados = info.reportes.filter(r => {
-                        const nombreLower = r.nombre.toLowerCase();
-                        return !palabrasClave.some(palabra => nombreLower.includes(palabra));
-                    });
+    // Función para cargar el JSON (intenta con reportes.json e Informes.json)
+    async function cargarDatos() {
+        try {
+            // Obtener la ruta base del HTML (donde está el archivo actual)
+            const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
+            const posiblesNombres = ['reportes.json', 'Informes.json'];
+            let data = null;
+            let errorMsg = '';
 
-                    // Si quedan reportes, guardamos la categoría
-                    if (reportesFiltrados.length > 0) {
-                        categoriasFiltradas[nombreCat] = {
-                            ...info,
-                            reportes: reportesFiltrados
-                        };
+            // Intentar con cada nombre
+            for (const nombre of posiblesNombres) {
+                const url = basePath + nombre;
+                console.log(`Intentando cargar: ${url}`);
+                try {
+                    const response = await fetch(url);
+                    if (response.ok) {
+                        data = await response.json();
+                        console.log(`✅ Cargado correctamente: ${nombre}`);
+                        break;
+                    } else {
+                        errorMsg = `Error ${response.status} al intentar cargar ${nombre}`;
                     }
+                } catch (e) {
+                    errorMsg = `No se pudo cargar ${nombre}: ${e.message}`;
                 }
-
-                categorias = categoriasFiltradas;
-                // ----------------------------
-
-                // Una vez cargado y filtrado, renderizar el menú
-                renderMenu();
-                headerSubtitle.textContent = 'Selecciona una categoría para ver sus reportes';
-            } catch (error) {
-                console.error('Error al cargar los datos:', error);
-                menuCategorias.innerHTML = `
-                        <div class="loader" style="grid-column:1/-1;">
-                            <span>❌</span>
-                            Error al cargar los reportes.<br />
-                            <small>Verifica que el archivo <strong>reportes.json</strong> exista y sea accesible.</small>
-                        </div>
-                    `;
-                headerSubtitle.textContent = 'Error de carga';
-            }
-        }
-
-        // ================================================================
-        //  FUNCIONES DE RENDERIZADO
-        // ================================================================
-        function renderMenu() {
-            // Si no hay categorías, mostrar mensaje
-            const keys = Object.keys(categorias);
-            if (keys.length === 0) {
-                menuCategorias.innerHTML = `
-                        <div class="loader" style="grid-column:1/-1;">
-                            <span>📭</span>
-                            No hay reportes disponibles después del filtro.
-                        </div>
-                    `;
-                return;
             }
 
-            const html = keys.map(nombre => {
-                const data = categorias[nombre];
-                const count = data.reportes.length;
-                return `
-                        <div class="categoria-card" data-categoria="${nombre}">
-                            <span class="icon-grande">${data.icono}</span>
-                            <h2>${nombre}</h2>
-                            <p>${data.descripcion}</p>
-                            <span class="badge-count">${count} reportes</span>
-                        </div>
-                    `;
-            }).join('');
-            menuCategorias.innerHTML = html;
-            menuCategorias.classList.remove('hidden');
+            if (!data) {
+                throw new Error(`No se encontró ningún archivo JSON. Intentamos: ${posiblesNombres.join(', ')}. ${errorMsg}`);
+            }
 
-            // Asignar eventos a las tarjetas
-            document.querySelectorAll('.categoria-card').forEach(el => {
-                el.addEventListener('click', function() {
-                    const categoria = this.dataset.categoria;
-                    mostrarReportes(categoria);
+            // ---- FILTRO: eliminar reportes que contengan las frases prohibidas ----
+            const palabrasClave = ['tiempos de asignación', 'tracking de servicios'];
+            const categoriasFiltradas = {};
+
+            for (const [nombreCat, info] of Object.entries(data.categorias)) {
+                // Filtrar reportes de esta categoría
+                const reportesFiltrados = info.reportes.filter(r => {
+                    const nombreLower = r.nombre.toLowerCase();
+                    return !palabrasClave.some(palabra => nombreLower.includes(palabra));
                 });
-            });
-        }
 
-        function mostrarReportes(categoria) {
-            const data = categorias[categoria];
-            if (!data) return;
+                // Si quedan reportes, guardamos la categoría
+                if (reportesFiltrados.length > 0) {
+                    categoriasFiltradas[nombreCat] = {
+                        ...info,
+                        reportes: reportesFiltrados
+                    };
+                }
+            }
 
-            menuCategorias.classList.add('hidden');
-            reportesContainer.classList.remove('hidden');
-            btnBack.classList.remove('hidden');
-            headerSubtitle.textContent = `📂 ${categoria} — ${data.reportes.length} reportes`;
+            categorias = categoriasFiltradas;
+            // ----------------------------
 
-            const html = data.reportes.map(r => {
-                const esLocal = r.local || (r.url && r.url.startsWith('file://'));
-                const target = esLocal ? '_self' : '_blank';
-                const rel = esLocal ? '' : 'rel="noopener noreferrer"';
-                const badgeClase = esLocal ? 'local' : '';
-                const badgeTexto = esLocal ? '📂 Local' : '🌐 Looker Studio';
-                const botonClase = esLocal ? 'local' : '';
-
-                return `
-                        <div class="card">
-                            <div class="card-header">
-                                <span class="icon">${r.icono || '📄'}</span>
-                                <h3>${r.nombre}</h3>
-                            </div>
-                            <div class="card-footer">
-                                <a href="${r.url}" target="${target}" ${rel} class="${botonClase}">
-                                    Abrir reporte →
-                                </a>
-                                <span class="badge ${badgeClase}">${badgeTexto}</span>
-                            </div>
-                        </div>
-                    `;
-            }).join('');
-
-            reportesContainer.innerHTML = html;
-        }
-
-        function volverMenu() {
-            reportesContainer.classList.add('hidden');
-            btnBack.classList.add('hidden');
-            menuCategorias.classList.remove('hidden');
+            // Una vez cargado y filtrado, renderizar el menú
+            renderMenu();
             headerSubtitle.textContent = 'Selecciona una categoría para ver sus reportes';
-            reportesContainer.innerHTML = '';
+        } catch (error) {
+            console.error('Error al cargar los datos:', error);
+            menuCategorias.innerHTML = `
+                    <div class="loader" style="grid-column:1/-1;">
+                        <span>❌</span>
+                        Error al cargar los reportes.<br />
+                        <small>${error.message}</small><br />
+                        <small>Verifica que el archivo JSON (reportes.json o Informes.json) esté en la misma carpeta que este HTML.</small>
+                    </div>
+                `;
+            headerSubtitle.textContent = 'Error de carga';
+        }
+    }
+
+    // ================================================================
+    //  FUNCIONES DE RENDERIZADO
+    // ================================================================
+    function renderMenu() {
+        // Si no hay categorías, mostrar mensaje
+        const keys = Object.keys(categorias);
+        if (keys.length === 0) {
+            menuCategorias.innerHTML = `
+                    <div class="loader" style="grid-column:1/-1;">
+                        <span>📭</span>
+                        No hay reportes disponibles después del filtro.
+                    </div>
+                `;
+            return;
         }
 
-        btnBack.addEventListener('click', volverMenu);
+        const html = keys.map(nombre => {
+            const data = categorias[nombre];
+            const count = data.reportes.length;
+            return `
+                    <div class="categoria-card" data-categoria="${nombre}">
+                        <span class="icon-grande">${data.icono}</span>
+                        <h2>${nombre}</h2>
+                        <p>${data.descripcion}</p>
+                        <span class="badge-count">${count} reportes</span>
+                    </div>
+                `;
+        }).join('');
+        menuCategorias.innerHTML = html;
+        menuCategorias.classList.remove('hidden');
 
-        // ================================================================
-        //  INICIAR CARGA
-        // ================================================================
-        cargarDatos();
-    </script>
+        // Asignar eventos a las tarjetas
+        document.querySelectorAll('.categoria-card').forEach(el => {
+            el.addEventListener('click', function() {
+                const categoria = this.dataset.categoria;
+                mostrarReportes(categoria);
+            });
+        });
+    }
+
+    function mostrarReportes(categoria) {
+        const data = categorias[categoria];
+        if (!data) return;
+
+        menuCategorias.classList.add('hidden');
+        reportesContainer.classList.remove('hidden');
+        btnBack.classList.remove('hidden');
+        headerSubtitle.textContent = `📂 ${categoria} — ${data.reportes.length} reportes`;
+
+        const html = data.reportes.map(r => {
+            const esLocal = r.local || (r.url && r.url.startsWith('file://'));
+            const target = esLocal ? '_self' : '_blank';
+            const rel = esLocal ? '' : 'rel="noopener noreferrer"';
+            const badgeClase = esLocal ? 'local' : '';
+            const badgeTexto = esLocal ? '📂 Local' : '🌐 Looker Studio';
+            const botonClase = esLocal ? 'local' : '';
+
+            return `
+                    <div class="card">
+                        <div class="card-header">
+                            <span class="icon">${r.icono || '📄'}</span>
+                            <h3>${r.nombre}</h3>
+                        </div>
+                        <div class="card-footer">
+                            <a href="${r.url}" target="${target}" ${rel} class="${botonClase}">
+                                Abrir reporte →
+                            </a>
+                            <span class="badge ${badgeClase}">${badgeTexto}</span>
+                        </div>
+                    </div>
+                `;
+        }).join('');
+
+        reportesContainer.innerHTML = html;
+    }
+
+    function volverMenu() {
+        reportesContainer.classList.add('hidden');
+        btnBack.classList.add('hidden');
+        menuCategorias.classList.remove('hidden');
+        headerSubtitle.textContent = 'Selecciona una categoría para ver sus reportes';
+        reportesContainer.innerHTML = '';
+    }
+
+    btnBack.addEventListener('click', volverMenu);
+
+    // ================================================================
+    //  INICIAR CARGA
+    // ================================================================
+    cargarDatos();
+</script>
 
 </body>
 </html>
