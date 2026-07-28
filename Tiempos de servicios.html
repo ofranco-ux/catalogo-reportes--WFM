@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reporte Ejecutivo de Tiempos</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+    </script>
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f0f2f5;
+            padding: 20px;
+            color: #1e293b;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* ===== HEADER ===== */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 600;
+            color: #1a3c5e;
+        }
+        .header h1 small {
+            font-size: 0.9rem;
+            font-weight: 400;
+            color: #64748b;
+            margin-left: 0.5rem;
+        }
+        .header-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .file-status {
+            font-size: 0.85rem;
+            color: #64748b;
+            background: #e2e8f0;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+        }
+
+        /* ===== BOTONES ===== */
+        .btn {
+            padding: 0.4rem 1rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #e2e8f0;
+            color: #1e293b;
+        }
+        .btn-primary {
+            background: #0d6efd;
+            color: white;
+        }
+        .btn-primary:hover {
+            background: #0b5ed7;
+        }
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        .btn-success:hover {
+            background: #059669;
+        }
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #cbd5e1;
+        }
+        .btn-outline:hover {
+            background: #f1f5f9;
+        }
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        .btn-warning:hover {
+            background: #d97706;
+        }
+        .toggle-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .toggle-btn:hover {
+            background: #5a6268;
+        }
+
+        /* ===== TARJETAS ===== */
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e2e8f0;
+        }
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* ===== KPI CARDS ===== */
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        .kpi-card {
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+            border-left: 4px solid #0d6efd;
+            text-align: center;
+        }
+        .kpi-card .label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            color: #64748b;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .kpi-card .value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+        .kpi-card .sub {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+
+        /* ===== FILTROS ===== */
+        .filters-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 0.8rem;
+            align-items: end;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.2rem;
+        }
+        .filter-group label {
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: #475569;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .filter-group input,
+        .filter-group select {
+            padding: 0.3rem 0.5rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.85rem;
+            background: white;
+        }
+        .filter-group input:focus,
+        .filter-group select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+        .filter-actions-row {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            align-items: center;
+            margin-top: 0.5rem;
+        }
+
+        /* ===== TABLAS ===== */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.8rem;
+            min-width: 700px;
+        }
+        thead {
+            background: #1a3c5e;
+            color: white;
+        }
+        th {
+            padding: 0.5rem 0.6rem;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #cbd5e1;
+            white-space: nowrap;
+        }
+        td {
+            padding: 0.4rem 0.6rem;
+            border-bottom: 1px solid #e2e8f0;
+            vertical-align: middle;
+        }
+        tr:nth-child(even) {
+            background: #f8fafc;
+        }
+        .badge {
+            display: inline-block;
+            padding: 0.1rem 0.4rem;
+            border-radius: 20px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .badge-escalado {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        .no-data {
+            text-align: center;
+            padding: 2rem;
+            color: #94a3b8;
+        }
+        .detalle-oculto {
+            display: none;
+        }
+
+        /* ===== GRÁFICOS ===== */
+        .chart-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        .chart-container {
+            position: relative;
+            height: 260px;
+        }
+        @media (max-width: 900px) {
+            .chart-grid {
+                grid-template-columns: 1fr;
+            }
+            .filters-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        @media (max-width: 600px) {
+            .filters-grid {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 0.5rem;
+            }
+        }
+
+        /* ===== GLOSARIO ===== */
+        .glosario {
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 2px solid #e9ecef;
+        }
+        .glosario h2 {
+            color: #1a3c5e;
+            margin-bottom: 15px;
+        }
+        .glosario-grid {
+            display: grid;
+            grid-template-columns: 1fr 2fr 2fr;
+            gap: 6px 20px;
+            font-size: 14px;
+        }
+        .glosario-grid .term {
+            font-weight: 600;
+            color: #0d6efd;
+            padding: 4px 0;
+        }
+        .glosario-grid .def {
+            color: #343a40;
+            padding: 4px 0;
+        }
+        .glosario-grid .formula {
+            color: #495057;
+            padding: 4px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            background: #f8f9fa;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        @media (max-width: 600px) {
+            .glosario-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 2rem;
+            color: #94a3b8;
+            font-size: 0.8rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <!-- ===== HEADER ===== -->
+        <div class="header">
+            <h1>📊 Reporte Ejecutivo <small>Tiempos de Servicio</small></h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="btnCargarEjemplo">📥 Ejemplo</button>
+                <button class="btn btn-success" id="btnCargarCarpeta">📁 Carpeta</button>
+                <label class="btn btn-outline" style="cursor:pointer;">
+                    📄 Archivo(s)
+                    <input type="file" id="fileInput" accept=".csv,.tsv,.txt" style="display:none;" multiple>
+                </label>
+                <button class="btn btn-outline" id="btnLimpiarFiltros">🧹 Limpiar</button>
+                <span class="file-status" id="fileStatus">Sin datos</span>
+            </div>
+        </div>
+
+        <!-- ===== KPI CARDS ===== -->
+        <div class="kpi-grid" id="kpiContainer">
+            <div class="kpi-card"><div class="label">Total Servicios</div><div class="value" id="kpiTotal">0</div><div class="sub">registros</div></div>
+            <div class="kpi-card"><div class="label">⏱ Toma Datos</div><div class="value" id="kpiToma">—</div><div class="sub">promedio</div></div>
+            <div class="kpi-card"><div class="label">⏱ Asignación</div><div class="value" id="kpiAsignacion">—</div><div class="sub">promedio</div></div>
+            <div class="kpi-card"><div class="label">⏱ Escalación</div><div class="value" id="kpiEscalacion">—</div><div class="sub">promedio</div></div>
+            <div class="kpi-card"><div class="label">⏱ Proveedor</div><div class="value" id="kpiProveedor">—</div><div class="sub">promedio</div></div>
+            <div class="kpi-card"><div class="label">⏱ Duración Total</div><div class="value" id="kpiTotalDuracion">—</div><div class="sub">promedio</div></div>
+        </div>
+
+        <!-- ===== FILTROS ===== -->
+        <div class="card">
+            <div class="card-title">🔎 Filtros</div>
+            <div class="filters-grid" id="filtersContainer">
+                <!-- Generado dinámicamente -->
+            </div>
+            <div class="filter-actions-row">
+                <span style="font-size:0.85rem;color:#64748b;" id="countResult">Mostrando 0 registros</span>
+            </div>
+        </div>
+
+        <!-- ===== GRÁFICOS ===== -->
+        <div class="card">
+            <div class="card-title">📈 Comparativa de Tiempos</div>
+            <div class="chart-grid">
+                <div class="chart-container"><canvas id="barChart"></canvas></div>
+                <div class="chart-container"><canvas id="stackedBarChart"></canvas></div>
+            </div>
+        </div>
+
+        <!-- ===== GRÁFICO DE EVOLUCIÓN DIARIA ===== -->
+        <div class="card">
+            <div class="card-title">📈 Evolución diaria (promedio de duración total)</div>
+            <div class="chart-container" style="height:280px;">
+                <canvas id="lineChart"></canvas>
+            </div>
+        </div>
+
+        <!-- ===== TABLA RESUMEN POR COMPAÑÍA Y ASISTENCIA ===== -->
+        <div class="card">
+            <div class="card-title">📋 Resumen por compañía y tipo de asistencia</div>
+            <div class="table-wrapper" id="tablaResumenWrapper">
+                <div class="no-data">Carga datos para visualizar</div>
+            </div>
+        </div>
+
+        <!-- ===== TABLA DETALLE (colapsable) ===== -->
+        <button class="toggle-btn" onclick="toggleDetalle()">📄 Mostrar / Ocultar detalle por fila</button>
+        <div id="detalleContainer" class="detalle-oculto">
+            <div class="card">
+                <div class="card-title">📋 Detalle de Servicios</div>
+                <div class="table-wrapper" id="tableWrapper">
+                    <div class="no-data">Carga datos para visualizar</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== GLOSARIO ===== -->
+        <div class="glosario">
+            <h2>📖 Glosario de términos</h2>
+            <div class="glosario-grid">
+                <div class="term">Toma de datos</div>
+                <div class="def">Tiempo desde que se crea el caso hasta que se finaliza la toma de datos.</div>
+                <div class="formula">fecha_fin_toma_datos – fecha_alta</div>
+
+                <div class="term">Asignación</div>
+                <div class="def">Tiempo desde el fin de la toma de datos hasta la última asignación.</div>
+                <div class="formula">fecha_ultima_asignación – fecha_fin_toma_datos</div>
+
+                <div class="term">Escalación RDP</div>
+                <div class="def">Tiempo total del proceso de escalación (desde la última asignación hasta la respuesta).</div>
+                <div class="formula">(fecha_escalacion – fecha_ultima_asignacion) + (fecha_respuesta_rdp – fecha_escalacion)</div>
+
+                <div class="term">Proveedor (total)</div>
+                <div class="def">Tiempo total desde la última asignación hasta que el proveedor finaliza el servicio.</div>
+                <div class="formula">fecha_termino_proveedor – fecha_ultima_asignacion</div>
+
+                <div class="term">Duración Total</div>
+                <div class="def">Suma de todas las etapas anteriores.</div>
+                <div class="formula">Toma + Asignación + Escalación + Proveedor</div>
+            </div>
+            <p style="margin-top:10px; font-size:13px; color:#6c757d;">
+                ⚠️ <strong>Nota:</strong> Los tiempos se muestran en formato horas/minutos/segundos. Valores nulos o negativos se omiten en los promedios.
+            </p>
+        </div>
+
+        <footer>Reporte Ejecutivo · Los tiempos se muestran en minutos · Datos cargados desde carpeta o archivos CSV</footer>
+    </div>
+
+    <script>
+        // ==============================================================
+        //  DATOS DE EJEMPLO (simplificados, con los mismos campos que tu código)
+        // ==============================================================
+        const datosEjemplo = [{
+            id: 21184606,
+            cliente: "Nancy Maribel Gonzalez Armendaria",
+            compania: "Zurich",
+            asistencia: "Hogar",
+            tipoasistencia: "Electricidad",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-01",
+            tiempo_toma_datos: 66.66,
+            tiempo_asignacion: 1393.56,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 97.78,
+            duracion_total: 1558
+        }, {
+            id: 21186960,
+            cliente: "Maria Laura Borja Chavez",
+            compania: "Zurich",
+            asistencia: "Hogar",
+            tipoasistencia: "Plomería",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-04",
+            tiempo_toma_datos: 27.2,
+            tiempo_asignacion: 239.35,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 2603.45,
+            duracion_total: 2870
+        }, {
+            id: 21190810,
+            cliente: "Erica Gabriela Magaña Espinsa",
+            compania: "Zurich",
+            asistencia: "Hogar",
+            tipoasistencia: "Plomería",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Sin asignar",
+            asignacion_final: "Sin asignar",
+            fecha_alta: "2026-07-08",
+            tiempo_toma_datos: null,
+            tiempo_asignacion: null,
+            tiempo_escalacion: null,
+            tiempo_proveedor: null,
+            duracion_total: 32
+        }, {
+            id: 21185939,
+            cliente: "Santiago Rodriguez Ortiz",
+            compania: "Zurich",
+            asistencia: "Hogar",
+            tipoasistencia: "Plomería",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-03",
+            tiempo_toma_datos: 19.43,
+            tiempo_asignacion: 288.22,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 2554.35,
+            duracion_total: 2862
+        }, {
+            id: 21189083,
+            cliente: "Roberto Javier Villareal Gonzalez",
+            compania: "Zurich",
+            asistencia: "Hogar",
+            tipoasistencia: "Electricidad",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-06",
+            tiempo_toma_datos: 56.31,
+            tiempo_asignacion: 1229.56,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 111.13,
+            duracion_total: 1397
+        }, {
+            id: 21189148,
+            cliente: "Eduardo Morales Bustamante",
+            compania: "Zurich",
+            asistencia: "Hogar",
+            tipoasistencia: "Electricidad",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-06",
+            tiempo_toma_datos: 1177.68,
+            tiempo_asignacion: 0,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 2765.32,
+            duracion_total: 3943
+        }, {
+            id: 21189512,
+            cliente: "Roberto Ortiz Salazar",
+            compania: "Zurich",
+            asistencia: "Hogar",
+            tipoasistencia: "Plomería",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-07",
+            tiempo_toma_datos: 12.47,
+            tiempo_asignacion: 323.66,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 1392.87,
+            duracion_total: 1729
+        }, {
+            id: 21189839,
+            cliente: "Jaime Martinez Aguilar",
+            compania: "Zurich",
+            asistencia: "Hogar",
+            tipoasistencia: "Plomería",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-07",
+            tiempo_toma_datos: 35.83,
+            tiempo_asignacion: 1376.31,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 92.86,
+            duracion_total: 1505
+        }, {
+            id: 21189377,
+            cliente: "Ericka Haidee Centeno Trujillo",
+            compania: "Tu Momento",
+            asistencia: "Vial",
+            tipoasistencia: "Cerrajería Para Auto",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-06",
+            tiempo_toma_datos: 2.32,
+            tiempo_asignacion: 51.92,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 407.76,
+            duracion_total: 462
+        }, {
+            id: 21186642,
+            cliente: "Herlinda Bautista Garcia",
+            compania: "Suburbia",
+            asistencia: "Vial",
+            tipoasistencia: "Paso De Corriente",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-03",
+            tiempo_toma_datos: 16.7,
+            tiempo_asignacion: 27.14,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 0,
+            duracion_total: 734
+        }, {
+            id: 21186652,
+            cliente: "Nahum Arnulfo Garcia Dominguez",
+            compania: "Suburbia",
+            asistencia: "Vial",
+            tipoasistencia: "Arrastre De Grúa",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-03",
+            tiempo_toma_datos: 21.72,
+            tiempo_asignacion: 79.53,
+            tiempo_escalacion: 13,
+            tiempo_proveedor: 9966,
+            duracion_total: 9966
+        }, {
+            id: 21190682,
+            cliente: "Margarita Eugenia Estrada Alvarado",
+            compania: "Suburbia",
+            asistencia: "Vial",
+            tipoasistencia: "Arrastre De Grúa",
+            crea_servicio: "Ivr (Talkdesk)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-08",
+            tiempo_toma_datos: 26.59,
+            tiempo_asignacion: 37.68,
+            tiempo_escalacion: 21,
+            tiempo_proveedor: 160,
+            duracion_total: 160
+        }, {
+            id: 21190808,
+            cliente: "Nora Liz Santos Sanchez",
+            compania: "Suburbia",
+            asistencia: "Hogar",
+            tipoasistencia: "Vidriería",
+            crea_servicio: "Whatsapp (Atom)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-08",
+            tiempo_toma_datos: 143.65,
+            tiempo_asignacion: 35,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 4444,
+            duracion_total: 4444
+        }, {
+            id: 21187181,
+            cliente: "Jose Hugo Soto Becerril",
+            compania: "Liverpool Pocket",
+            asistencia: "Vial",
+            tipoasistencia: "Arrastre De Grúa",
+            crea_servicio: "Pocket (Liverpool)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Asignacion Portal",
+            asignacion_final: "Asignacion portal",
+            fecha_alta: "2026-07-04",
+            tiempo_toma_datos: 0.55,
+            tiempo_asignacion: 72.2,
+            tiempo_escalacion: null,
+            tiempo_proveedor: 176,
+            duracion_total: 176
+        }, {
+            id: 21187202,
+            cliente: "Mariana Paola Elguera Medina",
+            compania: "Liverpool Pocket",
+            asistencia: "Vial",
+            tipoasistencia: "Arrastre De Grúa",
+            crea_servicio: "Pocket (Liverpool)",
+            estatus_servicio: "CONCLUIDO",
+            primer_asignacion: "Call Center",
+            asignacion_final: "Call center",
+            fecha_alta: "2026-07-04",
+            tiempo_toma_datos: 48.28,
+            tiempo_asignacion: 140.63,
+            tiempo_escalacion: 39,
+            tiempo_proveedor: 193,
+            duracion_total: 193
+        }];
+
+        // ==============================================================
+        //  ESTADO GLOBAL
+        // ==============================================================
+        let datos = [];
+        let datosFiltrados = [];
+        let charts = { bar: null, stacked: null, line: null };
+
+        // ==============================================================
+        //  UTILIDADES
+        // ==============================================================
+        function formatMinutes(min) {
+            if (min == null || isNaN(min) || min < 0) return '—';
+            const sign = min < 0 ? '-' : '';
+            const abs = Math.abs(min);
+            const hours = Math.floor(abs / 60);
+            const minutes = Math.floor(abs % 60);
+            const seconds = Math.round((abs % 1) * 60);
+            if (hours > 0) {
+                return `${sign}${hours}h ${minutes}m ${seconds}s`;
+            } else {
+                return `${sign}${minutes}m ${seconds}s`;
+            }
+        }
+
+        function formatMinutesShort(min) {
+            if (min == null || isNaN(min) || min < 0) return '—';
+            if (min < 60) return min.toFixed(1) + 'm';
+            const hours = Math.floor(min / 60);
+            const minutes = Math.round(min % 60);
+            return `${hours}h ${minutes}m`;
+        }
+
+        function getUniqueValues(arr, key) {
+            const values = arr.map(d => d[key]).filter(v => v != null && v !== '');
+            return [...new Set(values)].sort();
+        }
+
+        function getMonths(arr) {
+            const months = arr.map(d => {
+                if (d.fecha_alta) {
+                    const parts = d.fecha_alta.split('-');
+                    if (parts.length === 3) return parts[0] + '-' + parts[1];
+                }
+                return null;
+            }).filter(v => v);
+            return [...new Set(months)].sort();
+        }
+
+        function normalizeDate(dateStr) {
+            if (!dateStr) return null;
+            const parts = dateStr.split('-');
+            if (parts.length === 3) return `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
+            return null;
+        }
+
+        function dateToYYYYMM(dateStr) {
+            if (!dateStr) return null;
+            const parts = dateStr.split('-');
+            if (parts.length === 3) return parts[0] + '-' + parts[1];
+            return null;
+        }
+
+        // ==============================================================
+        //  CÁLCULO DE PROMEDIOS
+        // ==============================================================
+        function calcularPromedios(data) {
+            const keys = ['tiempo_toma_datos', 'tiempo_asignacion', 'tiempo_escalacion', 'tiempo_proveedor', 'duracion_total'];
+            const result = {};
+            keys.forEach(k => {
+                const values = data.map(d => d[k]).filter(v => v != null && v >= 0);
+                if (values.length === 0) {
+                    result[k] = { promedio: null, count: 0, min: null, max: null };
+                } else {
+                    const sum = values.reduce((a, b) => a + b, 0);
+                    const avg = sum / values.length;
+                    const min = Math.min(...values);
+                    const max = Math.max(...values);
+                    result[k] = { promedio: avg, count: values.length, min, max };
+                }
+            });
+            return result;
+        }
+
+        // ==============================================================
+        //  ACTUALIZAR KPI CARDS
+        // ==============================================================
+        function updateKPIs(data) {
+            const total = data.length;
+            document.getElementById('kpiTotal').textContent = total;
+
+            if (total === 0) {
+                ['kpiToma', 'kpiAsignacion', 'kpiEscalacion', 'kpiProveedor', 'kpiTotalDuracion'].forEach(id =>
+                    document.getElementById(id).textContent = '—'
+                );
+                return;
+            }
+
+            const promedios = calcularPromedios(data);
+            const map = {
+                'kpiToma': 'tiempo_toma_datos',
+                'kpiAsignacion': 'tiempo_asignacion',
+                'kpiEscalacion': 'tiempo_escalacion',
+                'kpiProveedor': 'tiempo_proveedor',
+                'kpiTotalDuracion': 'duracion_total'
+            };
+            Object.keys(map).forEach(kpiId => {
+                const key = map[kpiId];
+                const info = promedios[key];
+                if (info.count === 0 || info.promedio === null) {
+                    document.getElementById(kpiId).textContent = '—';
+                } else {
+                    document.getElementById(kpiId).textContent = formatMinutesShort(info.promedio);
+                }
+            });
+        }
+
+        // ==============================================================
+        //  FILTROS
+        // ==============================================================
+        function renderFilters() {
+            const container = document.getElementById('filtersContainer');
+            const companias = getUniqueValues(datos, 'compania');
+            const asistencias = getUniqueValues(datos, 'asistencia');
+            const creaServicios = getUniqueValues(datos, 'crea_servicio');
+            const tipoAsistencias = getUniqueValues(datos, 'tipoasistencia');
+            const estatuses = getUniqueValues(datos, 'estatus_servicio');
+            const tipoAsignaciones = getUniqueValues(datos, 'asignacion_final');
+            const primerAsignaciones = getUniqueValues(datos, 'primer_asignacion');
+            const meses = getMonths(datos);
+
+            const fechas = datos.map(d => d.fecha_alta).filter(f => f);
+            let minDate = '',
+                maxDate = '';
+            if (fechas.length > 0) {
+                const sorted = fechas.slice().sort();
+                minDate = sorted[0];
+                maxDate = sorted[sorted.length - 1];
+            }
+
+            container.innerHTML = `
+                <div class="filter-group">
+                    <label>Desde</label>
+                    <input type="date" id="filtroDesde" value="${minDate || ''}" min="${minDate || ''}" max="${maxDate || ''}">
+                </div>
+                <div class="filter-group">
+                    <label>Hasta</label>
+                    <input type="date" id="filtroHasta" value="${maxDate || ''}" min="${minDate || ''}" max="${maxDate || ''}">
+                </div>
+                <div class="filter-group">
+                    <label>Mes</label>
+                    <select id="filtroMes">
+                        <option value="">Todos</option>
+                        ${meses.map(m => `<option value="${m}">${m}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Compañía</label>
+                    <select id="filtroCompania">
+                        <option value="">Todas</option>
+                        ${companias.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Asistencia</label>
+                    <select id="filtroAsistencia">
+                        <option value="">Todas</option>
+                        ${asistencias.map(a => `<option value="${a}">${a}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Crea servicio</label>
+                    <select id="filtroCreaServicio">
+                        <option value="">Todos</option>
+                        ${creaServicios.map(c => `<option value="${c}">${c}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Tipo asistencia</label>
+                    <select id="filtroTipoAsistencia">
+                        <option value="">Todos</option>
+                        ${tipoAsistencias.map(t => `<option value="${t}">${t}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Estatus</label>
+                    <select id="filtroEstatus">
+                        <option value="">Todos</option>
+                        ${estatuses.map(e => `<option value="${e}">${e}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Tipo asignación</label>
+                    <select id="filtroTipoAsignacion">
+                        <option value="">Todos</option>
+                        ${tipoAsignaciones.map(t => `<option value="${t}">${t}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Primera asignación</label>
+                    <select id="filtroPrimeraAsignacion">
+                        <option value="">Todos</option>
+                        ${primerAsignaciones.map(p => `<option value="${p}">${p}</option>`).join('')}
+                    </select>
+                </div>
+            `;
+
+            const inputs = container.querySelectorAll('input, select');
+            inputs.forEach(el => {
+                el.addEventListener('change', aplicarFiltros);
+                el.addEventListener('input', aplicarFiltros);
+            });
+        }
+
+        // ==============================================================
+        //  APLICAR FILTROS
+        // ==============================================================
+        function aplicarFiltros() {
+            const desde = document.getElementById('filtroDesde')?.value || '';
+            const hasta = document.getElementById('filtroHasta')?.value || '';
+            const mes = document.getElementById('filtroMes')?.value || '';
+            const compania = document.getElementById('filtroCompania')?.value || '';
+            const asistencia = document.getElementById('filtroAsistencia')?.value || '';
+            const creaServicio = document.getElementById('filtroCreaServicio')?.value || '';
+            const tipoAsistencia = document.getElementById('filtroTipoAsistencia')?.value || '';
+            const estatus = document.getElementById('filtroEstatus')?.value || '';
+            const tipoAsignacion = document.getElementById('filtroTipoAsignacion')?.value || '';
+            const primeraAsignacion = document.getElementById('filtroPrimeraAsignacion')?.value || '';
+
+            datosFiltrados = datos.filter(d => {
+                let ok = true;
+                const fecha = d.fecha_alta || '';
+                const fechaNormal = normalizeDate(fecha);
+                if (desde && fechaNormal && fechaNormal < desde) ok = false;
+                if (hasta && fechaNormal && fechaNormal > hasta) ok = false;
+                if (mes && dateToYYYYMM(fecha) !== mes) ok = false;
+                if (compania && d.compania !== compania) ok = false;
+                if (asistencia && d.asistencia !== asistencia) ok = false;
+                if (creaServicio && d.crea_servicio !== creaServicio) ok = false;
+                if (tipoAsistencia && d.tipoasistencia !== tipoAsistencia) ok = false;
+                if (estatus && d.estatus_servicio !== estatus) ok = false;
+                if (tipoAsignacion && d.asignacion_final !== tipoAsignacion) ok = false;
+                if (primeraAsignacion && d.primer_asignacion !== primeraAsignacion) ok = false;
+                return ok;
+            });
+
+            renderTablaDetalle(datosFiltrados);
+            renderTablaResumen(datosFiltrados);
+            renderCharts(datosFiltrados);
+            renderLineChart(datosFiltrados);
+            updateKPIs(datosFiltrados);
+            document.getElementById('countResult').textContent = `Mostrando ${datosFiltrados.length} registros`;
+        }
+
+        // ==============================================================
+        //  RENDER TABLA DETALLE
+        // ==============================================================
+        function renderTablaDetalle(data) {
+            const wrapper = document.getElementById('tableWrapper');
+            if (!data || data.length === 0) {
+                wrapper.innerHTML = `<div class="no-data">No hay datos que coincidan con los filtros</div>`;
+                return;
+            }
+            let html = `<table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Cliente</th>
+                        <th>Compañía</th>
+                        <th>Asistencia</th>
+                        <th>Tipo</th>
+                        <th>Toma Datos</th>
+                        <th>Asignación</th>
+                        <th>Escalación</th>
+                        <th>Proveedor</th>
+                        <th>Duración Total</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+            data.forEach(s => {
+                const escalado = s.tiempo_escalacion !== null && s.tiempo_escalacion !== undefined && s
+                    .tiempo_escalacion > 0;
+                html += `<tr>
+                    <td><strong>${s.id}</strong></td>
+                    <td>${s.cliente}</td>
+                    <td>${s.compania || '—'}</td>
+                    <td>${s.asistencia || '—'}</td>
+                    <td>${s.tipoasistencia || '—'}</td>
+                    <td>${formatMinutes(s.tiempo_toma_datos)}</td>
+                    <td>${formatMinutes(s.tiempo_asignacion)}</td>
+                    <td>${escalado ? `<span class="badge badge-escalado">${formatMinutes(s.tiempo_escalacion)}</span>` : '—'}</td>
+                    <td>${formatMinutes(s.tiempo_proveedor)}</td>
+                    <td><strong>${formatMinutes(s.duracion_total)}</strong></td>
+                </tr>`;
+            });
+            html += `</tbody></table>`;
+            wrapper.innerHTML = html;
+        }
+
+        // ==============================================================
+        //  RENDER TABLA RESUMEN (por compañía y tipo de asistencia)
+        // ==============================================================
+        function renderTablaResumen(data) {
+            const wrapper = document.getElementById('tablaResumenWrapper');
+            if (!data || data.length === 0) {
+                wrapper.innerHTML = `<div class="no-data">No hay datos para resumir</div>`;
+                return;
+            }
+
+            // Agrupar por compañía + tipoasistencia
+            const groups = {};
+            data.forEach(d => {
+                const key = `${d.compania || 'Sin compañía'}||${d.tipoasistencia || 'Sin tipo'}`;
+                if (!groups[key]) {
+                    groups[key] = { compania: d.compania || 'Sin compañía', tipo: d.tipoasistencia || 'Sin tipo',
+                        duraciones: [] };
+                }
+                if (d.duracion_total != null && d.duracion_total >= 0) {
+                    groups[key].duraciones.push(d.duracion_total);
+                }
+            });
+
+            let html = `<table>
+                <thead>
+                    <tr>
+                        <th>Compañía</th>
+                        <th>Tipo de Asistencia</th>
+                        <th>Total casos</th>
+                        <th>Duración promedio</th>
+                    </tr>
+                </thead>
+                <tbody>`;
+            for (const key in groups) {
+                const g = groups[key];
+                const count = g.duraciones.length;
+                const avg = count > 0 ? g.duraciones.reduce((a, b) => a + b, 0) / count : null;
+                html += `<tr>
+                    <td>${g.compania}</td>
+                    <td>${g.tipo}</td>
+                    <td>${count}</td>
+                    <td>${avg !== null ? formatMinutesShort(avg) : '—'}</td>
+                </tr>`;
+            }
+            html += `</tbody></table>`;
+            wrapper.innerHTML = html;
+        }
+
+        // ==============================================================
+        //  GRÁFICOS (barras agrupadas y apiladas)
+        // ==============================================================
+        function renderCharts(data) {
+            const labels = data.map(s => `#${s.id}`);
+            const colors = {
+                tomaDatos: '#3b82f6',
+                asignacion: '#8b5cf6',
+                escalacion: '#f59e0b',
+                proveedor: '#10b981',
+            };
+
+            if (charts.bar) { charts.bar.destroy();
+                charts.bar = null; }
+            if (charts.stacked) { charts.stacked.destroy();
+                charts.stacked = null; }
+
+            if (data.length === 0) {
+                const ctx1 = document.getElementById('barChart').getContext('2d');
+                charts.bar = new Chart(ctx1, {
+                    type: 'bar',
+                    data: { labels: ['Sin datos'], datasets: [{ label: 'Sin datos', data: [0] }] },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+                const ctx2 = document.getElementById('stackedBarChart').getContext('2d');
+                charts.stacked = new Chart(ctx2, {
+                    type: 'bar',
+                    data: { labels: ['Sin datos'], datasets: [{ label: 'Sin datos', data: [0] }] },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+                return;
+            }
+
+            // Barra agrupada
+            const ctx1 = document.getElementById('barChart').getContext('2d');
+            charts.bar = new Chart(ctx1, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Toma de Datos',
+                        data: data.map(s => s.tiempo_toma_datos),
+                        backgroundColor: colors.tomaDatos,
+                        borderRadius: 4,
+                    }, {
+                        label: 'Asignación',
+                        data: data.map(s => s.tiempo_asignacion),
+                        backgroundColor: colors.asignacion,
+                        borderRadius: 4,
+                    }, {
+                        label: 'Proveedor',
+                        data: data.map(s => s.tiempo_proveedor),
+                        backgroundColor: colors.proveedor,
+                        borderRadius: 4,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatMinutes(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, ticks: { callback: v => formatMinutes(v) } }
+                    }
+                }
+            });
+
+            // Apilada
+            const ctx2 = document.getElementById('stackedBarChart').getContext('2d');
+            const datasets = [{
+                label: 'Toma de Datos',
+                data: data.map(s => s.tiempo_toma_datos),
+                backgroundColor: colors.tomaDatos,
+            }, {
+                label: 'Asignación',
+                data: data.map(s => s.tiempo_asignacion),
+                backgroundColor: colors.asignacion,
+            }, {
+                label: 'Escalación',
+                data: data.map(s => s.tiempo_escalacion !== null ? s.tiempo_escalacion : 0),
+                backgroundColor: colors.escalacion,
+            }, {
+                label: 'Proveedor',
+                data: data.map(s => s.tiempo_proveedor),
+                backgroundColor: colors.proveedor,
+            }];
+            const hasEscalacion = data.some(s => s.tiempo_escalacion !== null && s.tiempo_escalacion > 0);
+            if (!hasEscalacion) datasets.splice(2, 1);
+
+            charts.stacked = new Chart(ctx2, {
+                type: 'bar',
+                data: { labels: labels, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatMinutes(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { stacked: true, grid: { display: false } },
+                        y: { stacked: true, beginAtZero: true, ticks: { callback: v => formatMinutes(v) } }
+                    }
+                }
+            });
+        }
+
+        // ==============================================================
+        //  GRÁFICO DE EVOLUCIÓN DIARIA (línea)
+        // ==============================================================
+        function renderLineChart(data) {
+            if (charts.line) { charts.line.destroy();
+                charts.line = null; }
+            const ctx = document.getElementById('lineChart').getContext('2d');
+
+            if (data.length === 0) {
+                charts.line = new Chart(ctx, {
+                    type: 'line',
+                    data: { labels: ['Sin datos'], datasets: [{ label: 'Sin datos', data: [0] }] },
+                    options: { responsive: true, maintainAspectRatio: false }
+                });
+                return;
+            }
+
+            // Agrupar por fecha
+            const groups = {};
+            data.forEach(d => {
+                const fecha = d.fecha_alta ? d.fecha_alta.split('T')[0] : null;
+                if (!fecha) return;
+                if (!groups[fecha]) groups[fecha] = { total: 0, count: 0 };
+                if (d.duracion_total != null && d.duracion_total >= 0) {
+                    groups[fecha].total += d.duracion_total;
+                    groups[fecha].count++;
+                }
+            });
+
+            const fechas = Object.keys(groups).sort();
+            const promedios = fechas.map(f => {
+                const g = groups[f];
+                return g.count > 0 ? g.total / g.count : null;
+            });
+
+            charts.line = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: fechas,
+                    datasets: [{
+                        label: 'Duración total promedio (min)',
+                        data: promedios,
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13,110,253,0.1)',
+                        fill: true,
+                        tension: 0.2,
+                        pointRadius: 3,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': ' + formatMinutes(context.raw);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false } },
+                        y: { beginAtZero: true, ticks: { callback: v => formatMinutes(v) } }
+                    }
+                }
+            });
+        }
+
+        // ==============================================================
+        //  TOGGLE DETALLE
+        // ==============================================================
+        function toggleDetalle() {
+            const container = document.getElementById('detalleContainer');
+            container.classList.toggle('detalle-oculto');
+        }
+
+        // ==============================================================
+        //  CARGA DE DATOS
+        // ==============================================================
+        function cargarDatos(nuevosDatos) {
+            datos = nuevosDatos.slice();
+            renderFilters();
+            aplicarFiltros();
+            document.getElementById('fileStatus').textContent = `✅ ${datos.length} registros`;
+        }
+
+        function cargarEjemplo() {
+            cargarDatos(datosEjemplo);
+        }
+
+        function limpiarFiltros() {
+            document.querySelectorAll('#filtersContainer select').forEach(sel => sel.value = '');
+            document.querySelectorAll('#filtersContainer input[type="date"]').forEach(inp => inp.value = '');
+            aplicarFiltros();
+        }
+
+        // ==============================================================
+        //  PARSEO DE CSV
+        // ==============================================================
+        function parseCSV(text) {
+            let sep = ',';
+            if (text.indexOf('\t') > -1 && text.indexOf(',') === -1) sep = '\t';
+            else if (text.indexOf(';') > -1) sep = ';';
+
+            const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
+            if (lines.length < 2) return [];
+
+            const headers = lines[0].split(sep).map(h => h.trim().toLowerCase());
+            const mapCol = {
+                'id': 'id',
+                'cliente': 'cliente',
+                'compania': 'compania',
+                'compañía': 'compania',
+                'asistencia': 'asistencia',
+                'tipoasistencia': 'tipoasistencia',
+                'crea_servicio': 'crea_servicio',
+                'estatus_servicio': 'estatus_servicio',
+                'primer_asignacion': 'primer_asignacion',
+                'asignacion_final': 'asignacion_final',
+                'fecha_alta': 'fecha_alta',
+                'tiempo_de_asignacion': 'tiempo_toma_datos',
+                'tiempo_de_arribo': 'tiempo_asignacion',
+                'tiempo_en_escalar': 'tiempo_escalacion',
+                'tiempo_escalacion': 'tiempo_escalacion',
+                'tiempo_cierre': 'duracion_total'
+            };
+
+            const idx = {};
+            headers.forEach((h, i) => {
+                const key = mapCol[h] || h;
+                idx[key] = i;
+            });
+
+            const result = [];
+            for (let i = 1; i < lines.length; i++) {
+                const parts = lines[i].split(sep).map(s => s.trim());
+                if (parts.length < headers.length) continue;
+                const row = {};
+                Object.keys(idx).forEach(key => {
+                    const val = parts[idx[key]] || '';
+                    row[key] = val;
+                });
+                ['tiempo_toma_datos', 'tiempo_asignacion', 'tiempo_escalacion', 'duracion_total'].forEach(k => {
+                    if (row[k] !== undefined && row[k] !== '') {
+                        const num = parseFloat(row[k].replace(',', '.'));
+                        row[k] = isNaN(num) ? null : num;
+                    } else {
+                        row[k] = null;
+                    }
+                });
+                row.tiempo_proveedor = null;
+                if (row.duracion_total !== null && row.tiempo_toma_datos !== null && row.tiempo_asignacion !== null) {
+                    const esc = row.tiempo_escalacion || 0;
+                    row.tiempo_proveedor = row.duracion_total - row.tiempo_toma_datos - row.tiempo_asignacion - esc;
+                    if (row.tiempo_proveedor < 0) row.tiempo_proveedor = null;
+                }
+                if (!row.id) continue;
+                result.push(row);
+            }
+            return result;
+        }
+
+        // ==============================================================
+        //  CARGA DE CARPETA (File System Access API)
+        // ==============================================================
+        async function cargarCarpeta() {
+            try {
+                if (!window.showDirectoryPicker) {
+                    alert('Tu navegador no soporta la selección de carpetas. Usa la opción de archivos individuales.');
+                    return;
+                }
+                const dirHandle = await window.showDirectoryPicker();
+                const files = [];
+                for await (const entry of dirHandle.values()) {
+                    if (entry.kind === 'file' && (entry.name.endsWith('.csv') || entry.name.endsWith('.tsv') || entry.name
+                            .endsWith('.txt'))) {
+                        const file = await entry.getFile();
+                        const text = await file.text();
+                        const parsed = parseCSV(text);
+                        if (parsed.length > 0) files.push(...parsed);
+                    }
+                }
+                if (files.length === 0) {
+                    alert('No se encontraron archivos CSV válidos en la carpeta.');
+                    return;
+                }
+                cargarDatos(files);
+                document.getElementById('fileStatus').textContent = `📁 ${files.length} registros (carpeta)`;
+            } catch (err) {
+                if (err.name !== 'AbortError') alert('Error: ' + err.message);
+            }
+        }
+
+        // ==============================================================
+        //  EVENTOS
+        // ==============================================================
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('btnCargarEjemplo').addEventListener('click', cargarEjemplo);
+            document.getElementById('btnCargarCarpeta').addEventListener('click', cargarCarpeta);
+            document.getElementById('btnLimpiarFiltros').addEventListener('click', limpiarFiltros);
+
+            document.getElementById('fileInput').addEventListener('change', function(e) {
+                const files = e.target.files;
+                if (!files || files.length === 0) return;
+                let allData = [];
+                let promises = [];
+                for (const file of files) {
+                    const reader = new FileReader();
+                    const promise = new Promise((resolve, reject) => {
+                        reader.onload = function(ev) {
+                            try {
+                                const text = ev.target.result;
+                                const parsed = parseCSV(text);
+                                resolve(parsed);
+                            } catch (err) { reject(err); }
+                        };
+                        reader.onerror = reject;
+                        reader.readAsText(file);
+                    });
+                    promises.push(promise);
+                }
+                Promise.all(promises).then(results => {
+                    results.forEach(parsed => { if (parsed.length > 0) allData.push(...parsed); });
+                    if (allData.length === 0) { alert('No se pudieron leer datos.'); return; }
+                    cargarDatos(allData);
+                    document.getElementById('fileStatus').textContent =
+                        `📄 ${allData.length} registros (${files.length} archivos)`;
+                }).catch(err => alert('Error: ' + err.message));
+                e.target.value = '';
+            });
+
+            cargarEjemplo();
+        });
+    </script>
+</body>
+</html>
