@@ -90,6 +90,13 @@
         .btn-outline:hover {
             background: #f1f5f9;
         }
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+        .btn-danger:hover {
+            background: #c82333;
+        }
         .btn-warning {
             background: #f59e0b;
             color: white;
@@ -348,6 +355,7 @@
                     📄 Archivo(s)
                     <input type="file" id="fileInput" accept=".csv,.tsv,.txt" style="display:none;" multiple>
                 </label>
+                <button class="btn btn-danger" id="btnResetearGuardado">🗑️ Restablecer a datos del servidor</button>
                 <button class="btn btn-outline" id="btnLimpiarFiltros">🧹 Limpiar</button>
                 <span class="file-status" id="fileStatus">Sin datos</span>
             </div>
@@ -444,7 +452,7 @@
 
     <script>
         // ==============================================================
-        //  DATOS DE EJEMPLO (simplificados, con los mismos campos que tu código)
+        //  DATOS DE EJEMPLO (simplificados)
         // ==============================================================
         const datosEjemplo = [{
             id: 21184606,
@@ -694,6 +702,7 @@
         let datos = [];
         let datosFiltrados = [];
         let charts = { bar: null, stacked: null, line: null };
+        let datosGuardados = null; // para saber si usamos localStorage
 
         // ==============================================================
         //  UTILIDADES
@@ -996,7 +1005,6 @@
                 return;
             }
 
-            // Agrupar por compañía + tipoasistencia
             const groups = {};
             data.forEach(d => {
                 const key = `${d.compania || 'Sin compañía'}||${d.tipoasistencia || 'Sin tipo'}`;
@@ -1035,7 +1043,7 @@
         }
 
         // ==============================================================
-        //  GRÁFICOS (barras agrupadas y apiladas)
+        //  GRÁFICOS
         // ==============================================================
         function renderCharts(data) {
             const labels = data.map(s => `#${s.id}`);
@@ -1067,7 +1075,6 @@
                 return;
             }
 
-            // Barra agrupada
             const ctx1 = document.getElementById('barChart').getContext('2d');
             charts.bar = new Chart(ctx1, {
                 type: 'bar',
@@ -1110,7 +1117,6 @@
                 }
             });
 
-            // Apilada
             const ctx2 = document.getElementById('stackedBarChart').getContext('2d');
             const datasets = [{
                 label: 'Toma de Datos',
@@ -1157,7 +1163,7 @@
         }
 
         // ==============================================================
-        //  GRÁFICO DE EVOLUCIÓN DIARIA (línea)
+        //  GRÁFICO DE EVOLUCIÓN DIARIA
         // ==============================================================
         function renderLineChart(data) {
             if (charts.line) { charts.line.destroy();
@@ -1173,7 +1179,6 @@
                 return;
             }
 
-            // Agrupar por fecha
             const groups = {};
             data.forEach(d => {
                 const fecha = d.fecha_alta ? d.fecha_alta.split('T')[0] : null;
@@ -1235,17 +1240,58 @@
         }
 
         // ==============================================================
-        //  CARGA DE DATOS
+        //  PERSISTENCIA EN LOCALSTORAGE
         // ==============================================================
-        function cargarDatos(nuevosDatos) {
+        function guardarDatosEnStorage(data) {
+            try {
+                localStorage.setItem('reporteDatos', JSON.stringify(data));
+                localStorage.setItem('usarDatosGuardados', 'true');
+            } catch (e) {
+                console.warn('No se pudo guardar en localStorage:', e);
+            }
+        }
+
+        function cargarDatosDesdeStorage() {
+            try {
+                const raw = localStorage.getItem('reporteDatos');
+                const usar = localStorage.getItem('usarDatosGuardados');
+                if (raw && usar === 'true') {
+                    const data = JSON.parse(raw);
+                    if (Array.isArray(data) && data.length > 0) {
+                        return data;
+                    }
+                }
+            } catch (e) {}
+            return null;
+        }
+
+        function limpiarStorage() {
+            localStorage.removeItem('reporteDatos');
+            localStorage.removeItem('usarDatosGuardados');
+        }
+
+        // ==============================================================
+        //  CARGA DE DATOS (desde archivo o desde servidor)
+        // ==============================================================
+        function cargarDatos(nuevosDatos, origen = 'manual') {
             datos = nuevosDatos.slice();
+            if (origen === 'manual') {
+                // Guardamos en localStorage y marcamos para que se use en futuras recargas
+                guardarDatosEnStorage(datos);
+                document.getElementById('fileStatus').textContent = `💾 ${datos.length} registros (guardados localmente)`;
+            } else {
+                // Carga desde servidor o ejemplo: no guardamos automáticamente,
+                // solo se usa en esta sesión. Pero si el usuario quiere que persista,
+                // debería cargar manualmente.
+                document.getElementById('fileStatus').textContent = `📁 ${datos.length} registros (desde servidor)`;
+            }
             renderFilters();
             aplicarFiltros();
-            document.getElementById('fileStatus').textContent = `✅ ${datos.length} registros`;
         }
 
         function cargarEjemplo() {
-            cargarDatos(datosEjemplo);
+            // Cargar ejemplo y guardar en storage para que persista
+            cargarDatos(datosEjemplo, 'manual');
         }
 
         function limpiarFiltros() {
@@ -1255,7 +1301,7 @@
         }
 
         // ==============================================================
-        //  PARSEO DE CSV
+        //  CARGA DESDE ARCHIVO (CSV/TSV)
         // ==============================================================
         function parseCSV(text) {
             let sep = ',';
@@ -1321,6 +1367,35 @@
         }
 
         // ==============================================================
+        //  CARGA DE ARCHIVOS (input file)
+        // ==============================================================
+        function procesarArchivosSeleccionados(files) {
+            if (!files || files.length === 0) return;
+            let allData = [];
+            let promises = [];
+            for (const file of files) {
+                const reader = new FileReader();
+                const promise = new Promise((resolve, reject) => {
+                    reader.onload = function(ev) {
+                        try {
+                            const text = ev.target.result;
+                            const parsed = parseCSV(text);
+                            resolve(parsed);
+                        } catch (err) { reject(err); }
+                    };
+                    reader.onerror = reject;
+                    reader.readAsText(file);
+                });
+                promises.push(promise);
+            }
+            Promise.all(promises).then(results => {
+                results.forEach(parsed => { if (parsed.length > 0) allData.push(...parsed); });
+                if (allData.length === 0) { alert('No se pudieron leer datos.'); return; }
+                cargarDatos(allData, 'manual');
+            }).catch(err => alert('Error: ' + err.message));
+        }
+
+        // ==============================================================
         //  CARGA DE CARPETA (File System Access API)
         // ==============================================================
         async function cargarCarpeta() {
@@ -1344,52 +1419,71 @@
                     alert('No se encontraron archivos CSV válidos en la carpeta.');
                     return;
                 }
-                cargarDatos(files);
-                document.getElementById('fileStatus').textContent = `📁 ${files.length} registros (carpeta)`;
+                cargarDatos(files, 'manual');
             } catch (err) {
                 if (err.name !== 'AbortError') alert('Error: ' + err.message);
             }
         }
 
         // ==============================================================
+        //  CARGA AUTOMÁTICA DESDE EL SERVIDOR (datos.csv)
+        // ==============================================================
+        async function cargarArchivoLocal(nombreArchivo = 'datos.csv') {
+            try {
+                const response = await fetch(nombreArchivo);
+                if (!response.ok) throw new Error('Archivo no encontrado');
+                const text = await response.text();
+                const parsed = parseCSV(text);
+                if (parsed.length > 0) {
+                    cargarDatos(parsed, 'servidor');
+                    return true;
+                }
+            } catch (e) {
+                console.log('No se pudo cargar automáticamente:', e.message);
+            }
+            return false;
+        }
+
+        // ==============================================================
+        //  RESETEAR GUARDADO
+        // ==============================================================
+        function resetearGuardado() {
+            if (confirm('¿Borrar los datos guardados localmente y volver a cargar desde el servidor (datos.csv)?')) {
+                limpiarStorage();
+                // Recargar la página para que intente fetch de nuevo
+                location.reload();
+            }
+        }
+
+        // ==============================================================
         //  EVENTOS
         // ==============================================================
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            // Botones
             document.getElementById('btnCargarEjemplo').addEventListener('click', cargarEjemplo);
             document.getElementById('btnCargarCarpeta').addEventListener('click', cargarCarpeta);
             document.getElementById('btnLimpiarFiltros').addEventListener('click', limpiarFiltros);
+            document.getElementById('btnResetearGuardado').addEventListener('click', resetearGuardado);
 
             document.getElementById('fileInput').addEventListener('change', function(e) {
-                const files = e.target.files;
-                if (!files || files.length === 0) return;
-                let allData = [];
-                let promises = [];
-                for (const file of files) {
-                    const reader = new FileReader();
-                    const promise = new Promise((resolve, reject) => {
-                        reader.onload = function(ev) {
-                            try {
-                                const text = ev.target.result;
-                                const parsed = parseCSV(text);
-                                resolve(parsed);
-                            } catch (err) { reject(err); }
-                        };
-                        reader.onerror = reject;
-                        reader.readAsText(file);
-                    });
-                    promises.push(promise);
-                }
-                Promise.all(promises).then(results => {
-                    results.forEach(parsed => { if (parsed.length > 0) allData.push(...parsed); });
-                    if (allData.length === 0) { alert('No se pudieron leer datos.'); return; }
-                    cargarDatos(allData);
-                    document.getElementById('fileStatus').textContent =
-                        `📄 ${allData.length} registros (${files.length} archivos)`;
-                }).catch(err => alert('Error: ' + err.message));
+                procesarArchivosSeleccionados(e.target.files);
                 e.target.value = '';
             });
 
-            cargarEjemplo();
+            // 1. Intentar cargar datos guardados en localStorage
+            const datosGuardados = cargarDatosDesdeStorage();
+            if (datosGuardados) {
+                cargarDatos(datosGuardados, 'manual');
+                document.getElementById('fileStatus').textContent = `💾 ${datosGuardados.length} registros (guardados localmente)`;
+            } else {
+                // 2. Si no hay datos guardados, intentar fetch('datos.csv')
+                const cargado = await cargarArchivoLocal('datos.csv');
+                if (!cargado) {
+                    // 3. Si falla, cargar ejemplo
+                    cargarEjemplo();
+                    document.getElementById('fileStatus').textContent = `📥 ${datos.length} registros (ejemplo)`;
+                }
+            }
         });
     </script>
 </body>
