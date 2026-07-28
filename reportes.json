@@ -27,7 +27,7 @@
         { "nombre": "Rellamado", "url": "https://datastudio.google.com/reporting/671b554b-490e-41fb-a7e1-388b80bd26e7", "icono": "🔄" },
         { "nombre": "Llamadas por agente", "url": "https://datastudio.google.com/s/tVTnsp3bJSI", "icono": "📞" },
         { "nombre": "Tiempos de asignación", "url": "./reportes-html/reporte_ejecutivo.html", "icono": "⏳", "local": true },
-        { "nombre": "Tracking Servicios", "url": "./reportes-html/Seguimiento%20Servicios.html", "icono": "📍", "local": true }
+        { "nombre": "Tracking Servicios", "url": "./reportes-html/Seguimiento Servicios.html", "icono": "📍", "local": true }
       ]
     },
     "Hexalud": {
