@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Tiempos de Asignación</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 20px; background: #f0f2f5; }
+        .container { max-width: 1400px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }
+        h1 { color: #1a3c5e; font-weight: 600; margin-bottom: 5px; }
+        .filtros { display: flex; flex-wrap: wrap; gap: 15px; align-items: center; padding: 15px 20px; background: #f8f9fa; border-radius: 8px; margin: 20px 0; }
+        .filtros label { font-weight: 600; margin-right: 5px; font-size: 13px; }
+        .filtros select, .filtros input { padding: 6px 12px; border-radius: 5px; border: 1px solid #ced4da; background: white; }
+        .filtros button { padding: 6px 20px; background: #0d6efd; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600; }
+        .filtros button:hover { background: #0b5ed7; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin: 20px 0; }
+        .kpi-card { background: white; padding: 15px; border-radius: 10px; text-align: center; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border-left: 4px solid #0d6efd; }
+        .kpi-card .value { font-size: 28px; font-weight: 700; color: #0d6efd; }
+        .kpi-card .label { font-size: 13px; color: #6c757d; }
+        .kpi-card.destacado { background: #0d6efd; border-left-color: #0a58ca; }
+        .kpi-card.destacado .value { color: white; }
+        .kpi-card.destacado .label { color: #e0e0e0; }
+        .kpi-card .sub { font-size: 12px; color: #28a745; font-weight: 600; }
+        .kpi-card .sub.bad { color: #dc3545; }
+        .chart-container { max-width: 1000px; margin: 20px auto; position: relative; }
+        .table-wrapper { overflow-x: auto; margin: 20px 0; border: 1px solid #dee2e6; border-radius: 8px; }
+        .table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        .table th { background: #1a3c5e; color: white; padding: 10px 8px; text-align: left; white-space: nowrap; }
+        .table td, .table th { border: 1px solid #dee2e6; padding: 8px; }
+        .table tr:nth-child(even) { background: #f8f9fa; }
+        .badge-ok { background: #28a745; color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-fail { background: #dc3545; color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px; }
+        .badge-na { background: #6c757d; color: white; padding: 2px 10px; border-radius: 20px; font-size: 12px; }
+        .toggle-btn { background: #6c757d; color: white; border: none; padding: 8px 16px; border-radius: 5px; cursor: pointer; margin: 10px 0; }
+        .toggle-btn:hover { background: #5a6268; }
+        .detalle-oculto { display: none; }
+        .fecha-rango { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .glosario { margin-top: 40px; padding-top: 20px; border-top: 2px solid #e9ecef; }
+        .glosario h2 { color: #1a3c5e; margin-bottom: 15px; }
+        .glosario-grid { display: grid; grid-template-columns: 1fr 2fr 2fr; gap: 6px 20px; font-size: 14px; }
+        .glosario-grid .term { font-weight: 600; color: #0d6efd; padding: 4px 0; }
+        .glosario-grid .def { color: #343a40; padding: 4px 0; }
+        .glosario-grid .formula { color: #495057; padding: 4px 0; font-family: 'Courier New', monospace; font-size: 13px; background: #f8f9fa; padding: 4px 8px; border-radius: 4px; }
+        @media (max-width: 600px) { .glosario-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>📊 Tiempos de Asignación</h1>
+
+    <div class="filtros">
+        <div class="fecha-rango">
+            <label>Desde:</label><input type="date" id="fecha_desde" onchange="aplicarFiltros()">
+            <label>Hasta:</label><input type="date" id="fecha_hasta" onchange="aplicarFiltros()">
+        </div>
+        <div><label>Mes:</label><select id="filtro_mes" onchange="aplicarFiltros()"><option value="todos">Todos</option><option value="2026-06">2026-06</option><option value="2026-07">2026-07</option></select></div>
+        <div><label>Compañía:</label><select id="filtro_campania" onchange="aplicarFiltros()"><option value="todas">Todas</option><option value="Ambulancias Grupo Liverpool">Ambulancias Grupo Liverpool</option><option value="Asistencias Empleados Promass">Asistencias Empleados Promass</option><option value="Club De Proteccion Salud">Club De Proteccion Salud</option><option value="Concredito">Concredito</option><option value="Coppel">Coppel</option><option value="Coppel Contigo">Coppel Contigo</option><option value="Dentify">Dentify</option><option value="Empleados Promass">Empleados Promass</option><option value="H&B">H&B</option><option value="Liverpool">Liverpool</option><option value="Liverpool Pocket">Liverpool Pocket</option><option value="Membresia Familiar/Asistencia Pyme (Axtel)">Membresia Familiar/Asistencia Pyme (Axtel)</option><option value="Mission Xxi">Mission Xxi</option><option value="Muebles América">Muebles América</option><option value="Mutuus Salud">Mutuus Salud</option><option value="Pabs +">Pabs +</option><option value="Perks Up!">Perks Up!</option><option value="Programa Seguro">Programa Seguro</option><option value="Promass (Quantum)">Promass (Quantum)</option><option value="Protección Para El Bienestar (Holding)">Protección Para El Bienestar (Holding)</option><option value="Qualitas">Qualitas</option><option value="Rappicard">Rappicard</option><option value="Suburbia">Suburbia</option><option value="Tu Momento">Tu Momento</option><option value="Woow">Woow</option><option value="Zurich">Zurich</option></select></div>
+        <div><label>Asistencia:</label><select id="filtro_asistencia" onchange="aplicarFiltros()"><option value="todas">Todas</option><option value="Accidente automovilistico">Accidente automovilistico</option><option value="Ambulancia terrestre">Ambulancia terrestre</option><option value="Arrastre de grúa">Arrastre de grúa</option><option value="Asesoria juridica">Asesoria juridica</option><option value="Atencion dental">Atencion dental</option><option value="Boletin de descuentos">Boletin de descuentos</option><option value="Cambio de llantas">Cambio de llantas</option><option value="Cerrajería">Cerrajería</option><option value="Cerrajería para auto">Cerrajería para auto</option><option value="Checkup">Checkup</option><option value="Citas medicas">Citas medicas</option><option value="Coordinacion funeraria">Coordinacion funeraria</option><option value="Electricidad">Electricidad</option><option value="Envio y pago de grua por averia">Envio y pago de grua por averia</option><option value="Gestoria telefonica">Gestoria telefonica</option><option value="Informacion">Informacion</option><option value="Informacion dental">Informacion dental</option><option value="Interpretacion de resultados">Interpretacion de resultados</option><option value="Medicina general">Medicina general</option><option value="Medico a domicilio">Medico a domicilio</option><option value="Nutrición">Nutrición</option><option value="Paso de corriente">Paso de corriente</option><option value="Plomería">Plomería</option><option value="Psicología">Psicología</option><option value="Ref hospital">Ref hospital</option><option value="Ref laboratorio">Ref laboratorio</option><option value="Ref medico especialista">Ref medico especialista</option><option value="Suministro de gasolina">Suministro de gasolina</option><option value="Vidriería">Vidriería</option></select></div>
+        <div><label>Crea servicio:</label><select id="filtro_crea" onchange="aplicarFiltros()"><option value="todos">Todos</option><option value="AGENTE DE VOZ">AGENTE DE VOZ</option><option value="IVR (TALKDESK)">IVR (TALKDESK)</option><option value="MUSA (APP)">MUSA (APP)</option><option value="PABS (APP)">PABS (APP)</option><option value="POCKET (LIVERPOOL)">POCKET (LIVERPOOL)</option><option value="PROMASS (QUANTUM)">PROMASS (QUANTUM)</option><option value="WHATSAPP (ATOM OUT)">WHATSAPP (ATOM OUT)</option><option value="WHATSAPP (ATOM)">WHATSAPP (ATOM)</option><option value="WHATSAPP (PIF)">WHATSAPP (PIF)</option><option value="WHATSAPP SBB IN">WHATSAPP SBB IN</option><option value="WOOW (APP)">WOOW (APP)</option></select></div>
+        <div><label>Tipo asistencia:</label><select id="filtro_tipo" onchange="aplicarFiltros()"><option value="todos">Todos</option><option value="Ambulancias">Ambulancias</option><option value="Asistencia Hogar">Asistencia Hogar</option><option value="Asistencia Víal">Asistencia Víal</option><option value="Checkup">Checkup</option><option value="Coordinacion funeraria">Coordinacion funeraria</option><option value="Informativo">Informativo</option><option value="Juridicos">Juridicos</option><option value="Medicos">Medicos</option><option value="Servicio de asistencia km "0"">Servicio de asistencia km "0"</option></select></div>
+        <div><label>Estatus:</label><select id="filtro_estatus" onchange="aplicarFiltros()"><option value="todos">Todos</option><option value="EN PROCESO">EN PROCESO</option><option value="NO OTORGADO">NO OTORGADO</option><option value="NULL">NULL</option><option value="OTORGADO">OTORGADO</option><option value="PRUEBAS">PRUEBAS</option></select></div>
+        <div><label>Tipo de asignación:</label><select id="filtro_asignado" onchange="aplicarFiltros()"><option value="todos">Todos</option><option value="Asignacion directa ws">Asignacion directa ws</option><option value="Asignacion portal">Asignacion portal</option><option value="Call center">Call center</option><option value="Sin asignar">Sin asignar</option></select></div>
+        <div><label>Primera asignación:</label><select id="filtro_primer_asignacion" onchange="aplicarFiltros()"><option value="todos">Todos</option><option value="Asignacion Portal">Asignacion Portal</option><option value="Asignacion directa WS">Asignacion directa WS</option><option value="Call Center">Call Center</option><option value="NULL">NULL</option><option value="Sin asignar">Sin asignar</option></select></div>
+        <button onclick="limpiarFiltros()">Limpiar</button>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpi-grid" id="kpi_container"></div>
+
+    <!-- Gráfico de evolución temporal -->
+    <h2 style="margin-top: 30px;">📈 Evolución diaria de los tiempos del proceso</h2>
+    <div class="chart-container">
+        <canvas id="graficoEvolucion"></canvas>
+    </div>
+
+    <!-- Tabla resumen por compañía y asistencia -->
+    <h2>📋 Resumen por compañía y tipo de asistencia</h2>
+    <div class="table-wrapper" id="tabla_resumen_wrapper">
+        <!-- Se llena con JavaScript -->
+    </div>
+
+    <!-- Tabla de detalle (colapsable) -->
+    <button class="toggle-btn" onclick="toggleDetalle()">📄 Mostrar / Ocultar detalle por fila</button>
+    <div id="detalle_container" class="detalle-oculto">
+        <div class="table-wrapper" id="tabla_detalle_wrapper">
+            <!-- Se llena con JavaScript -->
+        </div>
+    </div>
+
+    <!-- Glosario -->
+    <div class="glosario">
+        <h2>📖 Glosario de términos</h2>
+        <div class="glosario-grid">
+            <div class="term">Toma de datos</div>
+            <div class="def">Tiempo desde que se crea el caso hasta que se finaliza la toma de datos.</div>
+            <div class="formula">fecha_fin_toma_datos – fecha</div>
+            <div class="term">Asignación</div>
+            <div class="def">Tiempo desde el fin de la toma de datos hasta la <strong>última</strong> asignación del caso.</div>
+            <div class="formula">fecha_ultima_asigna – fecha_fin_toma_datos</div>
+            <div class="term">Escalación RDP</div>
+            <div class="def">Tiempo total del proceso de escalación (desde la última asignación hasta la respuesta).</div>
+            <div class="formula">(fecha_escalacion – fecha_ultima_asigna) + (fecha_respuesta_rdp – fecha_escalacion)</div>
+            <div class="term">Proveedor (total)</div>
+            <div class="def">Tiempo total desde la última asignación hasta que el proveedor finaliza el servicio.</div>
+            <div class="formula">fecha_termino_proveedor – fecha_ultima_asigna</div>
+            <div class="term">Duración Total</div>
+            <div class="def">Suma de todas las etapas anteriores.</div>
+            <div class="formula">Toma + Asignación + Escalación RDP + Proveedor (total)</div>
+            <div class="term">% ≤ 24h</div>
+            <div class="def">Porcentaje de casos cuya Duración Total es ≤ 24 horas (1440 minutos).</div>
+            <div class="formula">(Casos que cumplen / Total de casos) × 100</div>
+            <div class="term">Evaluación de respuesta</div>
+            <div class="def">Clasificación del tiempo total del proveedor:</div>
+            <div class="formula">Óptimo ≤30min · Aceptable ≤60min · Retraso moderado ≤120min · Retraso crítico >120min</div>
+        </div>
+        <p style="margin-top:10px; font-size:13px; color:#6c757d;">
+            ⚠️ <strong>Nota:</strong> Si no se detecta la columna <code>fecha_ultima_asigna</code>, se utiliza <code>fecha_asigna</code> como alternativa.
+        </p>
+    </div>
+</div>
+
+<script>
+    // Variable global que se llenará con fetch
+    let datos = [];
+    let chartInstance = null;
+
+    // ======== FUNCIONES ORIGINALES EXTRAÍDAS DE TU CÓDIGO ========
+
+    function aplicarFiltros() {
+        const filtros = {
+            fecha_desde: document.getElementById('fecha_desde').value,
+            fecha_hasta: document.getElementById('fecha_hasta').value,
+            mes: document.getElementById('filtro_mes').value,
+            campania: document.getElementById('filtro_campania').value,
+            asistencia: document.getElementById('filtro_asistencia').value,
+            crea: document.getElementById('filtro_crea').value,
+            tipo: document.getElementById('filtro_tipo').value,
+            estatus: document.getElementById('filtro_estatus').value,
+            asignado: document.getElementById('filtro_asignado').value,
+            primer_asignacion: document.getElementById('filtro_primer_asignacion').value
+        };
+
+        const filtrados = datos.filter(d => {
+            if (filtros.fecha_desde && d.fecha_str < filtros.fecha_desde) return false;
+            if (filtros.fecha_hasta && d.fecha_str > filtros.fecha_hasta) return false;
+            if (filtros.mes !== 'todos' && d.mes !== filtros.mes) return false;
+            if (filtros.campania !== 'todas' && d.campaña !== filtros.campania) return false;
+            if (filtros.asistencia !== 'todas' && d.asistencia !== filtros.asistencia) return false;
+            if (filtros.crea !== 'todos' && d.crea_servicio !== filtros.crea) return false;
+            if (filtros.tipo !== 'todos' && d.tipoasistencia !== filtros.tipo) return false;
+            if (filtros.estatus !== 'todos' && d.estatus !== filtros.estatus) return false;
+            if (filtros.asignado !== 'todos' && d.asignado !== filtros.asignado) return false;
+            if (filtros.primer_asignacion !== 'todos' && d.primer_asignacion !== filtros.primer_asignacion) return false;
+            return true;
+        });
+
+        renderKPI(filtrados);
+        renderGrafico(filtrados);
+        renderTablaResumen(filtrados);
+        renderTablaDetalle(filtrados);
+    }
+
+    function limpiarFiltros() {
+        document.getElementById('fecha_desde').value = '';
+        document.getElementById('fecha_hasta').value = '';
+        document.getElementById('filtro_mes').value = 'todos';
+        document.getElementById('filtro_campania').value = 'todas';
+        document.getElementById('filtro_asistencia').value = 'todas';
+        document.getElementById('filtro_crea').value = 'todos';
+        document.getElementById('filtro_tipo').value = 'todos';
+        document.getElementById('filtro_estatus').value = 'todos';
+        document.getElementById('filtro_asignado').value = 'todos';
+        document.getElementById('filtro_primer_asignacion').value = 'todos';
+        aplicarFiltros();
+    }
+
+    function toggleDetalle() {
+        const cont = document.getElementById('detalle_container');
+        cont.classList.toggle('detalle-oculto');
+    }
+
+    function renderKPI(filtrados) {
+        const total = filtrados.length;
+        const cumple = filtrados.filter(d => d.cumple_24h === true).length;
+        const pct = total > 0 ? (cumple / total * 100) : 0;
+        const avgToma = total > 0 ? filtrados.reduce((s, d) => s + (d.toma_datos_min || 0), 0) / total : 0;
+        const avgAsig = total > 0 ? filtrados.reduce((s, d) => s + (d.asignacion_min || 0), 0) / total : 0;
+        const avgProv = total > 0 ? filtrados.reduce((s, d) => s + (d.proveedor_total_min || 0), 0) / total : 0;
+
+        document.getElementById('kpi_container').innerHTML = `
+            <div class="kpi-card"><div class="value">${total}</div><div class="label">Total casos</div></div>
+            <div class="kpi-card destacado"><div class="value">${pct.toFixed(1)}%</div><div class="label">% ≤ 24h</div></div>
+            <div class="kpi-card"><div class="value">${avgToma.toFixed(1)} min</div><div class="label">Toma datos (prom.)</div></div>
+            <div class="kpi-card"><div class="value">${avgAsig.toFixed(1)} min</div><div class="label">Asignación (prom.)</div></div>
+            <div class="kpi-card"><div class="value">${avgProv.toFixed(1)} min</div><div class="label">Proveedor (prom.)</div></div>
+        `;
+    }
+
+    function renderGrafico(filtrados) {
+        const dias = {};
+        filtrados.forEach(d => {
+            const dia = d.fecha_str;
+            if (!dias[dia]) dias[dia] = { total: 0, suma: 0, count: 0 };
+            dias[dia].total++;
+            if (d.duracion_total_min !== null && d.duracion_total_min !== undefined) {
+                dias[dia].suma += d.duracion_total_min;
+                dias[dia].count++;
+            }
+        });
+
+        const labels = Object.keys(dias).sort();
+        const promedios = labels.map(d => dias[d].count > 0 ? dias[d].suma / dias[d].count : 0);
+        const totales = labels.map(d => dias[d].total);
+
+        const ctx = document.getElementById('graficoEvolucion').getContext('2d');
+
+        if (chartInstance) chartInstance.destroy();
+
+        chartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'Duración promedio (min)',
+                        data: promedios,
+                        borderColor: '#0d6efd',
+                        backgroundColor: 'rgba(13, 110, 253, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        yAxisID: 'y'
+                    },
+                    {
+                        label: 'Cantidad de casos',
+                        data: totales,
+                        borderColor: '#dc3545',
+                        backgroundColor: 'rgba(220, 53, 69, 0.1)',
+                        tension: 0.3,
+                        fill: true,
+                        yAxisID: 'y1'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: { position: 'top' },
+                    tooltip: { mode: 'index', intersect: false }
+                },
+                scales: {
+                    y: {
+                        type: 'linear',
+                        position: 'left',
+                        title: { display: true, text: 'Duración (min)' }
+                    },
+                    y1: {
+                        type: 'linear',
+                        position: 'right',
+                        grid: { drawOnChartArea: false },
+                        title: { display: true, text: 'Cantidad de casos' }
+                    }
+                }
+            },
+            plugins: [ChartDataLabels]
+        });
+    }
+
+    function renderTablaResumen(filtrados) {
+        const grupos = {};
+        filtrados.forEach(d => {
+            const key = `${d.campaña}|${d.tipoasistencia}`;
+            if (!grupos[key]) grupos[key] = { campania: d.campaña, tipo: d.tipoasistencia, total: 0, cumple: 0 };
+            grupos[key].total++;
+            if (d.cumple_24h === true) grupos[key].cumple++;
+        });
+
+        let html = `<table class="table"><thead><tr><th>Compañía</th><th>Tipo de asistencia</th><th>Total</th><th>% ≤ 24h</th></tr></thead><tbody>`;
+        Object.values(grupos).forEach(g => {
+            const pct = g.total > 0 ? (g.cumple / g.total * 100).toFixed(1) : '0.0';
+            html += `<tr><td>${g.campania}</td><td>${g.tipo}</td><td>${g.total}</td><td>${pct}%</td></tr>`;
+        });
+        html += `</tbody></table>`;
+        document.getElementById('tabla_resumen_wrapper').innerHTML = html;
+    }
+
+    function renderTablaDetalle(filtrados) {
+        let html = `<table class="table"><thead><tr>
+            <th>ID</th><th>Compañía</th><th>Asistencia</th><th>Fecha</th>
+            <th>Toma (min)</th><th>Asig. (min)</th><th>Escal. (min)</th><th>Prov. (min)</th>
+            <th>Total (min)</th><th>≤24h</th><th>Evaluación</th>
+        </tr></thead><tbody>`;
+
+        filtrados.forEach(d => {
+            const badge = d.cumple_24h === true ? '<span class="badge-ok">Sí</span>' :
+                          d.cumple_24h === false ? '<span class="badge-fail">No</span>' :
+                          '<span class="badge-na">N/A</span>';
+            html += `<tr>
+                <td>${d.id_cas}</td>
+                <td>${d.campaña}</td>
+                <td>${d.asistencia}</td>
+                <td>${d.fecha_display || d.fecha_str}</td>
+                <td>${d.toma_datos_min !== null ? d.toma_datos_min.toFixed(1) : '-'}</td>
+                <td>${d.asignacion_min !== null ? d.asignacion_min.toFixed(1) : '-'}</td>
+                <td>${d.escalacion_rdp_min !== null ? d.escalacion_rdp_min.toFixed(1) : '-'}</td>
+                <td>${d.proveedor_total_min !== null ? d.proveedor_total_min.toFixed(1) : '-'}</td>
+                <td>${d.duracion_total_min !== null ? d.duracion_total_min.toFixed(1) : '-'}</td>
+                <td>${badge}</td>
+                <td>${d.evaluacion_respuesta || 'N/A'}</td>
+            </tr>`;
+        });
+        html += `</tbody></table>`;
+        document.getElementById('tabla_detalle_wrapper').innerHTML = html;
+    }
+
+    // ======== CARGA EXTERNA DE DATOS ========
+    fetch('datos.json')
+        .then(response => {
+            if (!response.ok) throw new Error('No se pudo cargar datos.json');
+            return response.json();
+        })
+        .then(data => {
+            datos = data;
+            console.log('✅ Datos cargados correctamente:', datos.length, 'registros');
+            aplicarFiltros();
+        })
+        .catch(error => {
+            console.error('❌ Error al cargar datos.json:', error);
+            document.querySelector('.container').innerHTML +=
+                '<p style="color:red;font-weight:bold;margin-top:20px;">⚠️ No se pudieron cargar los datos. Asegúrate de que el archivo <code>datos.json</code> esté en la misma carpeta.</p>';
+        });
+</script>
+</body>
+</html>
