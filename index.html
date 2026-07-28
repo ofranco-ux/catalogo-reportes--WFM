@@ -427,8 +427,31 @@
                 const response = await fetch('reportes.json');
                 if (!response.ok) throw new Error('No se pudo cargar el archivo JSON');
                 const data = await response.json();
-                categorias = data.categorias;
-                // Una vez cargado, renderizar el menú
+
+                // ---- FILTRO: eliminar reportes que contengan las frases prohibidas ----
+                const palabrasClave = ['tiempos de asignación', 'tracking de servicios'];
+                const categoriasFiltradas = {};
+
+                for (const [nombreCat, info] of Object.entries(data.categorias)) {
+                    // Filtrar reportes de esta categoría
+                    const reportesFiltrados = info.reportes.filter(r => {
+                        const nombreLower = r.nombre.toLowerCase();
+                        return !palabrasClave.some(palabra => nombreLower.includes(palabra));
+                    });
+
+                    // Si quedan reportes, guardamos la categoría
+                    if (reportesFiltrados.length > 0) {
+                        categoriasFiltradas[nombreCat] = {
+                            ...info,
+                            reportes: reportesFiltrados
+                        };
+                    }
+                }
+
+                categorias = categoriasFiltradas;
+                // ----------------------------
+
+                // Una vez cargado y filtrado, renderizar el menú
                 renderMenu();
                 headerSubtitle.textContent = 'Selecciona una categoría para ver sus reportes';
             } catch (error) {
@@ -448,7 +471,20 @@
         //  FUNCIONES DE RENDERIZADO
         // ================================================================
         function renderMenu() {
-            const html = Object.entries(categorias).map(([nombre, data]) => {
+            // Si no hay categorías, mostrar mensaje
+            const keys = Object.keys(categorias);
+            if (keys.length === 0) {
+                menuCategorias.innerHTML = `
+                        <div class="loader" style="grid-column:1/-1;">
+                            <span>📭</span>
+                            No hay reportes disponibles después del filtro.
+                        </div>
+                    `;
+                return;
+            }
+
+            const html = keys.map(nombre => {
+                const data = categorias[nombre];
                 const count = data.reportes.length;
                 return `
                         <div class="categoria-card" data-categoria="${nombre}">
@@ -524,4 +560,4 @@
     </script>
 
 </body>
-</html> 
+</html>
