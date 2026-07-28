@@ -405,6 +405,7 @@
 <script>
     // ================================================================
     //  CARGAR DATOS DESDE JSON EXTERNO (con fallback a ambos nombres)
+    //  MODIFICADO: Ahora busca 'informes.json' primero
     // ================================================================
     const menuCategorias = document.getElementById('menuCategorias');
     const reportesContainer = document.getElementById('reportesContainer');
@@ -421,12 +422,13 @@
             </div>
         `;
 
-    // Función para cargar el JSON (intenta con reportes.json e Informes.json)
+    // Función para cargar el JSON
     async function cargarDatos() {
         try {
             // Obtener la ruta base del HTML (donde está el archivo actual)
             const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-            const posiblesNombres = ['reportes.json', 'Informes.json'];
+            // 📌 IMPORTANTE: Ahora busca 'informes.json' primero (tu archivo)
+            const posiblesNombres = ['informes.json', 'reportes.json', 'Informes.json'];
             let data = null;
             let errorMsg = '';
 
