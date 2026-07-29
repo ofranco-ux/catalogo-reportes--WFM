@@ -8,377 +8,54 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* ============================================================
-               RESET Y VARIABLES CORPORATIVAS
-               ============================================================ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --color-primary: #0a1a2b;
-            --color-primary-light: #1a3050;
-            --color-accent: #c9a84c;
-            --color-accent-hover: #b8942e;
-            --color-bg: #f4f6f9;
-            --color-white: #ffffff;
-            --color-text: #1e2a3a;
-            --color-text-light: #5a6b7c;
-            --shadow-sm: 0 4px 16px rgba(10, 26, 43, 0.08);
-            --shadow-hover: 0 16px 48px rgba(10, 26, 43, 0.14);
-            --radius-lg: 24px;
-            --radius-xl: 32px;
-            --transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: var(--color-bg);
-            min-height: 100vh;
-            padding: 2.5rem 1.5rem;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .container {
-            max-width: 1400px;
-            width: 100%;
-        }
-
-        /* ============================================================
-               ENCABEZADO
-               ============================================================ */
-        .header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .header .brand {
-            display: inline-flex;
-            align-items: center;
-            gap: 1rem;
-            background: var(--color-white);
-            padding: 0.4rem 2rem 0.4rem 1.8rem;
-            border-radius: 60px;
-            box-shadow: var(--shadow-sm);
-            border: 1px solid rgba(201, 168, 76, 0.2);
-            margin-bottom: 0.8rem;
-        }
-
-        .header .brand-line {
-            width: 4px;
-            height: 40px;
-            background: var(--color-accent);
-            border-radius: 4px;
-        }
-
-        .header h1 {
-            font-weight: 700;
-            font-size: 2.4rem;
-            color: var(--color-primary);
-            letter-spacing: -0.02em;
-        }
-
-        .header h1 span {
-            color: var(--color-accent);
-        }
-
-        .header .subtitle {
-            color: var(--color-text-light);
-            font-size: 1.1rem;
-            font-weight: 400;
-            letter-spacing: 0.01em;
-        }
-
-        /* ============================================================
-               BOTÓN VOLVER
-               ============================================================ */
-        .btn-back {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--color-white);
-            border: 1px solid rgba(10, 26, 43, 0.08);
-            padding: 0.6rem 1.8rem;
-            border-radius: 40px;
-            font-weight: 600;
-            color: var(--color-primary);
-            cursor: pointer;
-            transition: var(--transition);
-            font-family: 'Inter', sans-serif;
-            font-size: 0.95rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--shadow-sm);
-        }
-        .btn-back:hover {
-            transform: translateX(-4px);
-            box-shadow: var(--shadow-hover);
-            border-color: var(--color-accent);
-        }
-        .btn-back.hidden {
-            display: none;
-        }
-
-        /* ============================================================
-               MENÚ DE CATEGORÍAS
-               ============================================================ */
-        .categorias-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 2rem;
-            animation: fadeUp 0.6s ease-out;
-        }
-
-        .categoria-card {
-            background: var(--color-white);
-            border-radius: var(--radius-xl);
-            padding: 2.5rem 2rem;
-            text-align: center;
-            box-shadow: var(--shadow-sm);
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-            border-bottom: 4px solid var(--color-accent);
-        }
-        .categoria-card:hover {
-            transform: translateY(-8px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .categoria-card .icon-grande {
-            font-size: 3.6rem;
-            display: block;
-            margin-bottom: 1rem;
-            animation: float 3s ease-in-out infinite;
-        }
-        .categoria-card h2 {
-            font-weight: 700;
-            font-size: 1.6rem;
-            color: var(--color-primary);
-        }
-        .categoria-card p {
-            color: var(--color-text-light);
-            margin-top: 0.4rem;
-            font-size: 0.95rem;
-        }
-        .categoria-card .badge-count {
-            display: inline-block;
-            background: rgba(201, 168, 76, 0.12);
-            color: var(--color-accent);
-            font-weight: 600;
-            font-size: 0.8rem;
-            padding: 0.2rem 1rem;
-            border-radius: 30px;
-            margin-top: 0.8rem;
-        }
-
-        /* ============================================================
-               GRID DE REPORTES
-               ============================================================ */
-        .reportes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-            animation: fadeUp 0.6s ease-out;
-        }
-        .reportes-grid.hidden {
-            display: none;
-        }
-
-        /* ============================================================
-               TARJETA DE REPORTE
-               ============================================================ */
-        .card {
-            background: var(--color-white);
-            border-radius: var(--radius-lg);
-            padding: 1.8rem 1.6rem;
-            box-shadow: var(--shadow-sm);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            border-left: 5px solid var(--color-accent);
-        }
-        .card:hover {
-            transform: translateY(-6px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 0.6rem;
-        }
-        .card-header .icon {
-            font-size: 2rem;
-            line-height: 1;
-            flex-shrink: 0;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(201, 168, 76, 0.10);
-            border-radius: 16px;
-            transition: var(--transition);
-            animation: float 3s ease-in-out infinite;
-        }
-        .card:hover .icon {
-            animation: none;
-            transform: scale(1.15) rotate(6deg);
-            background: rgba(201, 168, 76, 0.20);
-        }
-
-        @keyframes float {
-            0% {
-                transform: translateY(0px) scale(1);
-            }
-            50% {
-                transform: translateY(-6px) scale(1.02);
-            }
-            100% {
-                transform: translateY(0px) scale(1);
-            }
-        }
-
-        .card h3 {
-            font-weight: 600;
-            font-size: 1.15rem;
-            color: var(--color-primary);
-            flex: 1;
-        }
-
-        .card-footer {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 0.8rem;
-            margin-top: auto;
-            border-top: 1px solid rgba(10, 26, 43, 0.05);
-            padding-top: 1rem;
-        }
-        .card-footer a {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            background: var(--color-primary);
-            color: var(--color-white);
-            text-decoration: none;
-            padding: 0.5rem 1.6rem;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            transition: var(--transition);
-            font-family: 'Inter', sans-serif;
-        }
-        .card-footer a:hover {
-            background: var(--color-primary-light);
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(10, 26, 43, 0.20);
-        }
-        .card-footer a.local {
-            background: var(--color-text-light);
-        }
-        .card-footer a.local:hover {
-            background: var(--color-primary);
-        }
-
-        .card-footer .badge {
-            font-size: 0.65rem;
-            font-weight: 600;
-            padding: 0.25rem 1rem;
-            border-radius: 30px;
-            text-transform: uppercase;
-            letter-spacing: 0.03em;
-            background: rgba(201, 168, 76, 0.12);
-            color: var(--color-accent);
-        }
-        .badge.local {
-            background: rgba(90, 107, 124, 0.12);
-            color: var(--color-text-light);
-        }
-
-        /* ============================================================
-               ANIMACIONES
-               ============================================================ */
-        @keyframes fadeUp {
-            0% {
-                opacity: 0;
-                transform: translateY(30px);
-            }
-            100% {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* ============================================================
-               RESPONSIVE
-               ============================================================ */
-        @media (max-width: 768px) {
-            body {
-                padding: 1.5rem 1rem;
-            }
-            .header .brand {
-                padding: 0.3rem 1.2rem 0.3rem 1rem;
-                gap: 0.6rem;
-            }
-            .header h1 {
-                font-size: 1.8rem;
-            }
-            .categorias-grid {
-                gap: 1.2rem;
-            }
-            .categoria-card {
-                padding: 1.8rem 1.2rem;
-            }
-            .categoria-card .icon-grande {
-                font-size: 2.8rem;
-            }
-            .reportes-grid {
-                gap: 1.2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .header h1 {
-                font-size: 1.5rem;
-            }
-            .card {
-                padding: 1.4rem;
-            }
-        }
-
-        .hidden {
-            display: none !important;
-        }
-
-        /* Loader mientras se cargan los datos */
-        .loader {
-            text-align: center;
-            padding: 4rem 0;
-            color: var(--color-text-light);
-            font-size: 1.2rem;
-        }
-        .loader span {
-            display: block;
-            font-size: 3rem;
-            margin-bottom: 0.5rem;
-        }
+        /* (estilos iguales que antes, no los repito por brevedad) */
+        * { margin:0; padding:0; box-sizing:border-box; }
+        :root { --color-primary:#0a1a2b; --color-accent:#c9a84c; --color-bg:#f4f6f9; --color-white:#ffffff; --shadow-sm:0 4px 16px rgba(10,26,43,0.08); --shadow-hover:0 16px 48px rgba(10,26,43,0.14); --radius-xl:32px; --radius-lg:24px; --transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+        body { font-family:'Inter',sans-serif; background:var(--color-bg); min-height:100vh; padding:2.5rem 1.5rem; display:flex; flex-direction:column; align-items:center; }
+        .container { max-width:1400px; width:100%; }
+        .header { text-align:center; margin-bottom:3rem; }
+        .header .brand { display:inline-flex; align-items:center; gap:1rem; background:var(--color-white); padding:0.4rem 2rem 0.4rem 1.8rem; border-radius:60px; box-shadow:var(--shadow-sm); border:1px solid rgba(201,168,76,0.2); margin-bottom:0.8rem; }
+        .header .brand-line { width:4px; height:40px; background:var(--color-accent); border-radius:4px; }
+        .header h1 { font-weight:700; font-size:2.4rem; color:var(--color-primary); letter-spacing:-0.02em; }
+        .header h1 span { color:var(--color-accent); }
+        .header .subtitle { color:#5a6b7c; font-size:1.1rem; }
+        .btn-back { display:inline-flex; align-items:center; gap:0.5rem; background:var(--color-white); border:1px solid rgba(10,26,43,0.08); padding:0.6rem 1.8rem; border-radius:40px; font-weight:600; color:var(--color-primary); cursor:pointer; transition:var(--transition); font-family:'Inter',sans-serif; font-size:0.95rem; margin-bottom:2rem; box-shadow:var(--shadow-sm); }
+        .btn-back:hover { transform:translateX(-4px); box-shadow:var(--shadow-hover); border-color:var(--color-accent); }
+        .btn-back.hidden { display:none; }
+        .categorias-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:2rem; animation:fadeUp 0.6s ease-out; }
+        .categoria-card { background:var(--color-white); border-radius:var(--radius-xl); padding:2.5rem 2rem; text-align:center; box-shadow:var(--shadow-sm); cursor:pointer; transition:var(--transition); border-bottom:4px solid var(--color-accent); }
+        .categoria-card:hover { transform:translateY(-8px); box-shadow:var(--shadow-hover); }
+        .categoria-card .icon-grande { font-size:3.6rem; display:block; margin-bottom:1rem; animation:float 3s ease-in-out infinite; }
+        .categoria-card h2 { font-weight:700; font-size:1.6rem; color:var(--color-primary); }
+        .categoria-card p { color:#5a6b7c; margin-top:0.4rem; font-size:0.95rem; }
+        .categoria-card .badge-count { display:inline-block; background:rgba(201,168,76,0.12); color:var(--color-accent); font-weight:600; font-size:0.8rem; padding:0.2rem 1rem; border-radius:30px; margin-top:0.8rem; }
+        .reportes-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:2rem; animation:fadeUp 0.6s ease-out; }
+        .reportes-grid.hidden { display:none; }
+        .card { background:var(--color-white); border-radius:var(--radius-lg); padding:1.8rem 1.6rem; box-shadow:var(--shadow-sm); transition:var(--transition); display:flex; flex-direction:column; border-left:5px solid var(--color-accent); }
+        .card:hover { transform:translateY(-6px); box-shadow:var(--shadow-hover); }
+        .card-header { display:flex; align-items:center; gap:0.75rem; margin-bottom:0.6rem; }
+        .card-header .icon { font-size:2rem; line-height:1; flex-shrink:0; width:48px; height:48px; display:flex; align-items:center; justify-content:center; background:rgba(201,168,76,0.10); border-radius:16px; transition:var(--transition); animation:float 3s ease-in-out infinite; }
+        .card:hover .icon { animation:none; transform:scale(1.15) rotate(6deg); background:rgba(201,168,76,0.20); }
+        @keyframes float { 0% { transform:translateY(0px) scale(1); } 50% { transform:translateY(-6px) scale(1.02); } 100% { transform:translateY(0px) scale(1); } }
+        .card h3 { font-weight:600; font-size:1.15rem; color:var(--color-primary); flex:1; }
+        .card-footer { display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.8rem; margin-top:auto; border-top:1px solid rgba(10,26,43,0.05); padding-top:1rem; }
+        .card-footer a { display:inline-flex; align-items:center; gap:0.5rem; background:var(--color-primary); color:var(--color-white); text-decoration:none; padding:0.5rem 1.6rem; border-radius:40px; font-weight:600; font-size:0.85rem; transition:var(--transition); font-family:'Inter',sans-serif; }
+        .card-footer a:hover { background:#1a3050; transform:scale(1.02); box-shadow:0 4px 12px rgba(10,26,43,0.20); }
+        .card-footer a.local { background:#5a6b7c; }
+        .card-footer a.local:hover { background:var(--color-primary); }
+        .card-footer .badge { font-size:0.65rem; font-weight:600; padding:0.25rem 1rem; border-radius:30px; text-transform:uppercase; letter-spacing:0.03em; background:rgba(201,168,76,0.12); color:var(--color-accent); }
+        .badge.local { background:rgba(90,107,124,0.12); color:#5a6b7c; }
+        @keyframes fadeUp { 0% { opacity:0; transform:translateY(30px); } 100% { opacity:1; transform:translateY(0); } }
+        @media (max-width:768px) { body { padding:1.5rem 1rem; } .header .brand { padding:0.3rem 1.2rem 0.3rem 1rem; gap:0.6rem; } .header h1 { font-size:1.8rem; } .categorias-grid { gap:1.2rem; } .categoria-card { padding:1.8rem 1.2rem; } .categoria-card .icon-grande { font-size:2.8rem; } .reportes-grid { gap:1.2rem; } }
+        @media (max-width:480px) { .header h1 { font-size:1.5rem; } .card { padding:1.4rem; } }
+        .hidden { display:none !important; }
+        .loader { text-align:center; padding:4rem 0; color:#5a6b7c; font-size:1.2rem; }
+        .loader span { display:block; font-size:3rem; margin-bottom:0.5rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
-
-    <!-- ===== ENCABEZADO ===== -->
     <header class="header">
         <div class="brand">
             <div class="brand-line"></div>
@@ -387,52 +64,60 @@
         <p class="subtitle" id="headerSubtitle">Cargando reportes...</p>
     </header>
 
-    <!-- ===== BOTÓN VOLVER ===== -->
     <button class="btn-back hidden" id="btnBack">← Volver al menú</button>
 
-    <!-- ===== MENÚ DE CATEGORÍAS ===== -->
     <div id="menuCategorias" class="categorias-grid">
-        <!-- Generado por JavaScript -->
+        <div class="loader"><span>⏳</span>Cargando reportes...</div>
     </div>
 
-    <!-- ===== GRID DE REPORTES ===== -->
-    <div id="reportesContainer" class="reportes-grid hidden">
-        <!-- Generado por JavaScript -->
-    </div>
-
+    <div id="reportesContainer" class="reportes-grid hidden"></div>
 </div>
 
 <script>
     // ================================================================
-    //  CARGAR DATOS DESDE JSON EXTERNO (con fallback a ambos nombres)
-    //  MODIFICADO: Ahora busca 'informes.json' primero
+    //  DATOS INCRUSTADOS (FALLBACK) – CATEGORÍA SERVICIOS CON TU REPORTE
+    // ================================================================
+    const fallbackData = {
+        "categorias": {
+            "Servicios": {
+                "icono": "🔧",
+                "descripcion": "Reportes del área de servicios y atención al cliente.",
+                "reportes": [
+                    { "nombre": "Histórico indicadores", "url": "https://datastudio.google.com/reporting/dd6e412f-60c5-4129-af9e-5e8fee95400c", "icono": "📈" },
+                    { "nombre": "Tipificaciones", "url": "https://datastudio.google.com/reporting/53bc61d9-54d9-4433-86ed-32a91243d68a", "icono": "🏷️" },
+                    { "nombre": "AHT", "url": "https://datastudio.google.com/reporting/f1d96beb-1f1b-4a65-a047-163f63301904", "icono": "⏱️" },
+                    { "nombre": "Llamadas cortadas", "url": "https://datastudio.google.com/reporting/5caf4a3e-3f04-4f23-a558-11220ee4e875", "icono": "📞" },
+                    { "nombre": "Indicadores por hora", "url": "https://datastudio.google.com/s/kFX5PQJuLdM", "icono": "🕐" },
+                    { "nombre": "FCR & CSAT", "url": "https://datastudio.google.com/reporting/697c96d0-7d1b-44d4-ae68-deb8eddf9cf7/page/p_9dy8uzr00d", "icono": "⭐" },
+                    { "nombre": "Rellamado", "url": "https://datastudio.google.com/reporting/671b554b-490e-41fb-a7e1-388b80bd26e7", "icono": "🔄" },
+                    { "nombre": "Llamadas por agente", "url": "https://datastudio.google.com/s/tVTnsp3bJSI", "icono": "📞" },
+                    { "nombre": "Tracking Servicios", "url": "Seguimiento Servicios.html", "icono": "📋", "local": true },
+                    { "nombre": "Tiempos de servicio", "url": "Tiempos de servicios.html", "icono": "📋", "local": true },
+                    { "nombre": "Tiempos de servicio RT", "url": "Seguimiento Servicios RT.html", "icono": "📋", "local": true }
+                ]
+            }
+        }
+    };
+
+    // ================================================================
+    //  REFERENCIAS DOM
     // ================================================================
     const menuCategorias = document.getElementById('menuCategorias');
     const reportesContainer = document.getElementById('reportesContainer');
     const btnBack = document.getElementById('btnBack');
     const headerSubtitle = document.getElementById('headerSubtitle');
 
-    let categorias = {}; // se llenará con los datos del JSON
+    let categorias = {};
 
-    // Mostrar loader mientras carga
-    menuCategorias.innerHTML = `
-            <div class="loader">
-                <span>⏳</span>
-                Cargando reportes...
-            </div>
-        `;
-
-    // Función para cargar el JSON
+    // ================================================================
+    //  CARGA DE DATOS (EXTERNO + FALLBACK)
+    // ================================================================
     async function cargarDatos() {
         try {
-            // Obtener la ruta base del HTML (donde está el archivo actual)
             const basePath = window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/') + 1);
-            // 📌 IMPORTANTE: Ahora busca 'informes.json' primero (tu archivo)
             const posiblesNombres = ['informes.json', 'reportes.json', 'Informes.json'];
             let data = null;
-            let errorMsg = '';
 
-            // Intentar con cada nombre
             for (const nombre of posiblesNombres) {
                 const url = basePath + nombre;
                 console.log(`Intentando cargar: ${url}`);
@@ -442,94 +127,77 @@
                         data = await response.json();
                         console.log(`✅ Cargado correctamente: ${nombre}`);
                         break;
-                    } else {
-                        errorMsg = `Error ${response.status} al intentar cargar ${nombre}`;
                     }
                 } catch (e) {
-                    errorMsg = `No se pudo cargar ${nombre}: ${e.message}`;
+                    console.warn(`No se pudo cargar ${nombre}:`, e.message);
                 }
             }
 
+            // Si no se cargó ningún JSON, usar fallback
             if (!data) {
-                throw new Error(`No se encontró ningún archivo JSON. Intentamos: ${posiblesNombres.join(', ')}. ${errorMsg}`);
+                console.warn('⚠️ No se encontró JSON externo. Usando datos incrustados (fallback).');
+                data = fallbackData;
             }
 
-            // ---- FILTRO: eliminar reportes que contengan las frases prohibidas ----
+            // ---- FILTRO: eliminar reportes con palabras prohibidas ----
             const palabrasClave = ['tiempos de asignación', 'tracking de servicios'];
             const categoriasFiltradas = {};
 
             for (const [nombreCat, info] of Object.entries(data.categorias)) {
-                // Filtrar reportes de esta categoría
                 const reportesFiltrados = info.reportes.filter(r => {
                     const nombreLower = r.nombre.toLowerCase();
                     return !palabrasClave.some(palabra => nombreLower.includes(palabra));
                 });
-
-                // Si quedan reportes, guardamos la categoría
                 if (reportesFiltrados.length > 0) {
-                    categoriasFiltradas[nombreCat] = {
-                        ...info,
-                        reportes: reportesFiltrados
-                    };
+                    categoriasFiltradas[nombreCat] = { ...info, reportes: reportesFiltrados };
                 }
             }
 
             categorias = categoriasFiltradas;
-            // ----------------------------
-
-            // Una vez cargado y filtrado, renderizar el menú
             renderMenu();
             headerSubtitle.textContent = 'Selecciona una categoría para ver sus reportes';
         } catch (error) {
-            console.error('Error al cargar los datos:', error);
-            menuCategorias.innerHTML = `
-                    <div class="loader" style="grid-column:1/-1;">
-                        <span>❌</span>
-                        Error al cargar los reportes.<br />
-                        <small>${error.message}</small><br />
-                        <small>Verifica que el archivo JSON (reportes.json o Informes.json) esté en la misma carpeta que este HTML.</small>
-                    </div>
-                `;
-            headerSubtitle.textContent = 'Error de carga';
+            console.error('Error crítico:', error);
+            // Último recurso: usar fallback aunque haya error
+            if (Object.keys(categorias).length === 0) {
+                const fallbackCats = {};
+                for (const [nombreCat, info] of Object.entries(fallbackData.categorias)) {
+                    fallbackCats[nombreCat] = { ...info, reportes: info.reportes };
+                }
+                categorias = fallbackCats;
+                renderMenu();
+                headerSubtitle.textContent = 'Usando datos de respaldo (sin conexión)';
+            }
         }
     }
 
     // ================================================================
-    //  FUNCIONES DE RENDERIZADO
+    //  RENDERIZADO
     // ================================================================
     function renderMenu() {
-        // Si no hay categorías, mostrar mensaje
         const keys = Object.keys(categorias);
         if (keys.length === 0) {
-            menuCategorias.innerHTML = `
-                    <div class="loader" style="grid-column:1/-1;">
-                        <span>📭</span>
-                        No hay reportes disponibles después del filtro.
-                    </div>
-                `;
+            menuCategorias.innerHTML = `<div class="loader" style="grid-column:1/-1;"><span>📭</span>No hay reportes disponibles.</div>`;
             return;
         }
 
         const html = keys.map(nombre => {
             const data = categorias[nombre];
-            const count = data.reportes.length;
             return `
-                    <div class="categoria-card" data-categoria="${nombre}">
-                        <span class="icon-grande">${data.icono}</span>
-                        <h2>${nombre}</h2>
-                        <p>${data.descripcion}</p>
-                        <span class="badge-count">${count} reportes</span>
-                    </div>
-                `;
+                <div class="categoria-card" data-categoria="${nombre}">
+                    <span class="icon-grande">${data.icono}</span>
+                    <h2>${nombre}</h2>
+                    <p>${data.descripcion}</p>
+                    <span class="badge-count">${data.reportes.length} reportes</span>
+                </div>
+            `;
         }).join('');
         menuCategorias.innerHTML = html;
         menuCategorias.classList.remove('hidden');
 
-        // Asignar eventos a las tarjetas
         document.querySelectorAll('.categoria-card').forEach(el => {
             el.addEventListener('click', function() {
-                const categoria = this.dataset.categoria;
-                mostrarReportes(categoria);
+                mostrarReportes(this.dataset.categoria);
             });
         });
     }
@@ -552,21 +220,20 @@
             const botonClase = esLocal ? 'local' : '';
 
             return `
-                    <div class="card">
-                        <div class="card-header">
-                            <span class="icon">${r.icono || '📄'}</span>
-                            <h3>${r.nombre}</h3>
-                        </div>
-                        <div class="card-footer">
-                            <a href="${r.url}" target="${target}" ${rel} class="${botonClase}">
-                                Abrir reporte →
-                            </a>
-                            <span class="badge ${badgeClase}">${badgeTexto}</span>
-                        </div>
+                <div class="card">
+                    <div class="card-header">
+                        <span class="icon">${r.icono || '📄'}</span>
+                        <h3>${r.nombre}</h3>
                     </div>
-                `;
+                    <div class="card-footer">
+                        <a href="${r.url}" target="${target}" ${rel} class="${botonClase}">
+                            Abrir reporte →
+                        </a>
+                        <span class="badge ${badgeClase}">${badgeTexto}</span>
+                    </div>
+                </div>
+            `;
         }).join('');
-
         reportesContainer.innerHTML = html;
     }
 
@@ -581,7 +248,7 @@
     btnBack.addEventListener('click', volverMenu);
 
     // ================================================================
-    //  INICIAR CARGA
+    //  INICIO
     // ================================================================
     cargarDatos();
 </script>
