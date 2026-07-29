@@ -48,7 +48,7 @@
       "icono": "💰",
       "descripcion": "Reportes del área de ventas y rendimiento comercial.",
       "reportes": [
-        { "nombre": "Ventas por agente", "url": "https://datastudio.google.com/reporting/ec809242-26ef-40d2-a840-7f0e38cefe88/page/page_12345", "icono": "💰" }
+        { "nombre": "Ventas por agente", "url": "https://datastudio.google.com/reporting/fc7fd1aa-c7cb-4fb0-ad2c-cf1b4efe7eff/page/p_igtp01pz5d", "icono": "💰" }
       ]
     }
   }
