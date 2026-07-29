@@ -1,0 +1,929 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Panel de Servicios · Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #f4f6fa;
+            color: #1a2332;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .dashboard {
+            max-width: 1440px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        /* HEADER */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid #dce1e9;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .header h1 {
+            font-weight: 600;
+            font-size: 1.5rem;
+            letter-spacing: -0.3px;
+            color: #1a2332;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .header h1 .icon {
+            font-size: 1.6rem;
+            line-height: 1;
+        }
+
+        .live-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            background: #e8ecf3;
+            padding: 3px 12px 3px 8px;
+            border-radius: 30px;
+            color: #3a4a5a;
+        }
+
+        .live-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #2d7a4f;
+            display: inline-block;
+            animation: pulse-dot 1.5s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.4; transform: scale(0.75); }
+        }
+
+        .badge {
+            background: #e8ecf3;
+            padding: 4px 16px;
+            border-radius: 30px;
+            font-size: 0.75rem;
+            color: #3a4a5a;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .badge span { color: #1a2332; font-weight: 500; }
+        .badge .update-timestamp { color: #6a7a8a; font-size: 0.65rem; }
+
+        /* FILTROS */
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px 16px;
+            background: #ffffff;
+            padding: 12px 18px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #dce1e9;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+        }
+
+        .filters label {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            color: #5a6a7a;
+        }
+
+        .filters select, .filters input {
+            background: #f4f6fa;
+            border: 1px solid #dce1e9;
+            color: #1a2332;
+            padding: 5px 12px;
+            border-radius: 30px;
+            font-size: 0.78rem;
+            font-weight: 400;
+            outline: none;
+            transition: 0.2s;
+            min-width: 120px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .filters select:focus, .filters input:focus {
+            border-color: #4a7cf7;
+            box-shadow: 0 0 0 3px rgba(74, 124, 247, 0.12);
+        }
+
+        .filters .search-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            flex: 1 1 200px;
+        }
+        .filters .search-wrapper input { flex: 1; min-width: 90px; }
+
+        /* STATS */
+        .stats {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px 16px;
+            margin-bottom: 18px;
+            font-size: 0.78rem;
+        }
+
+        .stats .stat-item {
+            background: #ffffff;
+            padding: 3px 16px;
+            border-radius: 30px;
+            border-left: 3px solid #4a7cf7;
+            color: #5a6a7a;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+        }
+        .stats .stat-item strong { color: #1a2332; font-weight: 600; margin-right: 3px; }
+
+        /* TABLE */
+        .table-wrapper {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #dce1e9;
+            background: #ffffff;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.78rem;
+            min-width: 680px;
+        }
+
+        thead {
+            background: #f8f9fc;
+            border-bottom: 1px solid #e2e6ed;
+        }
+
+        th {
+            text-align: left;
+            padding: 10px 14px;
+            font-weight: 500;
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #5a6a7a;
+            white-space: nowrap;
+            cursor: pointer;
+            user-select: none;
+            transition: 0.15s;
+        }
+        th:hover { color: #1a2332; }
+        th .arrow { margin-left: 3px; opacity: 0.4; font-size: 0.55rem; }
+
+        td {
+            padding: 8px 14px;
+            border-bottom: 1px solid #edf0f5;
+            vertical-align: middle;
+            color: #2a3a4a;
+            transition: background 0.15s;
+        }
+
+        .row-update {
+            animation: rowFlash 0.45s ease;
+        }
+        @keyframes rowFlash {
+            0% { background: #e0edff; }
+            100% { background: transparent; }
+        }
+
+        .row-new {
+            animation: rowAppear 0.3s ease;
+        }
+        @keyframes rowAppear {
+            0% { opacity: 0; transform: translateX(-6px); }
+            100% { opacity: 1; transform: translateX(0); }
+        }
+
+        tr:hover td { background: #f4f7fc; }
+
+        .clickable-id {
+            color: #4a7cf7;
+            cursor: pointer;
+            font-weight: 500;
+            transition: 0.15s;
+            border-bottom: 1px dashed transparent;
+        }
+        .clickable-id:hover {
+            color: #1a5cdb;
+            border-bottom-color: #4a7cf7;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 1px 12px;
+            border-radius: 30px;
+            font-size: 0.6rem;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            text-transform: uppercase;
+            background: #e8ecf3;
+            color: #5a6a7a;
+        }
+
+        .status-badge.concluido { background: #dff0e6; color: #1f6e4a; }
+        .status-badge.pendiente { background: #fef3d7; color: #a67c1e; }
+        .status-badge.proceso { background: #dbeafe; color: #1a5cdb; }
+        .status-badge.cancelado { background: #fde8e8; color: #b33a3a; }
+        .status-badge.reembolso { background: #ede7f6; color: #6a3d9a; }
+
+        .empty-message {
+            text-align: center;
+            padding: 36px 20px;
+            color: #8a9aaa;
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 14px;
+            color: #6a7a8a;
+            font-size: 0.7rem;
+        }
+        .footer-info .count { color: #2a3a4a; }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.35);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+            animation: fadeIn 0.2s ease;
+        }
+        .modal-overlay.active { display: flex; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.97); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .modal-box {
+            background: #ffffff;
+            border-radius: 16px;
+            max-width: 680px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 0;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+            border: 1px solid #e2e6ed;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 22px;
+            border-bottom: 1px solid #e2e6ed;
+            background: #f8f9fc;
+            border-radius: 16px 16px 0 0;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .modal-header h2 {
+            font-weight: 500;
+            font-size: 1.1rem;
+            color: #1a2332;
+        }
+        .modal-header h2 small {
+            font-weight: 400;
+            color: #6a7a8a;
+            font-size: 0.75rem;
+            margin-left: 6px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            color: #6a7a8a;
+            font-size: 1.6rem;
+            cursor: pointer;
+            transition: 0.2s;
+            line-height: 1;
+            padding: 0 4px;
+        }
+        .modal-close:hover { color: #b33a3a; transform: rotate(90deg); }
+
+        .modal-body {
+            padding: 20px 22px;
+        }
+
+        .detail-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px 20px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 1px;
+            padding: 4px 0;
+            border-bottom: 1px solid #edf0f5;
+        }
+        .detail-item.full { grid-column: 1 / -1; }
+
+        .detail-item .label {
+            font-size: 0.55rem;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            color: #7a8a9a;
+        }
+        .detail-item .value {
+            font-size: 0.85rem;
+            color: #1a2332;
+            word-break: break-word;
+        }
+        .detail-item .value .status-badge {
+            font-size: 0.65rem;
+            padding: 1px 14px;
+        }
+
+        @media (max-width: 500px) {
+            .detail-grid { grid-template-columns: 1fr; }
+            .modal-box { max-width: 100%; margin: 10px; }
+        }
+    </style>
+</head>
+<body>
+<div class="dashboard">
+
+    <!-- HEADER -->
+    <div class="header">
+        <div class="header-left">
+            <h1>
+                <span class="icon">⚙️</span> Panel de Servicios
+                <span class="live-indicator">
+                    <span class="live-dot"></span> EN VIVO
+                </span>
+            </h1>
+        </div>
+        <div class="badge">
+            🟢 <span id="totalCount">0</span> activos ·
+            <span id="lastUpdate" class="update-timestamp">actualizando...</span>
+        </div>
+    </div>
+
+    <!-- FILTROS -->
+    <div class="filters">
+        <label>Estado <select id="filterStatus"><option value="">Todos</option></select></label>
+        <label>Tipo <select id="filterType"><option value="">Todos</option></select></label>
+        <label>Compañía <select id="filterCompany"><option value="">Todas</option></select></label>
+        <div class="search-wrapper">
+            <span>🔍</span>
+            <input id="searchInput" placeholder="Buscar cliente, ID, teléfono...">
+        </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats">
+        <div class="stat-item"><strong>Total:</strong> <span id="statTotal">0</span></div>
+        <div class="stat-item"><strong>Concluidos:</strong> <span id="statConcluido">0</span></div>
+        <div class="stat-item"><strong>Pendientes:</strong> <span id="statPendiente">0</span></div>
+        <div class="stat-item"><strong>En proceso:</strong> <span id="statProceso">0</span></div>
+        <div class="stat-item"><strong>Cancelados:</strong> <span id="statCancelado">0</span></div>
+    </div>
+
+    <!-- TABLA -->
+    <div class="table-wrapper">
+        <table>
+            <thead>
+                <tr>
+                    <th data-sort="id">ID <span class="arrow">↕</span></th>
+                    <th data-sort="cliente">Cliente <span class="arrow">↕</span></th>
+                    <th data-sort="tipoasistencia">Tipo <span class="arrow">↕</span></th>
+                    <th data-sort="estatus_servicio">Estado <span class="arrow">↕</span></th>
+                    <th data-sort="proveedor">Proveedor <span class="arrow">↕</span></th>
+                    <th data-sort="origen">Origen <span class="arrow">↕</span></th>
+                    <th data-sort="destino">Destino <span class="arrow">↕</span></th>
+                </tr>
+            </thead>
+            <tbody id="tableBody">
+                <tr><td colspan="7" class="empty-message">Cargando datos...</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer-info">
+        <span>Mostrando <span id="displayCount">0</span> de <span id="totalCountFooter">0</span></span>
+        <span>Ordena por columna · Actualización cada 4s · Click en ID para detalles</span>
+    </div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h2 id="modalTitle">Detalles <small id="modalIdLabel">ID</small></h2>
+            <button class="modal-close" id="modalClose">&times;</button>
+        </div>
+        <div class="modal-body" id="modalBody"></div>
+    </div>
+</div>
+
+<script>
+// ------------------------------------------------------------
+// DATOS BASE (sin cambios en los datos)
+// ------------------------------------------------------------
+const baseData = [
+    { id: "CAS18943899", cliente: "Carime Vazquez Rocha", telefono: "44228453550", tipoasistencia: "Informativo", estatus_servicio: "CONCLUIDO", fecha: "2026-07-11 10:01", proveedor: "N/A", origen: "QUERETARO", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21184606", cliente: "Nancy Maribel Gonzalez Armendaria", telefono: "81340256930", tipoasistencia: "Electricidad", estatus_servicio: "CONCLUIDO", fecha: "2026-07-01 17:12", proveedor: "MARES ASISTENCIA", origen: "YUCATAN", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21184727", cliente: "Ivone Lizeth Antunes Pineda", telefono: "81177878630", tipoasistencia: "Cerrajería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-01 19:09", proveedor: "CLUB DE ASISTENCIA SAPI DE CV", origen: "NUEVO LEON", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21186960", cliente: "Maria Laura Borja Chavez", telefono: "55389238200", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-04 11:30", proveedor: "MICOR TULTITLAN NUEVO", origen: "ESTADO DE MEXICO", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21190810", cliente: "Erica Gabriela Magaña Espinsa", telefono: "33145659750", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-08 14:45", proveedor: "N/A", origen: "JALISCO", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21185939", cliente: "Santiago Rodriguez Ortiz", telefono: "77134183050", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-03 09:48", proveedor: "ANTIGUA CASA DEL PLOMERO", origen: "QUERETARO", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21189083", cliente: "Roberto Javier Villareal Gonzalez", telefono: "81118100350", tipoasistencia: "Electricidad", estatus_servicio: "CONCLUIDO", fecha: "2026-07-06 16:59", proveedor: "GMS ASISTENCIA VIAL HOGAR", origen: "NUEVO LEON", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21189148", cliente: "Eduardo Morales Bustamante", telefono: "81120828380", tipoasistencia: "Electricidad", estatus_servicio: "CONCLUIDO", fecha: "2026-07-06 17:43", proveedor: "MULTISERVICIOS H/E", origen: "NUEVO LEON", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21198399", cliente: "Maria Del Socrro Cardiel Perez", telefono: "55210319980", tipoasistencia: "Plomería", estatus_servicio: "SERVICIO PENDIENTE", fecha: "2026-07-17 12:19", proveedor: "LLAMALE A FRANK", origen: "CIUDAD DE MEXICO", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21189512", cliente: "Roberto Ortiz Salazar", telefono: "81104420200", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-07 09:11", proveedor: "GMS ASISTENCIA VIAL HOGAR", origen: "NUEVO LEON", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21189377", cliente: "Ericka Haidee Centeno Trujillo", telefono: "55107123880", tipoasistencia: "Cerrajería Para Auto", estatus_servicio: "CONCLUIDO", fecha: "2026-07-06 21:35", proveedor: "GRUPO CON MAS VIAL", origen: "ESTADO DE MEXICO", destino: "N/A", compania: "Tu Momento" },
+    { id: "CAS21194331", cliente: "Mario Benjamin Alvarado Torres", telefono: "55489224820", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-12 18:15", proveedor: "GRUAS HERMES", origen: "ESTADO DE MEXICO", destino: "CIUDAD DE MEXICO", compania: "Tu Momento" },
+    { id: "CAS21195623", cliente: "Armando Garcia Esparza", telefono: "81401950300", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-14 06:51", proveedor: "TRANS WICK NACIONAL", origen: "NUEVO LEON", destino: "NUEVO LEON", compania: "Tu Momento" },
+    { id: "CAS21195834", cliente: "Jose Luis Martinez Martinez Escobedo", telefono: "81199585690", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-14 11:28", proveedor: "GRUAS MAC BERUMEN", origen: "COAHUILA", destino: "COAHUILA", compania: "Tu Momento" },
+    { id: "CAS21186642", cliente: "Herlinda Bautista Garcia", telefono: "55227445350", tipoasistencia: "Paso De Corriente", estatus_servicio: "CONCLUIDO", fecha: "2026-07-03 20:40", proveedor: "GRUPO CON MAS VIAL", origen: "ESTADO DE MEXICO", destino: "N/A", compania: "Suburbia" },
+    { id: "CAS21186652", cliente: "Nahum Arnulfo Garcia Dominguez", telefono: "77123689060", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-03 20:47", proveedor: "SERVICIO DE GRUAS VICTAN", origen: "HIDALGO", destino: "HIDALGO", compania: "Suburbia" },
+    { id: "CAS21186659", cliente: "Miriam Cruz Moreno", telefono: "65613717990", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-03 20:43", proveedor: "SERVICIOS DE LOGISTICA SAN MARCOS", origen: "CHIHUAHUA", destino: "CHIHUAHUA", compania: "Suburbia" },
+    { id: "CAS21186673", cliente: "Seydi Yazmin Alvarado Medina", telefono: "99944590160", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-03 21:27", proveedor: "GRUAS ROFIL", origen: "YUCATAN", destino: "YUCATAN", compania: "Suburbia" },
+    { id: "CAS21190682", cliente: "Margarita Eugenia Estrada Alvarado", telefono: "72286814700", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-08 12:43", proveedor: "TRANSVIAL ASISTENCIA VIAL", origen: "ESTADO DE MEXICO", destino: "ESTADO DE MEXICO", compania: "Suburbia" },
+    { id: "CAS21190689", cliente: "Jaime Oserin Ramirez", telefono: "55828554480", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-08 12:54", proveedor: "GRUAS CRK", origen: "CIUDAD DE MEXICO", destino: "CIUDAD DE MEXICO", compania: "Suburbia" },
+    { id: "CAS21190748", cliente: "Diana Lorena Velazquez Lozano", telefono: "87123955350", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-08 13:47", proveedor: "RADIO GRUAS MANDARINAS", origen: "COAHUILA", destino: "COAHUILA", compania: "Suburbia" },
+    { id: "CAS21190808", cliente: "Nora Liz Santos Sanchez", telefono: "55356420120", tipoasistencia: "Vidriería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-08 14:38", proveedor: "PLOMERO Y ELECTRICISTA ROMERO", origen: "CIUDAD DE MEXICO", destino: "N/A", compania: "Suburbia" },
+    { id: "CAS21195866", cliente: "Isaac Peña Perez", telefono: "55714107340", tipoasistencia: "Vidriería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-14 11:46", proveedor: "SERVICIO DEMS", origen: "ESTADO DE MEXICO", destino: "N/A", compania: "Suburbia" },
+    { id: "CAS21195879", cliente: "Pablo Olivera Campiran", telefono: "72290612980", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-14 12:01", proveedor: "TRANSVIAL ASISTENCIA VIAL", origen: "ESTADO DE MEXICO", destino: "ESTADO DE MEXICO", compania: "Suburbia" },
+    { id: "CAS21195881", cliente: "Susana Olivas Audelo", telefono: "66915520310", tipoasistencia: "Electricidad", estatus_servicio: "CONCLUIDO", fecha: "2026-07-14 12:09", proveedor: "N/A", origen: "SINALOA", destino: "N/A", compania: "Suburbia" },
+    { id: "CAS21187181", cliente: "Jose Hugo Soto Becerril", telefono: "84413085090", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-04 14:46", proveedor: "GRUAS MAC BERUMEN", origen: "COAHUILA", destino: "COAHUILA", compania: "Liverpool Pocket" },
+    { id: "CAS21187198", cliente: "Luis Manuel Gomez Campos", telefono: "91413207220", tipoasistencia: "Suministro De Gasolina", estatus_servicio: "CONCLUIDO", fecha: "2026-07-04 15:08", proveedor: "CLUB DE ASISTENCIA SAPI DE CV", origen: "TABASCO", destino: "N/A", compania: "Liverpool Pocket" },
+    { id: "CAS21187202", cliente: "Mariana Paola Elguera Medina", telefono: "44224722580", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-04 15:12", proveedor: "GRUAS Y REFACCIONES DE SAN JUAN", origen: "GUANAJUATO", destino: "GUANAJUATO", compania: "Liverpool Pocket" },
+    { id: "CAS21187219", cliente: "Jose Manuel Rodolfo Rendon Y Lopez", telefono: "22210023890", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-04 15:26", proveedor: "PRAKTISERVICIOS", origen: "PUEBLA", destino: "N/A", compania: "Liverpool Pocket" },
+    { id: "CAS21187227", cliente: "Ruben Gonzalez Montes", telefono: "55159052160", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-04 15:30", proveedor: "N/A", origen: "ESTADO DE MEXICO", destino: "ESTADO DE MEXICO", compania: "Liverpool Pocket" },
+    { id: "CAS21191042", cliente: "Alberto Valentin Perez", telefono: "23827383980", tipoasistencia: "Paso De Corriente", estatus_servicio: "CONCLUIDO", fecha: "2026-07-08 18:48", proveedor: "GRUAS GUZMAN", origen: "PUEBLA", destino: "N/A", compania: "Liverpool Pocket" },
+    { id: "CAS21191043", cliente: "Yazmin Aranda Garcia", telefono: "99832004580", tipoasistencia: "Cambio De Llantas", estatus_servicio: "CONCLUIDO", fecha: "2026-07-08 18:49", proveedor: "ASISTENCIA VIAL ACO", origen: "QUINTANA ROO", destino: "N/A", compania: "Liverpool Pocket" },
+    { id: "CAS21193105", cliente: "Carlos De Jess Hernández García", telefono: "65627528920", tipoasistencia: "Cerrajería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-11 10:24", proveedor: "N/A", origen: "CHIHUAHUA", destino: "N/A", compania: "Liverpool Pocket" },
+    { id: "CAS21193120", cliente: "Luis Gustavo Garcia Leal", telefono: "47319003870", tipoasistencia: "Cerrajería Para Auto", estatus_servicio: "CONCLUIDO", fecha: "2026-07-11 10:39", proveedor: "N/A", origen: "GUANAJUATO", destino: "N/A", compania: "Liverpool Pocket" },
+    { id: "CAS21193122", cliente: "Denis Gavira Cantinca", telefono: "72211822990", tipoasistencia: "Suministro De Gasolina", estatus_servicio: "CONCLUIDO", fecha: "2026-07-11 10:45", proveedor: "GRUPO CON MAS VIAL", origen: "ESTADO DE MEXICO", destino: "N/A", compania: "Liverpool Pocket" },
+    { id: "CAS21193129", cliente: "Gabriel Jiménez Ugalde", telefono: "55658167590", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-11 10:51", proveedor: "GRUAS EL PIOJITO", origen: "CIUDAD DE MEXICO", destino: "CIUDAD DE MEXICO", compania: "Liverpool Pocket" },
+    { id: "CAS21190699", cliente: "Jesus Esparza Elizondo", telefono: "81102477700", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-08 13:08", proveedor: "GMS ASISTENCIA VIAL HOGAR", origen: "NUEVO LEON", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21190799", cliente: "Beatriz Elizabeth Fibela Del Castillo", telefono: "68614844300", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-08 14:37", proveedor: "MULTISERVICIOS VALLE", origen: "BAJA CALIFORNIA", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21191453", cliente: "Sigma Alimentos Corporativo", telefono: "81235393650", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-09 11:27", proveedor: "GMS ASISTENCIA VIAL HOGAR", origen: "NUEVO LEON", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21192691", cliente: "Yosi Nagar Sotrit", telefono: "55550571120", tipoasistencia: "Cerrajería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-10 17:49", proveedor: "N/A", origen: "CIUDAD DE MEXICO", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21194964", cliente: "Ignacio Guizar Serrano", telefono: "72252372360", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-13 12:20", proveedor: "SIMAC", origen: "ESTADO DE MEXICO", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21195304", cliente: "Judith Leticia Mendez Vazquez", telefono: "55401927890", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-13 17:31", proveedor: "LLAMALE A FRANK", origen: "ESTADO DE MEXICO", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21196163", cliente: "Alfonso Mastri Nemar", telefono: "55529060100", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-14 17:01", proveedor: "MICOR TULTITLAN NUEVO", origen: "CIUDAD DE MEXICO", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21196855", cliente: "Carla Ivonne Frias Molino", telefono: "81865863120", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-15 15:14", proveedor: "GMS ASISTENCIA VIAL HOGAR", origen: "NUEVO LEON", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21198206", cliente: "Norberto Vidaña Romero", telefono: "81257461280", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-17 09:22", proveedor: "GMS ASISTENCIA VIAL HOGAR", origen: "NUEVO LEON", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21198391", cliente: "Arnulfo Rodriguez Campa", telefono: "84427110960", tipoasistencia: "Plomería", estatus_servicio: "CONCLUIDO", fecha: "2026-07-17 12:06", proveedor: "ANTIGUA CASA DEL PLOMERO", origen: "COAHUILA", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21199358", cliente: "Jose Juan Aguilar Ronzon", telefono: "27112955970", tipoasistencia: "Plomería", estatus_servicio: "SERVICIO PENDIENTE", fecha: "2026-07-18 13:22", proveedor: "ADMAR ASISTENCIA", origen: "VERACRUZ", destino: "N/A", compania: "Zurich" },
+    { id: "CAS21186688", cliente: "Oscar Erick Rivera Segura", telefono: "55389786030", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-03 21:36", proveedor: "N/A", origen: "CIUDAD DE MEXICO", destino: "ESTADO DE MEXICO", compania: "Suburbia" },
+    { id: "CAS21186712", cliente: "Alejandra Manzano Mora", telefono: "22411539540", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-03 22:26", proveedor: "N/A", origen: "HIDALGO", destino: "PUEBLA", compania: "Suburbia" },
+    { id: "CAS21186740", cliente: "Martha Delia Contreras Jacobo", telefono: "55349967370", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-03 23:47", proveedor: "GRUAS ALFARO", origen: "ESTADO DE MEXICO", destino: "CIUDAD DE MEXICO", compania: "Suburbia" },
+    { id: "CAS21186755", cliente: "Lenor Solis Aguirre", telefono: "81126374070", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-04 00:24", proveedor: "CHAPA HERMANOS GRUAS Y TRASLADOS", origen: "NUEVO LEON", destino: "NUEVO LEON", compania: "Suburbia" },
+    { id: "CAS21186756", cliente: "Jose Octavio Barron Martinez", telefono: "44235934100", tipoasistencia: "Arrastre De Grúa", estatus_servicio: "CONCLUIDO", fecha: "2026-07-04 01:10", proveedor: "GRUAS CORREGIDORA", origen: "QUERETARO", destino: "QUERETARO", compania: "Suburbia" }
+];
+
+// ------------------------------------------------------------
+// ESTADO Y LÓGICA
+// ------------------------------------------------------------
+let data = JSON.parse(JSON.stringify(baseData));
+let sortField = 'id';           // ← antes 'fecha', ahora por ID
+let sortAsc = false;
+let updateInterval = null;
+const INTERVAL_MS = 4000;
+let newIdCounter = 100000;
+
+const tbody = document.getElementById('tableBody');
+const searchInput = document.getElementById('searchInput');
+const filterStatus = document.getElementById('filterStatus');
+const filterType = document.getElementById('filterType');
+const filterCompany = document.getElementById('filterCompany');
+const displayCount = document.getElementById('displayCount');
+const totalCountFooter = document.getElementById('totalCountFooter');
+const totalCount = document.getElementById('totalCount');
+const lastUpdateSpan = document.getElementById('lastUpdate');
+const statTotal = document.getElementById('statTotal');
+const statConcluido = document.getElementById('statConcluido');
+const statPendiente = document.getElementById('statPendiente');
+const statProceso = document.getElementById('statProceso');
+const statCancelado = document.getElementById('statCancelado');
+
+const modalOverlay = document.getElementById('modalOverlay');
+const modalClose = document.getElementById('modalClose');
+const modalTitle = document.getElementById('modalTitle');
+const modalIdLabel = document.getElementById('modalIdLabel');
+const modalBody = document.getElementById('modalBody');
+
+function populateSelects() {
+    const statusSet = new Set(), typeSet = new Set(), companySet = new Set();
+    data.forEach(d => {
+        if (d.estatus_servicio) statusSet.add(d.estatus_servicio);
+        if (d.tipoasistencia) typeSet.add(d.tipoasistencia);
+        if (d.compania) companySet.add(d.compania);
+    });
+    const sorted = s => Array.from(s).sort();
+    const fill = (sel, arr) => {
+        sel.innerHTML = '<option value="">Todos</option>';
+        arr.forEach(v => { const opt = document.createElement('option'); opt.value = v; opt.textContent = v; sel.appendChild(opt); });
+    };
+    fill(filterStatus, sorted(statusSet));
+    fill(filterType, sorted(typeSet));
+    fill(filterCompany, sorted(companySet));
+}
+
+function getFilteredData() {
+    const searchTerm = searchInput.value.toLowerCase().trim();
+    const statusVal = filterStatus.value;
+    const typeVal = filterType.value;
+    const companyVal = filterCompany.value;
+
+    let filtered = data.filter(d => {
+        let matchesSearch = true;
+        if (searchTerm) {
+            const searchable = [d.id, d.cliente, d.telefono, d.tipoasistencia, d.estatus_servicio, d.proveedor, d.origen, d.destino, d.compania].join(' ').toLowerCase();
+            matchesSearch = searchable.includes(searchTerm);
+        }
+        const matchesStatus = statusVal ? d.estatus_servicio === statusVal : true;
+        const matchesType = typeVal ? d.tipoasistencia === typeVal : true;
+        const matchesCompany = companyVal ? d.compania === companyVal : true;
+        return matchesSearch && matchesStatus && matchesType && matchesCompany;
+    });
+
+    filtered.sort((a, b) => {
+        let va = a[sortField] || '', vb = b[sortField] || '';
+        if (typeof va === 'string') va = va.toLowerCase();
+        if (typeof vb === 'string') vb = vb.toLowerCase();
+        if (va < vb) return sortAsc ? -1 : 1;
+        if (va > vb) return sortAsc ? 1 : -1;
+        return 0;
+    });
+    return filtered;
+}
+
+function render(animateIds = [], newIds = []) {
+    const filtered = getFilteredData();
+    const total = filtered.length;
+
+    displayCount.textContent = total;
+    totalCountFooter.textContent = data.length;
+    totalCount.textContent = data.length;
+    statTotal.textContent = data.length;
+
+    const concluidos = data.filter(d => d.estatus_servicio === 'CONCLUIDO').length;
+    const pendientes = data.filter(d => d.estatus_servicio === 'SERVICIO PENDIENTE').length;
+    const proceso = data.filter(d => d.estatus_servicio && (d.estatus_servicio.includes('PROCESO') || d.estatus_servicio === 'SERVICIO PROGRAMADO')).length;
+    const cancelados = data.filter(d => d.estatus_servicio && (d.estatus_servicio.includes('CANCELADO') || d.estatus_servicio === 'NO OTORGADO')).length;
+    statConcluido.textContent = concluidos;
+    statPendiente.textContent = pendientes;
+    statProceso.textContent = proceso;
+    statCancelado.textContent = cancelados;
+
+    if (total === 0) {
+        tbody.innerHTML = `<tr><td colspan="7" class="empty-message">No hay servicios que coincidan</td></tr>`;
+        return;
+    }
+
+    let html = '';
+    filtered.forEach(d => {
+        let statusClass = '';
+        const est = d.estatus_servicio || '';
+        if (est.includes('CONCLUIDO')) statusClass = 'concluido';
+        else if (est.includes('PENDIENTE')) statusClass = 'pendiente';
+        else if (est.includes('PROCESO') || est.includes('PROGRAMADO')) statusClass = 'proceso';
+        else if (est.includes('CANCELADO') || est.includes('NO OTORGADO')) statusClass = 'cancelado';
+        else if (est.includes('REEMBOLSO')) statusClass = 'reembolso';
+
+        let rowClass = '';
+        if (animateIds.includes(d.id)) rowClass += ' row-update';
+        if (newIds.includes(d.id)) rowClass += ' row-new';
+
+        html += `<tr class="${rowClass}" data-id="${d.id}">
+            <td><span class="clickable-id" data-id="${d.id}">${d.id}</span></td>
+            <td><strong>${d.cliente || ''}</strong></td>
+            <td>${d.tipoasistencia || ''}</td>
+            <td><span class="status-badge ${statusClass}">${est || '—'}</span></td>
+            <td>${d.proveedor || '—'}</td>
+            <td>${d.origen || '—'}</td>
+            <td>${d.destino || '—'}</td>
+        </tr>`;
+    });
+    tbody.innerHTML = html;
+
+    const now = new Date();
+    lastUpdateSpan.textContent = now.toLocaleTimeString('es-MX', { hour12: false });
+
+    document.querySelectorAll('.clickable-id').forEach(el => {
+        el.addEventListener('click', function(e) {
+            e.stopPropagation();
+            const id = this.dataset.id;
+            const record = data.find(d => d.id === id);
+            if (record) openModal(record);
+        });
+    });
+}
+
+function openModal(record) {
+    modalIdLabel.textContent = record.id;
+    modalTitle.innerHTML = `Detalles <small>${record.id}</small>`;
+
+    // Lista de campos del modal (se eliminó 'fecha')
+    const fields = [
+        { key: 'cliente', label: 'Cliente' },
+        { key: 'telefono', label: 'Teléfono' },
+        { key: 'tipoasistencia', label: 'Tipo de servicio' },
+        { key: 'estatus_servicio', label: 'Estado' },
+        // { key: 'fecha', label: 'Fecha' },   // ← eliminado
+        { key: 'proveedor', label: 'Proveedor' },
+        { key: 'origen', label: 'Origen' },
+        { key: 'destino', label: 'Destino' },
+        { key: 'compania', label: 'Compañía' },
+        { key: 'idot', label: 'ID OT' },
+        { key: 'id_cas', label: 'ID CAS' },
+        { key: 'cuenta', label: 'Cuenta' },
+        { key: 'telefonocliente', label: 'Teléfono cliente' },
+        { key: 'telefonollama', label: 'Teléfono llamada' },
+        { key: 'cargo_cliente', label: 'Cargo cliente' },
+        { key: 'crea_servicio', label: 'Creado por' },
+        { key: 'asignacion_final', label: 'Asignación final' },
+        { key: 'estatus_reporte', label: 'Estatus reporte' },
+        { key: 'fuera_de_condiciones_generales', label: 'Fuera de condiciones generales' },
+        { key: 'fuera_de_condiciones_particulares', label: 'Fuera de condiciones particulares' },
+        { key: 'tiempo_de_asignacion', label: 'Tiempo de asignación' },
+        { key: 'fecha_asigna', label: 'Fecha asignación' },
+        { key: 'proveedores_tocados', label: 'Proveedores tocados' },
+        { key: 'nombre_asignador', label: 'Asignador' },
+        { key: 'id_proveedor', label: 'ID proveedor' },
+        { key: 'clave_proveedor', label: 'Clave proveedor' },
+        { key: 'proveedor_que_tomo', label: 'Proveedor que tomó' },
+        { key: 'estado_origen', label: 'Estado origen' },
+        { key: 'delegacion_municipio_origen', label: 'Municipio origen' },
+        { key: 'estado_destino', label: 'Estado destino' },
+        { key: 'delegacion_municipio_destino', label: 'Municipio destino' },
+        { key: 'tipo_servicio', label: 'Tipo servicio' },
+        { key: 'latorigen', label: 'Latitud origen' },
+        { key: 'lonorigen', label: 'Longitud origen' },
+        { key: 'latdestino', label: 'Latitud destino' },
+        { key: 'londestino', label: 'Longitud destino' },
+        { key: 'envio_sap', label: 'Envío SAP' },
+        { key: 'fecha_alta', label: 'Fecha alta' },
+        { key: 'duplicado', label: 'Duplicado' },
+        { key: 'estatus', label: 'Estatus' },
+        { key: 'motivo', label: 'Motivo' },
+        { key: 'descripcion_motivo', label: 'Descripción motivo' },
+        { key: 'origen_crm', label: 'Origen CRM' },
+        { key: 'fecha_asignacion', label: 'Fecha asignación' },
+        { key: 'fecha_fin_toma_datos', label: 'Fin toma datos' },
+        { key: 'fecha_contacto', label: 'Fecha contacto' },
+        { key: 'fecha_arribo', label: 'Fecha arribo' },
+        { key: 'fecha_termino', label: 'Fecha término' },
+        { key: 'correousuario', label: 'Correo usuario' },
+        { key: 'fecha_programado', label: 'Programado' },
+        { key: 'tiempo_de_arribo', label: 'Tiempo arribo' },
+        { key: 'servicio_por_excepcion', label: 'Excepción' },
+        { key: 'escalamiento_rdp', label: 'Escalamiento RDP' },
+        { key: 'tiempo_en_escalar', label: 'Tiempo escalar' },
+        { key: 'fecha_escalacion', label: 'Fecha escalación' },
+        { key: 'fecha_respuesta_rdp', label: 'Respuesta RDP' },
+        { key: 'tiempo_escalacion', label: 'Tiempo escalación' },
+        { key: 'tiempo_cierre', label: 'Tiempo cierre' },
+        { key: 'escalaciones', label: 'Escalaciones' },
+        { key: 'fecha_tipificacion', label: 'Tipificación' },
+        { key: 'fechaseguimiento1', label: 'Seg. 1' },
+        { key: 'programado', label: 'Programado' },
+        { key: 'fechaseguimiento2', label: 'Seg. 2' },
+        { key: 'fechaseguimiento3', label: 'Seg. 3' },
+        { key: 'fecha_alta_manual', label: 'Alta manual' },
+        { key: 'fecha_contacto_proveedor', label: 'Contacto proveedor' },
+        { key: 'fecha_arribo_proveedor', label: 'Arribo proveedor' },
+        { key: 'fecha_termino_proveedor', label: 'Término proveedor' },
+        { key: 'zona_roja', label: 'Zona roja' },
+        { key: 'fecha_alta_reemb', label: 'Alta reembolso' },
+        { key: 'evidencias', label: 'Evidencias' },
+        { key: 'con_foto', label: 'Con foto' },
+        { key: 'sin_foto', label: 'Sin foto' },
+        { key: 'fechaasignafinal', label: 'Fecha asignación final' },
+        { key: 'fechaarribofinal', label: 'Arribo final' },
+        { key: 'fechacontactofinal', label: 'Contacto final' },
+        { key: 'fechaterminofinal', label: 'Término final' },
+        { key: 'tiempo_de_asignacion_formateado', label: 'Tiempo asignación (formato)' },
+        { key: 'tiempo_de_arribo_formateado', label: 'Tiempo arribo (formato)' },
+        { key: 'tiempo_en_escalar_formateado', label: 'Tiempo escalar (formato)' },
+        { key: 'tiempo_en_escalacion_formateado', label: 'Tiempo escalación (formato)' },
+        { key: 'tiempo_cierre_formateado', label: 'Tiempo cierre (formato)' },
+        { key: 'costo_total_hogar', label: 'Costo total hogar' },
+        { key: 'observaciones_hogar', label: 'Observaciones hogar' },
+        { key: 'fecha_envio_link_ubicacion', label: 'Envío link ubicación' },
+        { key: 'motivo_rechazo', label: 'Motivo rechazo' },
+        { key: 'evaluar_asignacion', label: 'Evaluar asignación' },
+        { key: 'evaluar_arribo', label: 'Evaluar arribo' },
+        { key: 'fecha_cancelacion', label: 'Cancelación' },
+        { key: 'usuario_cancela', label: 'Usuario cancela' },
+        { key: 'observaciones_cancelacion', label: 'Observaciones cancelación' },
+        { key: 'particular', label: 'Particular' },
+        { key: 'observaciones', label: 'Observaciones' },
+        { key: 'observaciones_lista', label: 'Observaciones lista' },
+        { key: 'horas_lista', label: 'Horas lista' }
+    ];
+
+    let bodyHtml = '<div class="detail-grid">';
+    let hasData = false;
+    fields.forEach(f => {
+        const val = record[f.key];
+        if (val !== undefined && val !== null && val !== '') {
+            hasData = true;
+            let displayVal = val;
+            if (f.key === 'estatus_servicio') {
+                let cls = '';
+                const v = String(val);
+                if (v.includes('CONCLUIDO')) cls = 'concluido';
+                else if (v.includes('PENDIENTE')) cls = 'pendiente';
+                else if (v.includes('PROCESO') || v.includes('PROGRAMADO')) cls = 'proceso';
+                else if (v.includes('CANCELADO') || v.includes('NO OTORGADO')) cls = 'cancelado';
+                else if (v.includes('REEMBOLSO')) cls = 'reembolso';
+                displayVal = `<span class="status-badge ${cls}">${v}</span>`;
+            }
+            bodyHtml += `
+                <div class="detail-item">
+                    <div class="label">${f.label}</div>
+                    <div class="value">${displayVal}</div>
+                </div>
+            `;
+        }
+    });
+    bodyHtml += '</div>';
+
+    if (!hasData) {
+        bodyHtml = '<p style="color:#6a7a8a; text-align:center; padding:20px;">No hay información adicional para este registro.</p>';
+    }
+
+    modalBody.innerHTML = bodyHtml;
+    modalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+}
+
+modalClose.addEventListener('click', closeModal);
+modalOverlay.addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeModal();
+});
+
+// Simulación (idéntica a la original)
+function simulateUpdates() {
+    const changedIds = [];
+    const newIds = [];
+
+    const pendingItems = data.filter(d => d.estatus_servicio === 'SERVICIO PENDIENTE');
+    const inProcessItems = data.filter(d => d.estatus_servicio === 'EN PROCESO' || d.estatus_servicio === 'SERVICIO PROGRAMADO');
+
+    if (pendingItems.length > 0 && Math.random() < 0.5) {
+        const idx = Math.floor(Math.random() * pendingItems.length);
+        const item = pendingItems[idx];
+        item.estatus_servicio = 'EN PROCESO';
+        changedIds.push(item.id);
+    }
+
+    if (inProcessItems.length > 0 && Math.random() < 0.4) {
+        const idx = Math.floor(Math.random() * inProcessItems.length);
+        const item = inProcessItems[idx];
+        item.estatus_servicio = 'CONCLUIDO';
+        changedIds.push(item.id);
+    }
+
+    const cancelable = data.filter(d => d.estatus_servicio === 'SERVICIO PENDIENTE' || d.estatus_servicio === 'EN PROCESO');
+    if (cancelable.length > 0 && Math.random() < 0.2) {
+        const idx = Math.floor(Math.random() * cancelable.length);
+        const item = cancelable[idx];
+        item.estatus_servicio = 'NO OTORGADO';
+        changedIds.push(item.id);
+    }
+
+    if (Math.random() < 0.3) {
+        const tipos = ['Plomería', 'Electricidad', 'Cerrajería', 'Arrastre De Grúa', 'Vidriería', 'Paso De Corriente'];
+        const companias = ['Zurich', 'Suburbia', 'Tu Momento', 'Liverpool Pocket'];
+        const nombres = ['Juan Pérez', 'María López', 'Carlos Ruiz', 'Ana Gómez', 'Luis Martínez', 'Laura Fernández'];
+        const nuevo = {
+            id: 'CAS' + (++newIdCounter),
+            cliente: nombres[Math.floor(Math.random() * nombres.length)],
+            telefono: '55' + String(Math.floor(10000000 + Math.random() * 90000000)),
+            tipoasistencia: tipos[Math.floor(Math.random() * tipos.length)],
+            estatus_servicio: 'SERVICIO PENDIENTE',
+            fecha: new Date().toISOString().slice(0,16).replace('T', ' '),
+            proveedor: 'Pendiente de asignar',
+            origen: 'CDMX',
+            destino: 'N/A',
+            compania: companias[Math.floor(Math.random() * companias.length)]
+        };
+        data.push(nuevo);
+        newIds.push(nuevo.id);
+    }
+
+    if (Math.random() < 0.3) {
+        const priority = { 'SERVICIO PENDIENTE': 1, 'EN PROCESO': 2, 'CONCLUIDO': 3, 'NO OTORGADO': 4 };
+        data.sort((a, b) => {
+            const pa = priority[a.estatus_servicio] || 5;
+            const pb = priority[b.estatus_servicio] || 5;
+            return pa - pb;
+        });
+        const toAnimate = data.slice(0, 3).map(d => d.id);
+        changedIds.push(...toAnimate);
+    }
+
+    if (changedIds.length > 0 || newIds.length > 0) {
+        render(changedIds, newIds);
+        setTimeout(() => {
+            document.querySelectorAll('.row-update, .row-new').forEach(el => {
+                el.classList.remove('row-update', 'row-new');
+            });
+        }, 700);
+    } else {
+        render([], []);
+    }
+}
+
+function startSimulation() {
+    if (updateInterval) clearInterval(updateInterval);
+    updateInterval = setInterval(simulateUpdates, INTERVAL_MS);
+}
+
+// Eventos
+searchInput.addEventListener('input', () => render([], []));
+filterStatus.addEventListener('change', () => render([], []));
+filterType.addEventListener('change', () => render([], []));
+filterCompany.addEventListener('change', () => render([], []));
+
+document.querySelectorAll('th[data-sort]').forEach(th => {
+    th.addEventListener('click', function() {
+        const field = this.dataset.sort;
+        if (sortField === field) sortAsc = !sortAsc;
+        else { sortField = field; sortAsc = false; }
+        render([], []);
+    });
+});
+
+// Inicio
+populateSelects();
+render([], []);
+startSimulation();
+
+window.addEventListener('beforeunload', () => {
+    if (updateInterval) clearInterval(updateInterval);
+});
+</script>
+</body>
+</html>
