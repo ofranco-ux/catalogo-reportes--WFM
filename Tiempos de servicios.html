@@ -102,27 +102,31 @@
         <div id="dashboard-content" class="p-6 space-y-6 min-h-full relative">
             
             <div id="data-wrapper" class="opacity-30 transition-opacity duration-500 flex flex-col space-y-6">
-                <!-- Tarjetas KPI Superiores -->
-                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
-                    <div class="glass-card p-4 text-center border-b-4 border-blue-500">
+                <!-- Tarjetas KPI Superiores (6 Métricas en total) -->
+                <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
+                    <div class="glass-card p-3 text-center border-b-4 border-blue-500">
                         <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Toma Datos</p>
-                        <p id="kpi-td" class="text-2xl font-bold text-slate-800">-</p>
+                        <p id="kpi-td" class="text-xl font-bold text-slate-800">-</p>
                     </div>
-                    <div class="glass-card p-4 text-center border-b-4 border-indigo-500">
-                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Asignación / Escalación</p>
-                        <p id="kpi-asig" class="text-2xl font-bold text-slate-800">-</p>
+                    <div class="glass-card p-3 text-center border-b-4 border-indigo-500">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Asignación</p>
+                        <p id="kpi-asig" class="text-xl font-bold text-slate-800">-</p>
                     </div>
-                    <div class="glass-card p-4 text-center border-b-4 border-amber-500">
+                    <div class="glass-card p-3 text-center border-b-4 border-cyan-500">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Escalación</p>
+                        <p id="kpi-esc" class="text-xl font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="glass-card p-3 text-center border-b-4 border-amber-500">
                         <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Proveedor</p>
-                        <p id="kpi-prov" class="text-2xl font-bold text-slate-800">-</p>
+                        <p id="kpi-prov" class="text-xl font-bold text-slate-800">-</p>
                     </div>
-                    <div class="glass-card p-4 text-center border-b-4 border-purple-500">
+                    <div class="glass-card p-3 text-center border-b-4 border-purple-500">
                         <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Cierre</p>
-                        <p id="kpi-term" class="text-2xl font-bold text-slate-800">-</p>
+                        <p id="kpi-term" class="text-xl font-bold text-slate-800">-</p>
                     </div>
-                    <div class="glass-card p-4 text-center border-b-4 border-emerald-500 bg-emerald-50/30">
+                    <div class="glass-card p-3 text-center border-b-4 border-emerald-500 bg-emerald-50/30">
                         <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Suma Total</p>
-                        <p id="kpi-total" class="text-2xl font-bold text-emerald-800">-</p>
+                        <p id="kpi-total" class="text-xl font-bold text-emerald-800">-</p>
                     </div>
                 </div>
 
@@ -146,13 +150,14 @@
                             <table class="w-full text-xs text-left">
                                 <thead class="bg-slate-100 text-slate-500 uppercase sticky top-0 shadow-sm z-10">
                                     <tr>
-                                        <th class="px-3 py-2 font-semibold">Negocio</th>
-                                        <th class="px-3 py-2 font-semibold text-center">Vol.</th>
-                                        <th class="px-3 py-2 font-semibold text-right">TD</th>
-                                        <th class="px-3 py-2 font-semibold text-right">Asig</th>
-                                        <th class="px-3 py-2 font-semibold text-right">Prov</th>
-                                        <th class="px-3 py-2 font-semibold text-right">Term</th>
-                                        <th class="px-3 py-2 font-semibold text-right">Total</th>
+                                        <th class="px-2 py-2 font-semibold">Negocio</th>
+                                        <th class="px-2 py-2 font-semibold text-center">Vol.</th>
+                                        <th class="px-2 py-2 font-semibold text-right">TD</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Asig</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Esc</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Prov</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Term</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tb-tipo" class="divide-y divide-slate-200 bg-white"></tbody>
@@ -168,13 +173,14 @@
                             <table class="w-full text-xs text-left">
                                 <thead class="bg-slate-100 text-slate-500 uppercase sticky top-0 shadow-sm z-10">
                                     <tr>
-                                        <th class="px-3 py-2 font-semibold">Compañía</th>
-                                        <th class="px-3 py-2 font-semibold text-center">Vol.</th>
-                                        <th class="px-3 py-2 font-semibold text-right">TD</th>
-                                        <th class="px-3 py-2 font-semibold text-right">Asig</th>
-                                        <th class="px-3 py-2 font-semibold text-right">Prov</th>
-                                        <th class="px-3 py-2 font-semibold text-right">Term</th>
-                                        <th class="px-3 py-2 font-semibold text-right">Total</th>
+                                        <th class="px-2 py-2 font-semibold">Compañía</th>
+                                        <th class="px-2 py-2 font-semibold text-center">Vol.</th>
+                                        <th class="px-2 py-2 font-semibold text-right">TD</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Asig</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Esc</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Prov</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Term</th>
+                                        <th class="px-2 py-2 font-semibold text-right">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody id="tb-comp" class="divide-y divide-slate-200 bg-white"></tbody>
@@ -192,15 +198,16 @@
                         <table class="w-full text-xs text-left">
                             <thead class="bg-slate-100 text-slate-500 uppercase sticky top-0 shadow-sm z-10">
                                 <tr>
-                                    <th class="px-3 py-2 font-semibold">ID CAS</th>
-                                    <th class="px-3 py-2 font-semibold">Compañía</th>
-                                    <th class="px-3 py-2 font-semibold">Asistencia</th>
-                                    <th class="px-3 py-2 font-semibold">Descripción Motivo (AO)</th>
-                                    <th class="px-3 py-2 font-semibold text-right">TD</th>
-                                    <th class="px-3 py-2 font-semibold text-right">Asig</th>
-                                    <th class="px-3 py-2 font-semibold text-right">Prov</th>
-                                    <th class="px-3 py-2 font-semibold text-right">Term</th>
-                                    <th class="px-3 py-2 font-semibold text-right">Total</th>
+                                    <th class="px-2 py-2 font-semibold">ID CAS</th>
+                                    <th class="px-2 py-2 font-semibold">Compañía</th>
+                                    <th class="px-2 py-2 font-semibold">Asistencia</th>
+                                    <th class="px-2 py-2 font-semibold">Descripción Motivo (AO)</th>
+                                    <th class="px-2 py-2 font-semibold text-right">TD</th>
+                                    <th class="px-2 py-2 font-semibold text-right">Asig</th>
+                                    <th class="px-2 py-2 font-semibold text-right">Esc</th>
+                                    <th class="px-2 py-2 font-semibold text-right">Prov</th>
+                                    <th class="px-2 py-2 font-semibold text-right">Term</th>
+                                    <th class="px-2 py-2 font-semibold text-right">Total</th>
                                 </tr>
                             </thead>
                             <tbody id="tb-detalle" class="divide-y divide-slate-200 bg-white"></tbody>
@@ -265,26 +272,30 @@
 
                 <div>
                     <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Desglose Secuencial en Cadena</h4>
-                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
-                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                    <div class="grid grid-cols-2 md:grid-cols-6 gap-2 text-center">
+                        <div class="bg-blue-50 p-2 rounded-lg border border-blue-100">
                             <p class="text-[9px] text-blue-600 font-bold uppercase">Toma Datos</p>
-                            <p id="m-td" class="text-base font-bold text-slate-800">-</p>
+                            <p id="m-td" class="text-sm font-bold text-slate-800">-</p>
                         </div>
-                        <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                            <p class="text-[9px] text-indigo-600 font-bold uppercase">Asignación / Esc.</p>
-                            <p id="m-asig" class="text-base font-bold text-slate-800">-</p>
+                        <div class="bg-indigo-50 p-2 rounded-lg border border-indigo-100">
+                            <p class="text-[9px] text-indigo-600 font-bold uppercase">Asignación</p>
+                            <p id="m-asig" class="text-sm font-bold text-slate-800">-</p>
                         </div>
-                        <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                        <div class="bg-cyan-50 p-2 rounded-lg border border-cyan-100">
+                            <p class="text-[9px] text-cyan-600 font-bold uppercase">Escalación</p>
+                            <p id="m-esc" class="text-sm font-bold text-slate-800">-</p>
+                        </div>
+                        <div class="bg-amber-50 p-2 rounded-lg border border-amber-100">
                             <p class="text-[9px] text-amber-600 font-bold uppercase">Proveedor</p>
-                            <p id="m-prov" class="text-base font-bold text-slate-800">-</p>
+                            <p id="m-prov" class="text-sm font-bold text-slate-800">-</p>
                         </div>
-                        <div class="bg-purple-50 p-3 rounded-lg border border-purple-100">
+                        <div class="bg-purple-50 p-2 rounded-lg border border-purple-100">
                             <p class="text-[9px] text-purple-600 font-bold uppercase">Cierre</p>
-                            <p id="m-term" class="text-base font-bold text-slate-800">-</p>
+                            <p id="m-term" class="text-sm font-bold text-slate-800">-</p>
                         </div>
-                        <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 col-span-2 md:col-span-1">
+                        <div class="bg-emerald-50 p-2 rounded-lg border border-emerald-100">
                             <p class="text-[9px] text-emerald-600 font-bold uppercase">Suma Total</p>
-                            <p id="m-total" class="text-base font-bold text-slate-800">-</p>
+                            <p id="m-total" class="text-sm font-bold text-slate-800">-</p>
                         </div>
                     </div>
                 </div>
@@ -394,21 +405,26 @@
                 
                 let f_crea = r.fecha ? new Date(r.fecha) : null;
                 let f_toma = (r.fecha_fin_toma_datos || r.fecha_toma_datos) ? new Date(r.fecha_fin_toma_datos || r.fecha_toma_datos) : null;
-                let f_asig = (r.fecha_asigna || r.fecha_asignacion || r.fecha_asig || r.fecha_escalacion) ? new Date(r.fecha_asigna || r.fecha_asignacion || r.fecha_asig || r.fecha_escalacion) : null;
+                let f_asig = (r.fecha_asigna || r.fecha_asignacion || r.fecha_asig) ? new Date(r.fecha_asigna || r.fecha_asignacion || r.fecha_asig) : null;
+                let f_esc = r.fecha_escalacion ? new Date(r.fecha_escalacion) : null;
                 let f_arribo = (r.fechaarribofinal || r.fecha_arribo) ? new Date(r.fechaarribofinal || r.fecha_arribo) : null;
                 let f_fin = (r.fechaterminofinal || r.fecha_termino || r.fecha_cierre) ? new Date(r.fechaterminofinal || r.fecha_termino || r.fecha_cierre) : null;
 
                 let m_toma = (f_crea && f_toma && f_toma >= f_crea) ? (f_toma - f_crea)/60000 : 0;
                 let m_asig = (f_toma && f_asig && f_asig >= f_toma) ? (f_asig - f_toma)/60000 : 0;
+                let m_esc = (f_asig && f_esc && f_esc >= f_asig) ? (f_esc - f_asig)/60000 : 0;
                 let m_arribo = (f_asig && f_arribo && f_arribo >= f_asig) ? (f_arribo - f_asig)/60000 : 0;
                 let m_term = (f_arribo && f_fin && f_fin >= f_arribo) ? (f_fin - f_arribo)/60000 : 0;
 
-                // Recuperación de minutos directos si la diferencia de fechas dio 0
+                // Carga de tiempo directo desde minutos del Excel
                 if(m_toma === 0 && (r.tiempo_toma_datos_min || r.tiempo_toma_datos)) {
                     m_toma = r.tiempo_toma_datos_min || r.tiempo_toma_datos;
                 }
-                if(m_asig === 0 && (r.tiempo_asigna || r.tiempo_asignacion || r.tiempo_escalacion || r.tiempo_asig)) {
-                    m_asig = r.tiempo_asigna || r.tiempo_asignacion || r.tiempo_escalacion || r.tiempo_asig;
+                if(m_asig === 0 && (r.tiempo_asigna || r.tiempo_asignacion || r.tiempo_asig)) {
+                    m_asig = r.tiempo_asigna || r.tiempo_asignacion || r.tiempo_asig;
+                }
+                if(m_esc === 0 && r.tiempo_escalacion) {
+                    m_esc = r.tiempo_escalacion;
                 }
                 if(m_arribo === 0 && (r.tiempo_arribo || r.tiempo_proveedor)) {
                     m_arribo = r.tiempo_arribo || r.tiempo_proveedor;
@@ -417,11 +433,12 @@
                     m_term = r.tiempo_cierre || r.tiempo_termino;
                 }
                 
-                let total_calc = m_toma + m_asig + m_arribo + m_term;
+                let total_calc = m_toma + m_asig + m_esc + m_arribo + m_term;
                 if(total_calc === 0 && r.tiempo_total) total_calc = r.tiempo_total;
 
                 obj._s_toma = m_toma;
                 obj._s_asig = m_asig;
+                obj._s_esc = m_esc;
                 obj._s_prov = m_arribo;
                 obj._s_term = m_term;
                 obj._s_total = total_calc;
@@ -509,16 +526,19 @@
 
             let medTd = calcMedian(filteredData.map(d => d._s_toma));
             let medAsig = calcMedian(filteredData.map(d => d._s_asig));
+            let medEsc = calcMedian(filteredData.map(d => d._s_esc));
             let medProv = calcMedian(filteredData.map(d => d._s_prov));
             let medTerm = calcMedian(filteredData.map(d => d._s_term));
 
             let sumMedians = (typeof medTd === 'number' ? medTd : 0) + 
                              (typeof medAsig === 'number' ? medAsig : 0) + 
+                             (typeof medEsc === 'number' ? medEsc : 0) + 
                              (typeof medProv === 'number' ? medProv : 0) + 
                              (typeof medTerm === 'number' ? medTerm : 0);
 
             document.getElementById('kpi-td').innerText = formatHHMM(medTd);
             document.getElementById('kpi-asig').innerText = formatHHMM(medAsig);
+            document.getElementById('kpi-esc').innerText = formatHHMM(medEsc);
             document.getElementById('kpi-prov').innerText = formatHHMM(medProv);
             document.getElementById('kpi-term').innerText = formatHHMM(medTerm);
             document.getElementById('kpi-total').innerText = formatHHMM(sumMedians);
@@ -534,10 +554,11 @@
             filteredData.forEach(r => {
                 if(!r._dateStr) return;
                 if(!dailyGroups[r._dateStr]) {
-                    dailyGroups[r._dateStr] = { td: [], asig: [], prov: [], term: [], tot: [] };
+                    dailyGroups[r._dateStr] = { td: [], asig: [], esc: [], prov: [], term: [], tot: [] };
                 }
                 dailyGroups[r._dateStr].td.push(r._s_toma);
                 dailyGroups[r._dateStr].asig.push(r._s_asig);
+                dailyGroups[r._dateStr].esc.push(r._s_esc);
                 dailyGroups[r._dateStr].prov.push(r._s_prov);
                 dailyGroups[r._dateStr].term.push(r._s_term);
                 dailyGroups[r._dateStr].tot.push(r._s_total);
@@ -547,16 +568,18 @@
             
             let dataTd = sortedDates.map(date => calcMedian(dailyGroups[date].td));
             let dataAsig = sortedDates.map(date => calcMedian(dailyGroups[date].asig));
+            let dataEsc = sortedDates.map(date => calcMedian(dailyGroups[date].esc));
             let dataProv = sortedDates.map(date => calcMedian(dailyGroups[date].prov));
             let dataTerm = sortedDates.map(date => calcMedian(dailyGroups[date].term));
             
             let dataTotal = sortedDates.map(date => {
                 let m1 = calcMedian(dailyGroups[date].td);
                 let m2 = calcMedian(dailyGroups[date].asig);
-                let m3 = calcMedian(dailyGroups[date].prov);
-                let m4 = calcMedian(dailyGroups[date].term);
-                if(m1 === '-' || m2 === '-' || m3 === '-' || m4 === '-') return null;
-                return m1 + m2 + m3 + m4;
+                let m3 = calcMedian(dailyGroups[date].esc);
+                let m4 = calcMedian(dailyGroups[date].prov);
+                let m5 = calcMedian(dailyGroups[date].term);
+                if(m1 === '-' || m2 === '-' || m4 === '-' || m5 === '-') return null;
+                return m1 + m2 + (m3 === '-' ? 0 : m3) + m4 + m5;
             });
 
             if (myLineChart) { myLineChart.destroy(); }
@@ -572,7 +595,8 @@
                     labels: sortedDates,
                     datasets: [
                         { label: 'Toma Datos', data: dataTd.map(v => v === '-' ? null : v), borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, borderWidth: 2, pointRadius: 1 },
-                        { label: 'Asignación / Escalación', data: dataAsig.map(v => v === '-' ? null : v), borderColor: '#6366f1', backgroundColor: '#6366f1', tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                        { label: 'Asignación', data: dataAsig.map(v => v === '-' ? null : v), borderColor: '#6366f1', backgroundColor: '#6366f1', tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                        { label: 'Escalación', data: dataEsc.map(v => v === '-' ? null : v), borderColor: '#06b6d4', backgroundColor: '#06b6d4', tension: 0.3, borderWidth: 2, pointRadius: 1 },
                         { label: 'Proveedor', data: dataProv.map(v => v === '-' ? null : v), borderColor: '#f59e0b', backgroundColor: '#f59e0b', tension: 0.3, borderWidth: 2, pointRadius: 1 },
                         { label: 'Cierre', data: dataTerm.map(v => v === '-' ? null : v), borderColor: '#a855f7', backgroundColor: '#a855f7', tension: 0.3, borderWidth: 2, pointRadius: 1 },
                         { label: 'Suma Total', data: dataTotal, borderColor: '#10b981', backgroundColor: '#10b981', tension: 0.3, borderWidth: 2, borderDash: [5, 5], pointRadius: 1 }
@@ -623,33 +647,37 @@
             tbody.innerHTML = list.map(g => {
                 let m1 = calcMedian(g.rows.map(r => r._s_toma));
                 let m2 = calcMedian(g.rows.map(r => r._s_asig));
-                let m3 = calcMedian(g.rows.map(r => r._s_prov));
-                let m4 = calcMedian(g.rows.map(r => r._s_term));
+                let m3 = calcMedian(g.rows.map(r => r._s_esc));
+                let m4 = calcMedian(g.rows.map(r => r._s_prov));
+                let m5 = calcMedian(g.rows.map(r => r._s_term));
                 
                 let sumRow = (typeof m1 === 'number' ? m1 : 0) + 
                              (typeof m2 === 'number' ? m2 : 0) + 
                              (typeof m3 === 'number' ? m3 : 0) + 
-                             (typeof m4 === 'number' ? m4 : 0);
+                             (typeof m4 === 'number' ? m4 : 0) + 
+                             (typeof m5 === 'number' ? m5 : 0);
 
                 let td = formatHHMM(m1);
                 let as = formatHHMM(m2);
-                let pr = formatHHMM(m3);
-                let tm = formatHHMM(m4);
+                let es = formatHHMM(m3);
+                let pr = formatHHMM(m4);
+                let tm = formatHHMM(m5);
                 let to = formatHHMM(sumRow);
 
                 return `
                 <tr class="hover:bg-slate-50 transition border-b border-slate-100">
-                    <td class="px-3 py-2 font-semibold text-slate-800 whitespace-nowrap">${g.key}</td>
-                    <td class="px-3 py-2 text-center"><span class="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-2 py-0.5 rounded">${g.vol.toLocaleString()}</span></td>
-                    <td class="px-3 py-2 text-right text-slate-600">${td}</td>
-                    <td class="px-3 py-2 text-right text-slate-600">${as}</td>
-                    <td class="px-3 py-2 text-right text-slate-600">${pr}</td>
-                    <td class="px-3 py-2 text-right text-slate-600">${tm}</td>
-                    <td class="px-3 py-2 text-right font-bold text-slate-900">${to}</td>
+                    <td class="px-2 py-2 font-semibold text-slate-800 whitespace-nowrap">${g.key}</td>
+                    <td class="px-2 py-2 text-center"><span class="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-1.5 py-0.5 rounded">${g.vol.toLocaleString()}</span></td>
+                    <td class="px-2 py-2 text-right text-slate-600">${td}</td>
+                    <td class="px-2 py-2 text-right text-slate-600">${as}</td>
+                    <td class="px-2 py-2 text-right text-slate-600">${es}</td>
+                    <td class="px-2 py-2 text-right text-slate-600">${pr}</td>
+                    <td class="px-2 py-2 text-right text-slate-600">${tm}</td>
+                    <td class="px-2 py-2 text-right font-bold text-slate-900">${to}</td>
                 </tr>`;
             }).join('');
             
-            if (list.length === 0) tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">Sin datos para mostrar.</td></tr>`;
+            if (list.length === 0) tbody.innerHTML = `<tr><td colspan="8" class="text-center py-8 text-slate-400">Sin datos para mostrar.</td></tr>`;
         }
 
         function renderTableDetalle(tbodyId, limit) {
@@ -660,6 +688,7 @@
             tbody.innerHTML = list.map(r => {
                 let td = formatHHMM(r._s_toma);
                 let as = formatHHMM(r._s_asig);
+                let es = formatHHMM(r._s_esc);
                 let pr = formatHHMM(r._s_prov);
                 let tm = formatHHMM(r._s_term);
                 let to = formatHHMM(r._s_total);
@@ -668,19 +697,20 @@
 
                 return `
                 <tr class="hover:bg-slate-50 transition border-b border-slate-100 cursor-pointer" onclick="openModal(${r._rowIndex})" title="Haz clic para ver radiografía">
-                    <td class="px-3 py-2 font-semibold text-blue-600 whitespace-nowrap underline">${r.id_cas || 'N/D'}</td>
-                    <td class="px-3 py-2 text-slate-700 truncate max-w-[120px]">${r.compania || 'N/D'}</td>
-                    <td class="px-3 py-2 text-slate-600 truncate max-w-[120px]">${r.asistencia || 'N/D'}</td>
-                    <td class="px-3 py-2 text-slate-700 truncate max-w-[180px]" title="${descMotivo}">${descMotivo}</td>
-                    <td class="px-3 py-2 text-right text-slate-600">${td}</td>
-                    <td class="px-3 py-2 text-right text-slate-600">${as}</td>
-                    <td class="px-3 py-2 text-right text-slate-600">${pr}</td>
-                    <td class="px-3 py-2 text-right text-slate-600">${tm}</td>
-                    <td class="px-3 py-2 text-right font-bold text-slate-900">${to}</td>
+                    <td class="px-2 py-2 font-semibold text-blue-600 whitespace-nowrap underline">${r.id_cas || 'N/D'}</td>
+                    <td class="px-2 py-2 text-slate-700 truncate max-w-[100px]">${r.compania || 'N/D'}</td>
+                    <td class="px-2 py-2 text-slate-600 truncate max-w-[100px]">${r.asistencia || 'N/D'}</td>
+                    <td class="px-2 py-2 text-slate-700 truncate max-w-[150px]" title="${descMotivo}">${descMotivo}</td>
+                    <td class="px-2 py-2 text-right text-slate-600">${td}</td>
+                    <td class="px-2 py-2 text-right text-slate-600">${as}</td>
+                    <td class="px-2 py-2 text-right text-slate-600">${es}</td>
+                    <td class="px-2 py-2 text-right text-slate-600">${pr}</td>
+                    <td class="px-2 py-2 text-right text-slate-600">${tm}</td>
+                    <td class="px-2 py-2 text-right font-bold text-slate-900">${to}</td>
                 </tr>`;
             }).join('');
             
-            if (list.length === 0) tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">Sin datos para mostrar.</td></tr>`;
+            if (list.length === 0) tbody.innerHTML = `<tr><td colspan="10" class="text-center py-8 text-slate-400">Sin datos para mostrar.</td></tr>`;
         }
 
         function openModal(index) {
@@ -699,6 +729,7 @@
 
             document.getElementById('m-td').innerText = formatHHMM(r._s_toma);
             document.getElementById('m-asig').innerText = formatHHMM(r._s_asig);
+            document.getElementById('m-esc').innerText = formatHHMM(r._s_esc);
             document.getElementById('m-prov').innerText = formatHHMM(r._s_prov);
             document.getElementById('m-term').innerText = formatHHMM(r._s_term);
             document.getElementById('m-total').innerText = formatHHMM(r._s_total);
