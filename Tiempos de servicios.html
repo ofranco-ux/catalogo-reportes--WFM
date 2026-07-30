@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte - Tiempos de Servicios</title>
 
-    <!-- Evitar el error 404 de favicon.ico -->
+    <!-- Evitar error 404 de favicon -->
     <link rel="icon" href="data:,">
 
-    <!-- Configuración para silenciar advertencias de Tailwind CDN -->
+    <!-- Silenciar aviso de desarrollo de Tailwind CDN -->
     <script>
         window.tailwind = {
             config: {
@@ -16,80 +16,143 @@
             }
         };
     </script>
-    <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Librerías para Gráficos -->
+    <!-- Librería Chart.js para Gráficas -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body class="bg-slate-100 text-slate-800 font-sans p-6">
 
-    <!-- Loader / Pantalla de Carga -->
+    <!-- Pantalla de Carga -->
     <div id="loading-overlay" class="fixed inset-0 bg-white bg-opacity-90 flex flex-col items-center justify-center z-50">
         <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
-        <p class="text-slate-600 font-semibold">Cargando reporte de datos...</p>
+        <p class="text-slate-600 font-semibold">Procesando 29,679 registros...</p>
     </div>
 
-    <!-- Encabezado Principal -->
-    <header class="mb-6">
-        <h1 class="text-3xl font-bold text-slate-800">Reporte - Tiempos de Servicios</h1>
-        <p class="text-slate-500 text-sm">Actualización automática desde GitHub Actions</p>
+    <!-- Encabezado -->
+    <header class="mb-6 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-800">Reporte - Tiempos de Servicios</h1>
+            <p class="text-slate-500 text-sm">Actualización automática activada</p>
+        </div>
+        <div class="bg-blue-50 border border-blue-200 text-blue-700 px-4 py-2 rounded-lg text-sm font-semibold">
+            Status: Sincronizado
+        </div>
     </header>
 
-    <!-- Indicadores Principales (KPIs) -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+    <!-- Tarjetas KPI -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Registros</span>
             <p id="kpi-total" class="text-3xl font-extrabold text-blue-600 mt-2">0</p>
         </div>
         <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
-            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Estado del Sistema</span>
-            <p id="kpi-estado" class="text-lg font-bold text-emerald-600 mt-3">Sincronizado</p>
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Compañía Principal</span>
+            <p id="kpi-compania" class="text-lg font-bold text-slate-700 mt-2">Cargando...</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Tipo Asistencia Top</span>
+            <p id="kpi-asistencia" class="text-lg font-bold text-slate-700 mt-2">Cargando...</p>
         </div>
         <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Origen de Datos</span>
-            <p class="text-sm font-semibold text-slate-700 mt-3">data_procesada.json</p>
+            <p class="text-sm font-semibold text-emerald-600 mt-2">data_procesada.json</p>
         </div>
-    </div>
+    </section>
 
-    <!-- Vista Previa de Datos -->
-    <main class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
-        <h2 class="text-xl font-bold text-slate-800 mb-4">Vista Previa de los Datos Procesados</h2>
-        <div class="overflow-x-auto">
-            <pre id="data-preview" class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-auto max-h-96">Cargando datos...</pre>
+    <!-- Sección de Gráficas -->
+    <section class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h3 class="text-lg font-bold text-slate-800 mb-4">Servicios por Compañía</h3>
+            <div class="relative h-64">
+                <canvas id="chartCompanias"></canvas>
+            </div>
         </div>
-    </main>
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+            <h3 class="text-lg font-bold text-slate-800 mb-4">Distribución por Tipo de Asistencia</h3>
+            <div class="relative h-64">
+                <canvas id="chartAsistencias"></canvas>
+            </div>
+        </div>
+    </section>
 
-    <!-- Script para Lectura y Procesamiento del JSON -->
+    <!-- Script de Lógica y Procesamiento -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Petición al JSON en la raíz del repositorio
             fetch('./data_procesada.json')
                 .then(function(response) {
                     if (!response.ok) {
-                        throw new Error('No se pudo encontrar el archivo data_procesada.json (HTTP ' + response.status + ')');
+                        throw new Error('No se pudo cargar data_procesada.json');
                     }
                     return response.json();
                 })
                 .then(function(data) {
                     // Ocultar pantalla de carga
                     var loader = document.getElementById('loading-overlay');
-                    if (loader) {
-                        loader.classList.add('hidden');
-                    }
+                    if (loader) loader.classList.add('hidden');
 
-                    // Actualizar KPIs y vista previa
+                    // 1. KPI Total
                     document.getElementById('kpi-total').textContent = data.length.toLocaleString();
-                    document.getElementById('data-preview').textContent = JSON.stringify(data.slice(0, 5), null, 2);
+
+                    // 2. Conteo para Gráfica de Compañías
+                    var companiasCount = {};
+                    var asistenciasCount = {};
+
+                    data.forEach(function(row) {
+                        var comp = row.compania || 'Sin Especificar';
+                        var asis = row.tipoasistencia || 'Otros';
+
+                        companiasCount[comp] = (companiasCount[comp] || 0) + 1;
+                        asistenciasCount[asis] = (asistenciasCount[asis] || 0) + 1;
+                    });
+
+                    // Top Compañía y Top Asistencia para KPIs
+                    var topComp = Object.keys(companiasCount).sort((a,b) => companiasCount[b] - companiasCount[a])[0];
+                    var topAsis = Object.keys(asistenciasCount).sort((a,b) => asistenciasCount[b] - asistenciasCount[a])[0];
+
+                    document.getElementById('kpi-compania').textContent = topComp || 'N/A';
+                    document.getElementById('kpi-asistencia').textContent = topAsis || 'N/A';
+
+                    // 3. Renderizar Gráfica de Compañías
+                    var ctxComp = document.getElementById('chartCompanias').getContext('2d');
+                    new Chart(ctxComp, {
+                        type: 'bar',
+                        data: {
+                            labels: Object.keys(companiasCount).slice(0, 5),
+                            datasets: [{
+                                label: 'Cantidad de Servicios',
+                                data: Object.values(companiasCount).slice(0, 5),
+                                backgroundColor: '#2563eb'
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
+
+                    // 4. Renderizar Gráfica de Asistencias
+                    var ctxAsis = document.getElementById('chartAsistencias').getContext('2d');
+                    new Chart(ctxAsis, {
+                        type: 'doughnut',
+                        data: {
+                            labels: Object.keys(asistenciasCount).slice(0, 5),
+                            datasets: [{
+                                data: Object.values(asistenciasCount).slice(0, 5),
+                                backgroundColor: ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false
+                        }
+                    });
                 })
                 .catch(function(error) {
-                    console.error('Error al cargar datos:', error);
+                    console.error('Error:', error);
                     var loader = document.getElementById('loading-overlay');
                     if (loader) {
-                        loader.innerHTML = '<div class="text-center p-6 bg-red-50 rounded-xl border border-red-200 max-w-md">' +
-                            '<p class="text-red-600 font-bold mb-2">Error al cargar la información</p>' +
-                            '<p class="text-xs text-red-500">' + error.message + '</p>' +
-                            '</div>';
+                        loader.innerHTML = '<div class="p-4 bg-red-100 text-red-700 rounded-lg">Error al cargar datos: ' + error.message + '</div>';
                     }
                 });
         });
