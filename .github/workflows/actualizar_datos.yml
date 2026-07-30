@@ -3,7 +3,7 @@ name: Actualizar Datos Excel a JSON
 on:
   push:
     paths:
-      - 'data/servicios.xlsx'
+      - 'datos/Datos Servicios 2.xlsx'  # Escucha cambios en la carpeta "datos" y archivo exacto
 
 jobs:
   build:
@@ -24,7 +24,8 @@ jobs:
         run: |
           python -c "
           import pandas as pd
-          df = pd.read_excel('data/servicios.xlsx', sheet_name='Hoja2')
+          # Lee directamente tu archivo Datos Servicios 2.xlsx
+          df = pd.read_excel('datos/Datos Servicios 2.xlsx', sheet_name=0)  # sheet_name=0 toma la primera pestaña automáticamente
           df.to_json('data_procesada.json', orient='records', date_format='iso')
           "
 
