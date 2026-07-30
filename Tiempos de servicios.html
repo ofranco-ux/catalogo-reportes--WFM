@@ -102,7 +102,7 @@
         <div id="dashboard-content" class="p-6 space-y-6 min-h-full relative">
             
             <div id="data-wrapper" class="opacity-30 transition-opacity duration-500 flex flex-col space-y-6">
-                <!-- Tarjetas KPI Superiores (6 Métricas en total) -->
+                <!-- Tarjetas KPI Superiores -->
                 <div class="grid grid-cols-2 md:grid-cols-6 gap-3">
                     <div class="glass-card p-3 text-center border-b-4 border-blue-500">
                         <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Toma Datos</p>
@@ -378,11 +378,12 @@
             return (isNegative ? '-' : '') + hStr + ':' + mStr;
         }
 
+        // Mediana ajustada: Filtra y evalúa únicamente valores estrictamente MAYORES A CERO (> 0)
         function calcMedian(arr) {
             let valid = [];
             for (let i = 0; i < arr.length; i++) {
                 let x = arr[i];
-                if (x !== null && x !== undefined && !isNaN(x) && x !== "") valid.push(x);
+                if (x !== null && x !== undefined && !isNaN(x) && x > 0) valid.push(x);
             }
             if (valid.length === 0) return '-';
             valid.sort((a, b) => a - b);
@@ -416,7 +417,7 @@
                 let m_arribo = (f_asig && f_arribo && f_arribo >= f_asig) ? (f_arribo - f_asig)/60000 : 0;
                 let m_term = (f_arribo && f_fin && f_fin >= f_arribo) ? (f_fin - f_arribo)/60000 : 0;
 
-                // Carga de tiempo directo desde minutos del Excel
+                // Carga de tiempo directo desde minutos del Excel si la resta dio 0
                 if(m_toma === 0 && (r.tiempo_toma_datos_min || r.tiempo_toma_datos)) {
                     m_toma = r.tiempo_toma_datos_min || r.tiempo_toma_datos;
                 }
@@ -579,7 +580,7 @@
                 let m4 = calcMedian(dailyGroups[date].prov);
                 let m5 = calcMedian(dailyGroups[date].term);
                 if(m1 === '-' || m2 === '-' || m4 === '-' || m5 === '-') return null;
-                return m1 + m2 + (m3 === '-' ? 0 : m3) + m4 + m5;
+                return (m1 === '-' ? 0 : m1) + (m2 === '-' ? 0 : m2) + (m3 === '-' ? 0 : m3) + (m4 === '-' ? 0 : m4) + (m5 === '-' ? 0 : m5);
             });
 
             if (myLineChart) { myLineChart.destroy(); }
