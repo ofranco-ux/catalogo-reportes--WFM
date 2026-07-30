@@ -325,7 +325,7 @@
 
         // Carga Automática al iniciar la página desde el JSON generado por GitHub Actions
         window.addEventListener('DOMContentLoaded', () => {
-            fetch('data_procesada.json')
+            fetch('./data_procesada.json')
                 .then(response => {
                     if (!response.ok) throw new Error('No se encontró el archivo procesado automáticamente.');
                     return response.json();
