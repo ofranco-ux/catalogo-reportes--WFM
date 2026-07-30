@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet" />
     <style>
-        /* (estilos iguales que antes, no los repito por brevedad) */
         * { margin:0; padding:0; box-sizing:border-box; }
         :root { --color-primary:#0a1a2b; --color-accent:#c9a84c; --color-bg:#f4f6f9; --color-white:#ffffff; --shadow-sm:0 4px 16px rgba(10,26,43,0.08); --shadow-hover:0 16px 48px rgba(10,26,43,0.14); --radius-xl:32px; --radius-lg:24px; --transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
         body { font-family:'Inter',sans-serif; background:var(--color-bg); min-height:100vh; padding:2.5rem 1.5rem; display:flex; flex-direction:column; align-items:center; }
@@ -75,7 +74,7 @@
 
 <script>
     // ================================================================
-    //  DATOS INCRUSTADOS (FALLBACK) – CATEGORÍA SERVICIOS CON TU REPORTE
+    //  DATOS INCRUSTADOS (FALLBACK)
     // ================================================================
     const fallbackData = {
         "categorias": {
@@ -139,32 +138,17 @@
                 data = fallbackData;
             }
 
-            // ---- FILTRO: eliminar reportes con palabras prohibidas ----
-            const palabrasClave = ['tiempos de asignación', 'tracking de servicios'];
-            const categoriasFiltradas = {};
-
-            for (const [nombreCat, info] of Object.entries(data.categorias)) {
-                const reportesFiltrados = info.reportes.filter(r => {
-                    const nombreLower = r.nombre.toLowerCase();
-                    return !palabrasClave.some(palabra => nombreLower.includes(palabra));
-                });
-                if (reportesFiltrados.length > 0) {
-                    categoriasFiltradas[nombreCat] = { ...info, reportes: reportesFiltrados };
-                }
-            }
-
-            categorias = categoriasFiltradas;
+            // ---- CORRECCIÓN: Se asignan las categorías directamente sin aplicar filtros de exclusión ----
+            categorias = data.categorias;
+            
             renderMenu();
             headerSubtitle.textContent = 'Selecciona una categoría para ver sus reportes';
+            
         } catch (error) {
             console.error('Error crítico:', error);
             // Último recurso: usar fallback aunque haya error
             if (Object.keys(categorias).length === 0) {
-                const fallbackCats = {};
-                for (const [nombreCat, info] of Object.entries(fallbackData.categorias)) {
-                    fallbackCats[nombreCat] = { ...info, reportes: info.reportes };
-                }
-                categorias = fallbackCats;
+                categorias = fallbackData.categorias;
                 renderMenu();
                 headerSubtitle.textContent = 'Usando datos de respaldo (sin conexión)';
             }
