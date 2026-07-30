@@ -92,13 +92,7 @@
                 </div>
             </div>
             <div class="flex items-center space-x-6">
-                
-                <label class="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition inline-flex items-center text-sm border border-blue-400/30" title="Subir archivo alternativo opcional">
-                    <i class="fa-solid fa-file-arrow-up mr-2 text-lg"></i> Cargar Manual
-                    <input type="file" id="file-upload" accept=".xlsx, .xls, .csv" class="hidden">
-                </label>
-
-                <div class="text-right border-l pl-6 border-white/20">
+                <div class="text-right">
                     <p class="text-[10px] font-bold text-blue-200 uppercase tracking-wide">Volumen Filtrado</p>
                     <p id="kpi-volumen" class="text-2xl font-bold text-white">0</p>
                 </div>
@@ -338,7 +332,7 @@
             }
         }
 
-        // Carga Automática optimizada desde JSON
+        // Carga Automática desde JSON
         window.addEventListener('DOMContentLoaded', () => {
             fetch('./data_procesada.json')
                 .then(response => {
@@ -349,7 +343,7 @@
                     procesarDatosBrutos(data);
                 })
                 .catch(error => {
-                    console.log('Modo manual: Sube tu archivo si el JSON no está disponible.', error);
+                    console.log('Error al cargar data_procesada.json', error);
                     ocultarLoaders();
                 });
         });
@@ -384,37 +378,6 @@
             let half = Math.floor(valid.length / 2);
             return (valid.length % 2 !== 0) ? valid[half] : (valid[half - 1] + valid[half]) / 2.0;
         }
-
-        document.getElementById('file-upload').addEventListener('change', function(e) {
-            const file = e.target.files[0];
-            if (!file) return;
-
-            document.getElementById('loading-overlay').classList.remove('hidden');
-            document.getElementById('loading-overlay').classList.add('flex');
-
-            const isCSV = file.name.toLowerCase().endsWith('.csv');
-
-            if (isCSV) {
-                Papa.parse(file, {
-                    header: true,
-                    dynamicTyping: true,
-                    skipEmptyLines: true,
-                    complete: function(results) {
-                        procesarDatosBrutos(results.data);
-                    }
-                });
-            } else {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, {type: 'array', cellDates: true});
-                    const sheetName = workbook.SheetNames.includes('Hoja2') ? 'Hoja2' : workbook.SheetNames[0];
-                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {defval: null});
-                    procesarDatosBrutos(rows);
-                };
-                reader.readAsArrayBuffer(file);
-            }
-        });
 
         function procesarDatosBrutos(rows) {
             globalData = rows.map((r, index) => {
@@ -460,11 +423,9 @@
             document.getElementById('data-wrapper').classList.remove('opacity-30');
             document.getElementById('data-wrapper').classList.add('opacity-100');
             
-            // Garantizar que la pantalla de carga se oculta tras procesar
             ocultarLoaders();
         }
 
-        // Construcción ultra optimizada del DOM para los Filtros
         function initFiltrosUI() {
             container.innerHTML = ''; 
             const fragment = document.createDocumentFragment();
@@ -552,7 +513,7 @@
 
             renderTableAgrupada('tb-tipo', 'tipoasistencia', 100);
             renderTableAgrupada('tb-comp', 'compania', 20);
-            renderTableDetalle('tb-detalle', 100); // Limitado a 100 para no saturar memoria
+            renderTableDetalle('tb-detalle', 100);
             renderLineChart();
         }
 
