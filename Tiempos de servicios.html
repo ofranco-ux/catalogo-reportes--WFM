@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -6,12 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard Ejecutivo | Operaciones</title>
     
-    <!-- Librerías de diseño, iconos, lectura de datos y Mapas Leaflet -->
+    <!-- Evitar error 404 de favicon -->
+    <link rel="icon" href="data:,">
+
+    <!-- Silenciar avisos de Tailwind CDN -->
+    <script>
+        window.tailwind = {
+            config: {
+                suppressDeprecationWarnings: true
+            }
+        };
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
     <!-- Leaflet CSS & JS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -314,44 +325,39 @@
         ];
 
         const container = document.getElementById('filter-container');
-        filterConfigs.forEach(conf => {
-            container.innerHTML += `
-            <div>
-                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">${conf.label}</label>
-                <select disabled id="f_${conf.id}" class="w-full text-xs p-2 border border-slate-300 rounded shadow-sm bg-slate-100 text-slate-400">
-                    <option value="">Esperando datos...</option>
-                </select>
-            </div>`;
-        });
 
-        // Carga Automática al iniciar la página desde el JSON generado por GitHub Actions
+        function ocultarLoaders() {
+            const overlay = document.getElementById('loading-overlay');
+            if (overlay) {
+                overlay.classList.add('hidden');
+                overlay.classList.remove('flex');
+            }
+            const fOverlay = document.getElementById('filter-overlay');
+            if (fOverlay) {
+                fOverlay.classList.add('hidden');
+            }
+        }
+
+        // Carga Automática optimizada desde JSON
         window.addEventListener('DOMContentLoaded', () => {
-            fetch('data_procesada.json')
+            fetch('./data_procesada.json')
                 .then(response => {
                     if (!response.ok) throw new Error('No se encontró el archivo procesado automáticamente.');
                     return response.json();
                 })
                 .then(data => {
                     procesarDatosBrutos(data);
-                    document.getElementById('loading-overlay').classList.add('hidden');
-                    document.getElementById('loading-overlay').classList.remove('flex');
                 })
                 .catch(error => {
-                    console.log('Modo manual: Sube tu archivo si el JSON no está disponible.');
-                    document.getElementById('loading-overlay').classList.add('hidden');
-                    document.getElementById('loading-overlay').classList.remove('flex');
+                    console.log('Modo manual: Sube tu archivo si el JSON no está disponible.', error);
+                    ocultarLoaders();
                 });
         });
 
         function toggleSidebar() {
             const sidebar = document.getElementById('sidebar');
-            if (sidebar.classList.contains('hidden')) {
-                sidebar.classList.remove('hidden');
-                sidebar.classList.add('flex');
-            } else {
-                sidebar.classList.add('hidden');
-                sidebar.classList.remove('flex');
-            }
+            sidebar.classList.toggle('hidden');
+            sidebar.classList.toggle('flex');
         }
 
         function formatHHMM(minutesNum) {
@@ -368,7 +374,11 @@
         }
 
         function calcMedian(arr) {
-            let valid = arr.filter(x => x !== null && x !== undefined && !isNaN(x) && x !== "");
+            let valid = [];
+            for (let i = 0; i < arr.length; i++) {
+                let x = arr[i];
+                if (x !== null && x !== undefined && !isNaN(x) && x !== "") valid.push(x);
+            }
             if (valid.length === 0) return '-';
             valid.sort((a, b) => a - b);
             let half = Math.floor(valid.length / 2);
@@ -391,8 +401,6 @@
                     skipEmptyLines: true,
                     complete: function(results) {
                         procesarDatosBrutos(results.data);
-                        document.getElementById('loading-overlay').classList.add('hidden');
-                        document.getElementById('loading-overlay').classList.remove('flex');
                     }
                 });
             } else {
@@ -403,8 +411,6 @@
                     const sheetName = workbook.SheetNames.includes('Hoja2') ? 'Hoja2' : workbook.SheetNames[0];
                     const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {defval: null});
                     procesarDatosBrutos(rows);
-                    document.getElementById('loading-overlay').classList.add('hidden');
-                    document.getElementById('loading-overlay').classList.remove('flex');
                 };
                 reader.readAsArrayBuffer(file);
             }
@@ -451,27 +457,38 @@
             initFiltrosUI();
             applyFilters();
 
-            document.getElementById('empty-state').style.display = 'none';
-            document.getElementById('filter-overlay').classList.add('hidden');
             document.getElementById('data-wrapper').classList.remove('opacity-30');
             document.getElementById('data-wrapper').classList.add('opacity-100');
+            
+            // Garantizar que la pantalla de carga se oculta tras procesar
+            ocultarLoaders();
         }
 
+        // Construcción ultra optimizada del DOM para los Filtros
         function initFiltrosUI() {
             container.innerHTML = ''; 
+            const fragment = document.createDocumentFragment();
 
             filterConfigs.forEach(conf => {
-                let uniqueValues = [...new Set(globalData.map(d => d[conf.col]).filter(v => v !== null && v !== undefined && v !== ''))].sort();
-                let html = `
-                <div>
+                const setVals = new Set();
+                for(let i = 0; i < globalData.length; i++) {
+                    let v = globalData[i][conf.col];
+                    if (v !== null && v !== undefined && v !== '') setVals.add(v);
+                }
+                const uniqueValues = Array.from(setVals).sort();
+
+                const div = document.createElement('div');
+                div.innerHTML = `
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">${conf.label}</label>
                     <select id="f_${conf.id}" onchange="applyFilters()" class="w-full text-xs p-2 border border-slate-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white">
                         <option value="">Todas</option>
                         ${uniqueValues.map(v => `<option value="${v}">${v}</option>`).join('')}
                     </select>
-                </div>`;
-                container.innerHTML += html;
+                `;
+                fragment.appendChild(div);
             });
+
+            container.appendChild(fragment);
 
             document.getElementById('f_fecha_ini').addEventListener('change', applyFilters);
             document.getElementById('f_fecha_fin').addEventListener('change', applyFilters);
@@ -482,15 +499,20 @@
             let ff = document.getElementById('f_fecha_fin').value ? new Date(document.getElementById('f_fecha_fin').value) : null;
             if (ff) ff.setHours(23, 59, 59);
 
+            const activeFilters = {};
+            filterConfigs.forEach(conf => {
+                let el = document.getElementById(`f_${conf.id}`);
+                if (el && el.value !== "") {
+                    activeFilters[conf.col] = el.value;
+                }
+            });
+
             filteredData = globalData.filter(r => {
                 if (fi && (!r._fechaReal || r._fechaReal < fi)) return false;
                 if (ff && (!r._fechaReal || r._fechaReal > ff)) return false;
 
-                for (let conf of filterConfigs) {
-                    let select = document.getElementById(`f_${conf.id}`);
-                    if (select && select.value !== "" && String(r[conf.col]) !== select.value) {
-                        return false;
-                    }
+                for (let col in activeFilters) {
+                    if (String(r[col]) !== activeFilters[col]) return false;
                 }
                 return true;
             });
@@ -530,7 +552,7 @@
 
             renderTableAgrupada('tb-tipo', 'tipoasistencia', 100);
             renderTableAgrupada('tb-comp', 'compania', 20);
-            renderTableDetalle('tb-detalle', 200);
+            renderTableDetalle('tb-detalle', 100); // Limitado a 100 para no saturar memoria
             renderLineChart();
         }
 
