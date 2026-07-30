@@ -1,9 +1,14 @@
+<!DOCTYPE html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Reporte - Tiempos de Servicios</title>
 
-    <!-- 1. Silenciar advertencias de Tailwind CDN en la consola -->
+    <!-- Evitar el error 404 de favicon.ico -->
+    <link rel="icon" href="data:,">
+
+    <!-- Configuración para silenciar advertencias de Tailwind CDN -->
     <script>
         window.tailwind = {
             config: {
@@ -11,9 +16,83 @@
             }
         };
     </script>
-
-    <!-- 2. Carga de Tailwind CSS -->
+    <!-- Carga de Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Aquí continúan tus demás librerías (Chart.js, Leaflet, etc.) -->
+    <!-- Librerías para Gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
+<body class="bg-slate-100 text-slate-800 font-sans p-6">
+
+    <!-- Loader / Pantalla de Carga -->
+    <div id="loading-overlay" class="fixed inset-0 bg-white bg-opacity-90 flex flex-col items-center justify-center z-50">
+        <div class="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4"></div>
+        <p class="text-slate-600 font-semibold">Cargando reporte de datos...</p>
+    </div>
+
+    <!-- Encabezado Principal -->
+    <header class="mb-6">
+        <h1 class="text-3xl font-bold text-slate-800">Reporte - Tiempos de Servicios</h1>
+        <p class="text-slate-500 text-sm">Actualización automática desde GitHub Actions</p>
+    </header>
+
+    <!-- Indicadores Principales (KPIs) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Registros</span>
+            <p id="kpi-total" class="text-3xl font-extrabold text-blue-600 mt-2">0</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Estado del Sistema</span>
+            <p id="kpi-estado" class="text-lg font-bold text-emerald-600 mt-3">Sincronizado</p>
+        </div>
+        <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Origen de Datos</span>
+            <p class="text-sm font-semibold text-slate-700 mt-3">data_procesada.json</p>
+        </div>
+    </div>
+
+    <!-- Vista Previa de Datos -->
+    <main class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+        <h2 class="text-xl font-bold text-slate-800 mb-4">Vista Previa de los Datos Procesados</h2>
+        <div class="overflow-x-auto">
+            <pre id="data-preview" class="bg-slate-900 text-slate-100 p-4 rounded-lg text-xs overflow-auto max-h-96">Cargando datos...</pre>
+        </div>
+    </main>
+
+    <!-- Script para Lectura y Procesamiento del JSON -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Petición al JSON en la raíz del repositorio
+            fetch('./data_procesada.json')
+                .then(function(response) {
+                    if (!response.ok) {
+                        throw new Error('No se pudo encontrar el archivo data_procesada.json (HTTP ' + response.status + ')');
+                    }
+                    return response.json();
+                })
+                .then(function(data) {
+                    // Ocultar pantalla de carga
+                    var loader = document.getElementById('loading-overlay');
+                    if (loader) {
+                        loader.classList.add('hidden');
+                    }
+
+                    // Actualizar KPIs y vista previa
+                    document.getElementById('kpi-total').textContent = data.length.toLocaleString();
+                    document.getElementById('data-preview').textContent = JSON.stringify(data.slice(0, 5), null, 2);
+                })
+                .catch(function(error) {
+                    console.error('Error al cargar datos:', error);
+                    var loader = document.getElementById('loading-overlay');
+                    if (loader) {
+                        loader.innerHTML = '<div class="text-center p-6 bg-red-50 rounded-xl border border-red-200 max-w-md">' +
+                            '<p class="text-red-600 font-bold mb-2">Error al cargar la información</p>' +
+                            '<p class="text-xs text-red-500">' + error.message + '</p>' +
+                            '</div>';
+                    }
+                });
+        });
+    </script>
+</body>
+</html>
