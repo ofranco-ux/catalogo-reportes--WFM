@@ -391,51 +391,129 @@
             return (valid.length % 2 !== 0) ? valid[half] : (valid[half - 1] + valid[half]) / 2.0;
         }
 
+        // Funciones auxiliares ultra-robustas para parsing de campos
+        function parseFechaFlex(val) {
+            if (!val) return null;
+            if (val instanceof Date) return isNaN(val.getTime()) ? null : val;
+            let str = String(val).trim();
+            let d = new Date(str);
+            if (!isNaN(d.getTime())) return d;
+            
+            // Intento con formato DD/MM/YYYY HH:mm:ss
+            let match = str.match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})(?:\s+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+            if (match) {
+                let day = parseInt(match[1]);
+                let month = parseInt(match[2]) - 1;
+                let year = parseInt(match[3]);
+                let hrs = match[4] ? parseInt(match[4]) : 0;
+                let mins = match[5] ? parseInt(match[5]) : 0;
+                let secs = match[6] ? parseInt(match[6]) : 0;
+                let altD = new Date(year, month, day, hrs, mins, secs);
+                if (!isNaN(altD.getTime())) return altD;
+            }
+            return null;
+        }
+
+        function parseMinutosFlex(val) {
+            if (val === null || val === undefined || val === '') return 0;
+            if (typeof val === 'number') return isNaN(val) ? 0 : val;
+            let str = String(val).trim().replace(',', '.');
+            
+            // Si viene formateado como HH:MM:SS o MM:SS
+            if (str.includes(':')) {
+                let parts = str.split(':').map(p => parseFloat(p) || 0);
+                if (parts.length === 3) {
+                    return (parts[0] * 60) + parts[1] + (parts[2] / 60);
+                } else if (parts.length === 2) {
+                    return parts[0] + (parts[1] / 60);
+                }
+            }
+            let num = parseFloat(str);
+            return isNaN(num) ? 0 : num;
+        }
+
+        function getFirstValue(row, keysArray) {
+            for (let k of keysArray) {
+                if (row[k] !== undefined && row[k] !== null && row[k] !== '') {
+                    return row[k];
+                }
+            }
+            // Búsqueda flexible ignorando mayúsculas/minúsculas y guiones bajos
+            let rowKeys = Object.keys(row);
+            for (let targetKey of keysArray) {
+                let normalizedTarget = targetKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+                for (let actualKey of rowKeys) {
+                    let normalizedActual = actualKey.toLowerCase().replace(/[^a-z0-9]/g, '');
+                    if (normalizedTarget === normalizedActual) {
+                        let val = row[actualKey];
+                        if (val !== undefined && val !== null && val !== '') return val;
+                    }
+                }
+            }
+            return null;
+        }
+
         function procesarDatosBrutos(rows) {
             globalData = rows.map((r, index) => {
                 let obj = { ...r, _rowIndex: index };
                 
-                if (r.fecha && !isNaN(new Date(r.fecha))) {
-                    let d = new Date(r.fecha);
-                    obj._fechaReal = d;
-                    obj._dateStr = d.toISOString().split('T')[0];
+                // 1. Extraer Fechas clave con escaneo múltiple de columnas
+                let rawFechaCrea = getFirstValue(r, ['fecha', 'fecha_crea', 'fechacreacion', 'f_crea', 'fecha_creacion', 'creacion']);
+                let rawFechaToma = getFirstValue(r, ['fecha_fin_toma_datos', 'fecha_toma_datos', 'fechatomadatos', 'f_toma', 'fecha_toma']);
+                let rawFechaAsig = getFirstValue(r, ['fecha_asigna', 'fecha_asignacion', 'fechaasigna', 'f_asig', 'fecha_asig']);
+                let rawFechaEsc  = getFirstValue(r, ['fecha_escalacion', 'fechaescalacion', 'f_esc', 'fecha_esc']);
+                let rawFechaArribo = getFirstValue(r, ['fechaarribofinal', 'fecha_arribo', 'fechaarribo', 'f_arribo', 'fecha_proveedor']);
+                let rawFechaFin  = getFirstValue(r, ['fechaterminofinal', 'fecha_termino', 'fechatermino', 'fecha_cierre', 'fechacierre', 'f_fin']);
+
+                let f_crea = parseFechaFlex(rawFechaCrea);
+                let f_toma = parseFechaFlex(rawFechaToma);
+                let f_asig = parseFechaFlex(rawFechaAsig);
+                let f_esc  = parseFechaFlex(rawFechaEsc);
+                let f_arribo = parseFechaFlex(rawFechaArribo);
+                let f_fin  = parseFechaFlex(rawFechaFin);
+
+                if (f_crea) {
+                    obj._fechaReal = f_crea;
+                    obj._dateStr = f_crea.toISOString().split('T')[0];
                 } else {
                     obj._fechaReal = null;
                     obj._dateStr = null;
                 }
-                
-                let f_crea = r.fecha ? new Date(r.fecha) : null;
-                let f_toma = (r.fecha_fin_toma_datos || r.fecha_toma_datos) ? new Date(r.fecha_fin_toma_datos || r.fecha_toma_datos) : null;
-                let f_asig = (r.fecha_asigna || r.fecha_asignacion || r.fecha_asig) ? new Date(r.fecha_asigna || r.fecha_asignacion || r.fecha_asig) : null;
-                let f_esc = r.fecha_escalacion ? new Date(r.fecha_escalacion) : null;
-                let f_arribo = (r.fechaarribofinal || r.fecha_arribo) ? new Date(r.fechaarribofinal || r.fecha_arribo) : null;
-                let f_fin = (r.fechaterminofinal || r.fecha_termino || r.fecha_cierre) ? new Date(r.fechaterminofinal || r.fecha_termino || r.fecha_cierre) : null;
 
+                // 2. Cálculo por diferencia de Fechas (en minutos)
                 let m_toma = (f_crea && f_toma && f_toma >= f_crea) ? (f_toma - f_crea)/60000 : 0;
                 let m_asig = (f_toma && f_asig && f_asig >= f_toma) ? (f_asig - f_toma)/60000 : 0;
-                let m_esc = (f_asig && f_esc && f_esc >= f_asig) ? (f_esc - f_asig)/60000 : 0;
+                let m_esc  = (f_asig && f_esc && f_esc >= f_asig) ? (f_esc - f_asig)/60000 : 0;
                 let m_arribo = (f_asig && f_arribo && f_arribo >= f_asig) ? (f_arribo - f_asig)/60000 : 0;
                 let m_term = (f_arribo && f_fin && f_fin >= f_arribo) ? (f_fin - f_arribo)/60000 : 0;
 
-                // Carga de tiempo directo desde minutos del Excel si la resta dio 0
-                if(m_toma === 0 && (r.tiempo_toma_datos_min || r.tiempo_toma_datos)) {
-                    m_toma = r.tiempo_toma_datos_min || r.tiempo_toma_datos;
+                // 3. Fallback directo a columnas numéricas/minutos precalculados del Excel si la resta es 0
+                if (m_toma === 0) {
+                    let rawMinTd = getFirstValue(r, ['tiempo_toma_datos_min', 'tiempo_toma_datos', 'toma_datos_min', 'td_min', 'tiempo_toma', 'tiempotomadatos']);
+                    m_toma = parseMinutosFlex(rawMinTd);
                 }
-                if(m_asig === 0 && (r.tiempo_asigna || r.tiempo_asignacion || r.tiempo_asig)) {
-                    m_asig = r.tiempo_asigna || r.tiempo_asignacion || r.tiempo_asig;
+                if (m_asig === 0) {
+                    let rawMinAsig = getFirstValue(r, ['tiempo_asigna', 'tiempo_asignacion', 'tiempo_asig', 'asigna_min', 'tiempoasignacion', 'tiempoasigna']);
+                    m_asig = parseMinutosFlex(rawMinAsig);
                 }
-                if(m_esc === 0 && r.tiempo_escalacion) {
-                    m_esc = r.tiempo_escalacion;
+                if (m_esc === 0) {
+                    let rawMinEsc = getFirstValue(r, ['tiempo_escalacion', 'escalacion_min', 'tiempoescalacion', 'esc_min']);
+                    m_esc = parseMinutosFlex(rawMinEsc);
                 }
-                if(m_arribo === 0 && (r.tiempo_arribo || r.tiempo_proveedor)) {
-                    m_arribo = r.tiempo_arribo || r.tiempo_proveedor;
+                if (m_arribo === 0) {
+                    let rawMinArribo = getFirstValue(r, ['tiempo_arribo', 'tiempo_proveedor', 'arribo_min', 'tiempoarribo', 'tiempoproveedor']);
+                    m_arribo = parseMinutosFlex(rawMinArribo);
                 }
-                if(m_term === 0 && (r.tiempo_cierre || r.tiempo_termino)) {
-                    m_term = r.tiempo_cierre || r.tiempo_termino;
+                if (m_term === 0) {
+                    let rawMinTerm = getFirstValue(r, ['tiempo_cierre', 'tiempo_termino', 'cierre_min', 'tiempocierre', 'tiempotermino']);
+                    m_term = parseMinutosFlex(rawMinTerm);
                 }
                 
                 let total_calc = m_toma + m_asig + m_esc + m_arribo + m_term;
-                if(total_calc === 0 && r.tiempo_total) total_calc = r.tiempo_total;
+                if (total_calc === 0) {
+                    let rawMinTotal = getFirstValue(r, ['tiempo_total', 'total_min', 'tiempototal']);
+                    total_calc = parseMinutosFlex(rawMinTotal);
+                }
 
                 obj._s_toma = m_toma;
                 obj._s_asig = m_asig;
