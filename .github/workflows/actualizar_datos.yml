@@ -3,7 +3,7 @@ name: Actualizar Datos Excel a JSON
 on:
   push:
     paths:
-      - 'datos/Datos Servicios 2.xlsx'
+      - '**/*.xlsx'
   workflow_dispatch:
 
 permissions:
@@ -28,10 +28,22 @@ jobs:
         run: |
           python -c "
           import pandas as pd
+          import glob
+          import os
+
+          # Buscar cualquier archivo .xlsx en el repositorio
+          archivos = glob.glob('**/*.xlsx', recursive=True)
+          if not archivos:
+              raise FileNotFoundError('No se encontró ningún archivo .xlsx en el repositorio')
+
+          archivo_excel = archivos[0]
+          print(f'Procesando archivo encontrado: {archivo_excel}')
+
           try:
-              df = pd.read_excel('datos/Datos Servicios 2.xlsx', sheet_name='Hoja2')
+              df = pd.read_excel(archivo_excel, sheet_name='Hoja2')
           except Exception:
-              df = pd.read_excel('datos/Datos Servicios 2.xlsx', sheet_name=0)
+              df = pd.read_excel(archivo_excel, sheet_name=0)
+
           df.to_json('data_procesada.json', orient='records', date_format='iso')
           "
 
