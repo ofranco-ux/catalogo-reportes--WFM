@@ -109,7 +109,7 @@
                         <p id="kpi-td" class="text-2xl font-bold text-slate-800">-</p>
                     </div>
                     <div class="glass-card p-4 text-center border-b-4 border-indigo-500">
-                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Asignación</p>
+                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Asignación / Escalación</p>
                         <p id="kpi-asig" class="text-2xl font-bold text-slate-800">-</p>
                     </div>
                     <div class="glass-card p-4 text-center border-b-4 border-amber-500">
@@ -271,7 +271,7 @@
                             <p id="m-td" class="text-base font-bold text-slate-800">-</p>
                         </div>
                         <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
-                            <p class="text-[9px] text-indigo-600 font-bold uppercase">Asignación</p>
+                            <p class="text-[9px] text-indigo-600 font-bold uppercase">Asignación / Esc.</p>
                             <p id="m-asig" class="text-base font-bold text-slate-800">-</p>
                         </div>
                         <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
@@ -393,20 +393,32 @@
                 }
                 
                 let f_crea = r.fecha ? new Date(r.fecha) : null;
-                let f_toma = r.fecha_fin_toma_datos ? new Date(r.fecha_fin_toma_datos) : null;
-                let f_asig = r.fecha_asigna ? new Date(r.fecha_asigna) : null;
-                let f_arribo = r.fechaarribofinal ? new Date(r.fechaarribofinal) : null;
-                let f_fin = r.fechaterminofinal ? new Date(r.fechaterminofinal) : null;
+                let f_toma = (r.fecha_fin_toma_datos || r.fecha_toma_datos) ? new Date(r.fecha_fin_toma_datos || r.fecha_toma_datos) : null;
+                let f_asig = (r.fecha_asigna || r.fecha_asignacion || r.fecha_asig || r.fecha_escalacion) ? new Date(r.fecha_asigna || r.fecha_asignacion || r.fecha_asig || r.fecha_escalacion) : null;
+                let f_arribo = (r.fechaarribofinal || r.fecha_arribo) ? new Date(r.fechaarribofinal || r.fecha_arribo) : null;
+                let f_fin = (r.fechaterminofinal || r.fecha_termino || r.fecha_cierre) ? new Date(r.fechaterminofinal || r.fecha_termino || r.fecha_cierre) : null;
 
                 let m_toma = (f_crea && f_toma && f_toma >= f_crea) ? (f_toma - f_crea)/60000 : 0;
                 let m_asig = (f_toma && f_asig && f_asig >= f_toma) ? (f_asig - f_toma)/60000 : 0;
                 let m_arribo = (f_asig && f_arribo && f_arribo >= f_asig) ? (f_arribo - f_asig)/60000 : 0;
                 let m_term = (f_arribo && f_fin && f_fin >= f_arribo) ? (f_fin - f_arribo)/60000 : 0;
 
-                if(m_toma === 0 && r.tiempo_toma_datos_min) m_toma = r.tiempo_toma_datos_min;
+                // Recuperación de minutos directos si la diferencia de fechas dio 0
+                if(m_toma === 0 && (r.tiempo_toma_datos_min || r.tiempo_toma_datos)) {
+                    m_toma = r.tiempo_toma_datos_min || r.tiempo_toma_datos;
+                }
+                if(m_asig === 0 && (r.tiempo_asigna || r.tiempo_asignacion || r.tiempo_escalacion || r.tiempo_asig)) {
+                    m_asig = r.tiempo_asigna || r.tiempo_asignacion || r.tiempo_escalacion || r.tiempo_asig;
+                }
+                if(m_arribo === 0 && (r.tiempo_arribo || r.tiempo_proveedor)) {
+                    m_arribo = r.tiempo_arribo || r.tiempo_proveedor;
+                }
+                if(m_term === 0 && (r.tiempo_cierre || r.tiempo_termino)) {
+                    m_term = r.tiempo_cierre || r.tiempo_termino;
+                }
                 
                 let total_calc = m_toma + m_asig + m_arribo + m_term;
-                if(total_calc === 0 && r.tiempo_cierre) total_calc = r.tiempo_cierre;
+                if(total_calc === 0 && r.tiempo_total) total_calc = r.tiempo_total;
 
                 obj._s_toma = m_toma;
                 obj._s_asig = m_asig;
@@ -560,7 +572,7 @@
                     labels: sortedDates,
                     datasets: [
                         { label: 'Toma Datos', data: dataTd.map(v => v === '-' ? null : v), borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, borderWidth: 2, pointRadius: 1 },
-                        { label: 'Asignación', data: dataAsig.map(v => v === '-' ? null : v), borderColor: '#6366f1', backgroundColor: '#6366f1', tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                        { label: 'Asignación / Escalación', data: dataAsig.map(v => v === '-' ? null : v), borderColor: '#6366f1', backgroundColor: '#6366f1', tension: 0.3, borderWidth: 2, pointRadius: 1 },
                         { label: 'Proveedor', data: dataProv.map(v => v === '-' ? null : v), borderColor: '#f59e0b', backgroundColor: '#f59e0b', tension: 0.3, borderWidth: 2, pointRadius: 1 },
                         { label: 'Cierre', data: dataTerm.map(v => v === '-' ? null : v), borderColor: '#a855f7', backgroundColor: '#a855f7', tension: 0.3, borderWidth: 2, pointRadius: 1 },
                         { label: 'Suma Total', data: dataTotal, borderColor: '#10b981', backgroundColor: '#10b981', tension: 0.3, borderWidth: 2, borderDash: [5, 5], pointRadius: 1 }
