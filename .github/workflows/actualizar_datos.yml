@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'datos/Datos Servicios 2.xlsx'
+  workflow_dispatch:
 
 permissions:
   contents: write
