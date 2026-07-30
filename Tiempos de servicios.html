@@ -1,1490 +1,752 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Reporte Ejecutivo de Tiempos</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
-    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Ejecutivo | Operaciones</title>
+    
+    <!-- Librerías de diseño, iconos, lectura de datos y Mapas Leaflet -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Leaflet CSS & JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    
     <style>
-        /* ===== RESET & BASE ===== */
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f2f5;
-            padding: 20px;
-            color: #1e293b;
-        }
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        /* ===== HEADER ===== */
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            margin-bottom: 20px;
-        }
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 600;
-            color: #1a3c5e;
-        }
-        .header h1 small {
-            font-size: 0.9rem;
-            font-weight: 400;
-            color: #64748b;
-            margin-left: 0.5rem;
-        }
-        .header-actions {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-        .file-status {
-            font-size: 0.85rem;
-            color: #64748b;
-            background: #e2e8f0;
-            padding: 0.3rem 0.8rem;
-            border-radius: 20px;
-        }
-
-        /* ===== BOTONES ===== */
-        .btn {
-            padding: 0.4rem 1rem;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.2s;
-            background: #e2e8f0;
-            color: #1e293b;
-        }
-        .btn-primary {
-            background: #0d6efd;
-            color: white;
-        }
-        .btn-primary:hover {
-            background: #0b5ed7;
-        }
-        .btn-success {
-            background: #10b981;
-            color: white;
-        }
-        .btn-success:hover {
-            background: #059669;
-        }
-        .btn-outline {
-            background: transparent;
-            border: 1px solid #cbd5e1;
-        }
-        .btn-outline:hover {
-            background: #f1f5f9;
-        }
-        .btn-danger {
-            background: #dc3545;
-            color: white;
-        }
-        .btn-danger:hover {
-            background: #c82333;
-        }
-        .btn-warning {
-            background: #f59e0b;
-            color: white;
-        }
-        .btn-warning:hover {
-            background: #d97706;
-        }
-        .toggle-btn {
-            background: #6c757d;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            margin: 10px 0;
-        }
-        .toggle-btn:hover {
-            background: #5a6268;
-        }
-
-        /* ===== TARJETAS ===== */
-        .card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            border: 1px solid #e2e8f0;
-        }
-        .card-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 1rem;
-            color: #0f172a;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* ===== KPI CARDS ===== */
-        .kpi-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-        .kpi-card {
-            background: white;
-            padding: 1rem;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-            border-left: 4px solid #0d6efd;
-            text-align: center;
-        }
-        .kpi-card .label {
-            font-size: 0.75rem;
-            text-transform: uppercase;
-            color: #64748b;
-            font-weight: 600;
-            letter-spacing: 0.3px;
-        }
-        .kpi-card .value {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #0f172a;
-            line-height: 1.2;
-        }
-        .kpi-card .sub {
-            font-size: 0.7rem;
-            color: #94a3b8;
-        }
-
-        /* ===== FILTROS ===== */
-        .filters-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 0.8rem;
-            align-items: end;
-        }
-        .filter-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.2rem;
-        }
-        .filter-group label {
-            font-size: 0.7rem;
-            font-weight: 600;
-            color: #475569;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-        }
-        .filter-group input,
-        .filter-group select {
-            padding: 0.3rem 0.5rem;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 0.85rem;
-            background: white;
-        }
-        .filter-group input:focus,
-        .filter-group select:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-        }
-        .filter-actions-row {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            align-items: center;
-            margin-top: 0.5rem;
-        }
-
-        /* ===== TABLAS ===== */
-        .table-wrapper {
-            overflow-x: auto;
-            border-radius: 12px;
-            border: 1px solid #e2e8f0;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.8rem;
-            min-width: 700px;
-        }
-        thead {
-            background: #1a3c5e;
-            color: white;
-        }
-        th {
-            padding: 0.5rem 0.6rem;
-            text-align: left;
-            font-weight: 600;
-            border-bottom: 2px solid #cbd5e1;
-            white-space: nowrap;
-        }
-        td {
-            padding: 0.4rem 0.6rem;
-            border-bottom: 1px solid #e2e8f0;
-            vertical-align: middle;
-        }
-        tr:nth-child(even) {
-            background: #f8fafc;
-        }
-        .badge {
-            display: inline-block;
-            padding: 0.1rem 0.4rem;
-            border-radius: 20px;
-            font-size: 0.65rem;
-            font-weight: 600;
-            background: #dbeafe;
-            color: #1e40af;
-        }
-        .badge-escalado {
-            background: #fef3c7;
-            color: #92400e;
-        }
-        .no-data {
-            text-align: center;
-            padding: 2rem;
-            color: #94a3b8;
-        }
-        .detalle-oculto {
-            display: none;
-        }
-
-        /* ===== GRÁFICOS ===== */
-        .chart-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 2rem;
-        }
-        .chart-container {
-            position: relative;
-            height: 260px;
-        }
-        @media (max-width: 900px) {
-            .chart-grid {
-                grid-template-columns: 1fr;
-            }
-            .filters-grid {
-                grid-template-columns: 1fr 1fr;
-            }
-        }
-        @media (max-width: 600px) {
-            .filters-grid {
-                grid-template-columns: 1fr;
-            }
-            .header {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 0.5rem;
-            }
-        }
-
-        /* ===== GLOSARIO ===== */
-        .glosario {
-            margin-top: 40px;
-            padding-top: 20px;
-            border-top: 2px solid #e9ecef;
-        }
-        .glosario h2 {
-            color: #1a3c5e;
-            margin-bottom: 15px;
-        }
-        .glosario-grid {
-            display: grid;
-            grid-template-columns: 1fr 2fr 2fr;
-            gap: 6px 20px;
-            font-size: 14px;
-        }
-        .glosario-grid .term {
-            font-weight: 600;
-            color: #0d6efd;
-            padding: 4px 0;
-        }
-        .glosario-grid .def {
-            color: #343a40;
-            padding: 4px 0;
-        }
-        .glosario-grid .formula {
-            color: #495057;
-            padding: 4px 0;
-            font-family: 'Courier New', monospace;
-            font-size: 13px;
-            background: #f8f9fa;
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-        @media (max-width: 600px) {
-            .glosario-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        footer {
-            text-align: center;
-            margin-top: 2rem;
-            color: #94a3b8;
-            font-size: 0.8rem;
-            border-top: 1px solid #e2e8f0;
-            padding-top: 1rem;
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); border: 1px solid #e2e8f0; }
+        .sidebar-scroll { max-height: calc(100vh - 80px); overflow-y: auto; }
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3b82f6; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #service-map { height: 220px; width: 100%; border-radius: 0.75rem; z-index: 10; }
     </style>
 </head>
-<body>
+<body class="flex h-screen overflow-hidden text-slate-800 antialiased">
 
-    <div class="container">
-        <!-- ===== HEADER ===== -->
-        <div class="header">
-            <h1>📊 Reporte Ejecutivo <small>Tiempos de Servicio</small></h1>
-            <div class="header-actions">
-                <button class="btn btn-primary" id="btnCargarEjemplo">📥 Ejemplo</button>
-                <button class="btn btn-success" id="btnCargarCarpeta">📁 Carpeta</button>
-                <label class="btn btn-outline" style="cursor:pointer;">
-                    📄 Archivo(s)
-                    <input type="file" id="fileInput" accept=".csv,.tsv,.txt" style="display:none;" multiple>
-                </label>
-                <button class="btn btn-danger" id="btnResetearGuardado">🗑️ Restablecer a datos del servidor</button>
-                <button class="btn btn-outline" id="btnLimpiarFiltros">🧹 Limpiar</button>
-                <span class="file-status" id="fileStatus">Sin datos</span>
+    <!-- Barra lateral de Filtros -->
+    <aside id="sidebar" class="w-80 bg-white border-r border-slate-200 flex flex-col shadow-lg z-20 transition-all duration-300">
+        <div class="p-5 border-b border-slate-100 bg-slate-900 text-white flex justify-between items-center">
+            <div>
+                <h2 class="text-lg font-bold"><i class="fa-solid fa-filter mr-2 text-blue-400"></i>Filtros</h2>
             </div>
+            <button onclick="toggleSidebar()" class="text-slate-400 hover:text-white transition">
+                <i class="fa-solid fa-chevron-left text-xl"></i>
+            </button>
         </div>
-
-        <!-- ===== KPI CARDS ===== -->
-        <div class="kpi-grid" id="kpiContainer">
-            <div class="kpi-card"><div class="label">Total Servicios</div><div class="value" id="kpiTotal">0</div><div class="sub">registros</div></div>
-            <div class="kpi-card"><div class="label">⏱ Toma Datos</div><div class="value" id="kpiToma">—</div><div class="sub">promedio</div></div>
-            <div class="kpi-card"><div class="label">⏱ Asignación</div><div class="value" id="kpiAsignacion">—</div><div class="sub">promedio</div></div>
-            <div class="kpi-card"><div class="label">⏱ Escalación</div><div class="value" id="kpiEscalacion">—</div><div class="sub">promedio</div></div>
-            <div class="kpi-card"><div class="label">⏱ Proveedor</div><div class="value" id="kpiProveedor">—</div><div class="sub">promedio</div></div>
-            <div class="kpi-card"><div class="label">⏱ Duración Total</div><div class="value" id="kpiTotalDuracion">—</div><div class="sub">promedio</div></div>
-        </div>
-
-        <!-- ===== FILTROS ===== -->
-        <div class="card">
-            <div class="card-title">🔎 Filtros</div>
-            <div class="filters-grid" id="filtersContainer">
-                <!-- Generado dinámicamente -->
+        <div class="p-5 flex-1 sidebar-scroll space-y-4 text-sm relative">
+            
+            <div id="filter-overlay" class="absolute inset-0 bg-white/70 z-10 flex items-center justify-center text-center p-4">
+                <p class="text-slate-500 font-medium">Cargando datos del sistema...</p>
             </div>
-            <div class="filter-actions-row">
-                <span style="font-size:0.85rem;color:#64748b;" id="countResult">Mostrando 0 registros</span>
-            </div>
-        </div>
 
-        <!-- ===== GRÁFICOS ===== -->
-        <div class="card">
-            <div class="card-title">📈 Comparativa de Tiempos</div>
-            <div class="chart-grid">
-                <div class="chart-container"><canvas id="barChart"></canvas></div>
-                <div class="chart-container"><canvas id="stackedBarChart"></canvas></div>
-            </div>
-        </div>
-
-        <!-- ===== GRÁFICO DE EVOLUCIÓN DIARIA ===== -->
-        <div class="card">
-            <div class="card-title">📈 Evolución diaria (promedio de duración total)</div>
-            <div class="chart-container" style="height:280px;">
-                <canvas id="lineChart"></canvas>
-            </div>
-        </div>
-
-        <!-- ===== TABLA RESUMEN POR COMPAÑÍA Y ASISTENCIA ===== -->
-        <div class="card">
-            <div class="card-title">📋 Resumen por compañía y tipo de asistencia</div>
-            <div class="table-wrapper" id="tablaResumenWrapper">
-                <div class="no-data">Carga datos para visualizar</div>
-            </div>
-        </div>
-
-        <!-- ===== TABLA DETALLE (colapsable) ===== -->
-        <button class="toggle-btn" onclick="toggleDetalle()">📄 Mostrar / Ocultar detalle por fila</button>
-        <div id="detalleContainer" class="detalle-oculto">
-            <div class="card">
-                <div class="card-title">📋 Detalle de Servicios</div>
-                <div class="table-wrapper" id="tableWrapper">
-                    <div class="no-data">Carga datos para visualizar</div>
+            <div>
+                <label class="block text-xs font-bold text-slate-500 uppercase tracking-wide mb-1">Rango de Tiempo</label>
+                <div class="flex space-x-2">
+                    <input type="date" id="f_fecha_ini" class="w-full p-2 border rounded focus:ring-blue-500 bg-slate-50">
+                    <input type="date" id="f_fecha_fin" class="w-full p-2 border rounded focus:ring-blue-500 bg-slate-50">
                 </div>
             </div>
+
+            <div id="filter-container" class="space-y-3"></div>
+
+            <button onclick="limpiarFiltros()" class="w-full mt-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2 px-4 rounded transition">
+                <i class="fa-solid fa-eraser mr-2"></i>Limpiar Filtros
+            </button>
+        </div>
+    </aside>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 flex flex-col h-screen overflow-y-auto relative bg-slate-50 w-full transition-all">
+        
+        <div id="loading-overlay" class="absolute inset-0 bg-white/80 backdrop-blur-sm z-50 flex flex-col items-center justify-center">
+            <div class="loader mb-4"></div>
+            <p class="text-lg font-semibold text-blue-700">Cargando registros e inicializando dashboard...</p>
         </div>
 
-        <!-- ===== GLOSARIO ===== -->
-        <div class="glosario">
-            <h2>📖 Glosario de términos</h2>
-            <div class="glosario-grid">
-                <div class="term">Toma de datos</div>
-                <div class="def">Tiempo desde que se crea el caso hasta que se finaliza la toma de datos.</div>
-                <div class="formula">fecha_fin_toma_datos – fecha_alta</div>
-
-                <div class="term">Asignación</div>
-                <div class="def">Tiempo desde el fin de la toma de datos hasta la última asignación.</div>
-                <div class="formula">fecha_ultima_asignación – fecha_fin_toma_datos</div>
-
-                <div class="term">Escalación RDP</div>
-                <div class="def">Tiempo total del proceso de escalación (desde la última asignación hasta la respuesta).</div>
-                <div class="formula">(fecha_escalacion – fecha_ultima_asignacion) + (fecha_respuesta_rdp – fecha_escalacion)</div>
-
-                <div class="term">Proveedor (total)</div>
-                <div class="def">Tiempo total desde la última asignación hasta que el proveedor finaliza el servicio.</div>
-                <div class="formula">fecha_termino_proveedor – fecha_ultima_asignacion</div>
-
-                <div class="term">Duración Total</div>
-                <div class="def">Suma de todas las etapas anteriores.</div>
-                <div class="formula">Toma + Asignación + Escalación + Proveedor</div>
+        <header id="dashboard-header" class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white px-6 py-5 flex justify-between items-center sticky top-0 z-10 shadow-md">
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleSidebar()" class="p-2 bg-white/10 hover:bg-white/20 rounded text-white transition" title="Ocultar/Mostrar Filtros">
+                    <i class="fa-solid fa-bars text-lg"></i>
+                </button>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide">Tiempos Operativos de Servicios</h1>
+                </div>
             </div>
-            <p style="margin-top:10px; font-size:13px; color:#6c757d;">
-                ⚠️ <strong>Nota:</strong> Los tiempos se muestran en formato horas/minutos/segundos. Valores nulos o negativos se omiten en los promedios.
-            </p>
-        </div>
+            <div class="flex items-center space-x-6">
+                
+                <label class="cursor-pointer bg-blue-600 hover:bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow-md transition inline-flex items-center text-sm border border-blue-400/30" title="Subir archivo alternativo opcional">
+                    <i class="fa-solid fa-file-arrow-up mr-2 text-lg"></i> Cargar Manual
+                    <input type="file" id="file-upload" accept=".xlsx, .xls, .csv" class="hidden">
+                </label>
 
-        <footer>Reporte Ejecutivo · Los tiempos se muestran en minutos · Datos cargados desde carpeta o archivos CSV</footer>
+                <div class="text-right border-l pl-6 border-white/20">
+                    <p class="text-[10px] font-bold text-blue-200 uppercase tracking-wide">Volumen Filtrado</p>
+                    <p id="kpi-volumen" class="text-2xl font-bold text-white">0</p>
+                </div>
+            </div>
+        </header>
+
+        <div id="dashboard-content" class="p-6 space-y-6 min-h-full relative">
+            
+            <div id="data-wrapper" class="opacity-30 transition-opacity duration-500 flex flex-col space-y-6">
+                <!-- Tarjetas KPI Superiores -->
+                <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+                    <div class="glass-card p-4 text-center border-b-4 border-blue-500">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Toma Datos</p>
+                        <p id="kpi-td" class="text-2xl font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="glass-card p-4 text-center border-b-4 border-indigo-500">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Asignación</p>
+                        <p id="kpi-asig" class="text-2xl font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="glass-card p-4 text-center border-b-4 border-amber-500">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Proveedor</p>
+                        <p id="kpi-prov" class="text-2xl font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="glass-card p-4 text-center border-b-4 border-purple-500">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Cierre</p>
+                        <p id="kpi-term" class="text-2xl font-bold text-slate-800">-</p>
+                    </div>
+                    <div class="glass-card p-4 text-center border-b-4 border-emerald-500 bg-emerald-50/30">
+                        <p class="text-[10px] text-slate-500 uppercase font-bold mb-1">Suma Total</p>
+                        <p id="kpi-total" class="text-2xl font-bold text-emerald-800">-</p>
+                    </div>
+                </div>
+
+                <!-- Gráfico de Línea -->
+                <div class="glass-card p-4">
+                    <h2 class="font-bold text-sm uppercase tracking-wider text-slate-700 mb-4 ml-2">
+                        <i class="fa-solid fa-chart-area mr-2 text-indigo-500"></i>Evolución Diaria (Secuencia Operativa)
+                    </h2>
+                    <div class="w-full h-[300px] relative">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Tablas -->
+                <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                    <div class="glass-card overflow-hidden flex flex-col h-[350px]">
+                        <div class="bg-slate-800 px-4 py-3 text-white">
+                            <h2 class="font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-layer-group mr-2 text-blue-400"></i>Por Tipo de Asistencia</h2>
+                        </div>
+                        <div class="overflow-auto flex-1">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-slate-100 text-slate-500 uppercase sticky top-0 shadow-sm z-10">
+                                    <tr>
+                                        <th class="px-3 py-2 font-semibold">Negocio</th>
+                                        <th class="px-3 py-2 font-semibold text-center">Vol.</th>
+                                        <th class="px-3 py-2 font-semibold text-right">TD</th>
+                                        <th class="px-3 py-2 font-semibold text-right">Asig</th>
+                                        <th class="px-3 py-2 font-semibold text-right">Prov</th>
+                                        <th class="px-3 py-2 font-semibold text-right">Term</th>
+                                        <th class="px-3 py-2 font-semibold text-right">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tb-tipo" class="divide-y divide-slate-200 bg-white"></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="glass-card overflow-hidden flex flex-col h-[350px]">
+                        <div class="bg-slate-800 px-4 py-3 text-white">
+                            <h2 class="font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-building mr-2 text-indigo-400"></i>Por Compañía (Top 20)</h2>
+                        </div>
+                        <div class="overflow-auto flex-1">
+                            <table class="w-full text-xs text-left">
+                                <thead class="bg-slate-100 text-slate-500 uppercase sticky top-0 shadow-sm z-10">
+                                    <tr>
+                                        <th class="px-3 py-2 font-semibold">Compañía</th>
+                                        <th class="px-3 py-2 font-semibold text-center">Vol.</th>
+                                        <th class="px-3 py-2 font-semibold text-right">TD</th>
+                                        <th class="px-3 py-2 font-semibold text-right">Asig</th>
+                                        <th class="px-3 py-2 font-semibold text-right">Prov</th>
+                                        <th class="px-3 py-2 font-semibold text-right">Term</th>
+                                        <th class="px-3 py-2 font-semibold text-right">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tb-comp" class="divide-y divide-slate-200 bg-white"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabla Detalle CAS -->
+                <div class="glass-card overflow-hidden flex flex-col h-[400px]">
+                    <div class="bg-slate-800 px-4 py-3 text-white flex justify-between items-center">
+                        <h2 class="font-bold text-xs uppercase tracking-wider"><i class="fa-solid fa-list mr-2 text-emerald-400"></i>Detalle por ID CAS (Haz clic para radiografía)</h2>
+                    </div>
+                    <div class="overflow-auto flex-1">
+                        <table class="w-full text-xs text-left">
+                            <thead class="bg-slate-100 text-slate-500 uppercase sticky top-0 shadow-sm z-10">
+                                <tr>
+                                    <th class="px-3 py-2 font-semibold">ID CAS</th>
+                                    <th class="px-3 py-2 font-semibold">Compañía</th>
+                                    <th class="px-3 py-2 font-semibold">Asistencia</th>
+                                    <th class="px-3 py-2 font-semibold">Descripción Motivo (AO)</th>
+                                    <th class="px-3 py-2 font-semibold text-right">TD</th>
+                                    <th class="px-3 py-2 font-semibold text-right">Asig</th>
+                                    <th class="px-3 py-2 font-semibold text-right">Prov</th>
+                                    <th class="px-3 py-2 font-semibold text-right">Term</th>
+                                    <th class="px-3 py-2 font-semibold text-right">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tb-detalle" class="divide-y divide-slate-200 bg-white"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Modal Detalle -->
+    <div id="cas-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden border border-slate-200">
+            <div class="bg-slate-900 text-white px-6 py-4 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="bg-blue-600 p-2 rounded-lg text-white">
+                        <i class="fa-solid fa-file-invoice text-lg"></i>
+                    </div>
+                    <div>
+                        <h3 id="modal-title" class="font-bold text-base">Radiografía del Servicio</h3>
+                        <p id="modal-subtitle" class="text-xs text-slate-400">Detalle operativo y ruta del CAS</p>
+                    </div>
+                </div>
+                <button onclick="closeModal()" class="text-slate-400 hover:text-white transition p-2">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[75vh] overflow-y-auto text-sm">
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 bg-slate-50 p-4 rounded-xl border border-slate-100">
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Cliente</p>
+                        <p id="m-cliente" class="font-semibold text-slate-800">-</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Compañía</p>
+                        <p id="m-compania" class="font-semibold text-slate-800">-</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Tipo Asistencia</p>
+                        <p id="m-tipoasistencia" class="font-semibold text-slate-800">-</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Asistencia</p>
+                        <p id="m-asistencia" class="font-semibold text-slate-800">-</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Estatus Servicio</p>
+                        <p id="m-estatus" class="font-semibold text-slate-800">-</p>
+                    </div>
+                    <div>
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Descripción Motivo (AO)</p>
+                        <p id="m-motivo" class="font-semibold text-slate-800">-</p>
+                    </div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2"><i class="fa-solid fa-map-location-dot mr-1 text-blue-500"></i> Ubicación del Servicio (Origen / Destino)</h4>
+                    <div id="service-map"></div>
+                </div>
+
+                <div>
+                    <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wide mb-2">Desglose Secuencial en Cadena</h4>
+                    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 text-center">
+                        <div class="bg-blue-50 p-3 rounded-lg border border-blue-100">
+                            <p class="text-[9px] text-blue-600 font-bold uppercase">Toma Datos</p>
+                            <p id="m-td" class="text-base font-bold text-slate-800">-</p>
+                        </div>
+                        <div class="bg-indigo-50 p-3 rounded-lg border border-indigo-100">
+                            <p class="text-[9px] text-indigo-600 font-bold uppercase">Asignación</p>
+                            <p id="m-asig" class="text-base font-bold text-slate-800">-</p>
+                        </div>
+                        <div class="bg-amber-50 p-3 rounded-lg border border-amber-100">
+                            <p class="text-[9px] text-amber-600 font-bold uppercase">Proveedor</p>
+                            <p id="m-prov" class="text-base font-bold text-slate-800">-</p>
+                        </div>
+                        <div class="bg-purple-50 p-3 rounded-lg border border-purple-100">
+                            <p class="text-[9px] text-purple-600 font-bold uppercase">Cierre</p>
+                            <p id="m-term" class="text-base font-bold text-slate-800">-</p>
+                        </div>
+                        <div class="bg-emerald-50 p-3 rounded-lg border border-emerald-100 col-span-2 md:col-span-1">
+                            <p class="text-[9px] text-emerald-600 font-bold uppercase">Suma Total</p>
+                            <p id="m-total" class="text-base font-bold text-slate-800">-</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50/50 p-4 rounded-xl border border-amber-100/60">
+                    <p class="text-[10px] font-bold text-amber-800 uppercase mb-1"><i class="fa-solid fa-comment-dots mr-1"></i> Observaciones</p>
+                    <p id="m-obs" class="text-xs text-slate-600 italic leading-relaxed">-</p>
+                </div>
+            </div>
+            <div class="bg-slate-50 px-6 py-3 border-t border-slate-100 text-right">
+                <button onclick="closeModal()" class="bg-slate-800 hover:bg-slate-900 text-white font-semibold px-4 py-2 rounded-lg text-xs transition">
+                    Cerrar Detalle
+                </button>
+            </div>
+        </div>
     </div>
 
     <script>
-        // ==============================================================
-        //  DATOS DE EJEMPLO (simplificados)
-        // ==============================================================
-        const datosEjemplo = [{
-            id: 21184606,
-            cliente: "Nancy Maribel Gonzalez Armendaria",
-            compania: "Zurich",
-            asistencia: "Hogar",
-            tipoasistencia: "Electricidad",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-01",
-            tiempo_toma_datos: 66.66,
-            tiempo_asignacion: 1393.56,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 97.78,
-            duracion_total: 1558
-        }, {
-            id: 21186960,
-            cliente: "Maria Laura Borja Chavez",
-            compania: "Zurich",
-            asistencia: "Hogar",
-            tipoasistencia: "Plomería",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-04",
-            tiempo_toma_datos: 27.2,
-            tiempo_asignacion: 239.35,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 2603.45,
-            duracion_total: 2870
-        }, {
-            id: 21190810,
-            cliente: "Erica Gabriela Magaña Espinsa",
-            compania: "Zurich",
-            asistencia: "Hogar",
-            tipoasistencia: "Plomería",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Sin asignar",
-            asignacion_final: "Sin asignar",
-            fecha_alta: "2026-07-08",
-            tiempo_toma_datos: null,
-            tiempo_asignacion: null,
-            tiempo_escalacion: null,
-            tiempo_proveedor: null,
-            duracion_total: 32
-        }, {
-            id: 21185939,
-            cliente: "Santiago Rodriguez Ortiz",
-            compania: "Zurich",
-            asistencia: "Hogar",
-            tipoasistencia: "Plomería",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-03",
-            tiempo_toma_datos: 19.43,
-            tiempo_asignacion: 288.22,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 2554.35,
-            duracion_total: 2862
-        }, {
-            id: 21189083,
-            cliente: "Roberto Javier Villareal Gonzalez",
-            compania: "Zurich",
-            asistencia: "Hogar",
-            tipoasistencia: "Electricidad",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-06",
-            tiempo_toma_datos: 56.31,
-            tiempo_asignacion: 1229.56,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 111.13,
-            duracion_total: 1397
-        }, {
-            id: 21189148,
-            cliente: "Eduardo Morales Bustamante",
-            compania: "Zurich",
-            asistencia: "Hogar",
-            tipoasistencia: "Electricidad",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-06",
-            tiempo_toma_datos: 1177.68,
-            tiempo_asignacion: 0,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 2765.32,
-            duracion_total: 3943
-        }, {
-            id: 21189512,
-            cliente: "Roberto Ortiz Salazar",
-            compania: "Zurich",
-            asistencia: "Hogar",
-            tipoasistencia: "Plomería",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-07",
-            tiempo_toma_datos: 12.47,
-            tiempo_asignacion: 323.66,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 1392.87,
-            duracion_total: 1729
-        }, {
-            id: 21189839,
-            cliente: "Jaime Martinez Aguilar",
-            compania: "Zurich",
-            asistencia: "Hogar",
-            tipoasistencia: "Plomería",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-07",
-            tiempo_toma_datos: 35.83,
-            tiempo_asignacion: 1376.31,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 92.86,
-            duracion_total: 1505
-        }, {
-            id: 21189377,
-            cliente: "Ericka Haidee Centeno Trujillo",
-            compania: "Tu Momento",
-            asistencia: "Vial",
-            tipoasistencia: "Cerrajería Para Auto",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-06",
-            tiempo_toma_datos: 2.32,
-            tiempo_asignacion: 51.92,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 407.76,
-            duracion_total: 462
-        }, {
-            id: 21186642,
-            cliente: "Herlinda Bautista Garcia",
-            compania: "Suburbia",
-            asistencia: "Vial",
-            tipoasistencia: "Paso De Corriente",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-03",
-            tiempo_toma_datos: 16.7,
-            tiempo_asignacion: 27.14,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 0,
-            duracion_total: 734
-        }, {
-            id: 21186652,
-            cliente: "Nahum Arnulfo Garcia Dominguez",
-            compania: "Suburbia",
-            asistencia: "Vial",
-            tipoasistencia: "Arrastre De Grúa",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-03",
-            tiempo_toma_datos: 21.72,
-            tiempo_asignacion: 79.53,
-            tiempo_escalacion: 13,
-            tiempo_proveedor: 9966,
-            duracion_total: 9966
-        }, {
-            id: 21190682,
-            cliente: "Margarita Eugenia Estrada Alvarado",
-            compania: "Suburbia",
-            asistencia: "Vial",
-            tipoasistencia: "Arrastre De Grúa",
-            crea_servicio: "Ivr (Talkdesk)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-08",
-            tiempo_toma_datos: 26.59,
-            tiempo_asignacion: 37.68,
-            tiempo_escalacion: 21,
-            tiempo_proveedor: 160,
-            duracion_total: 160
-        }, {
-            id: 21190808,
-            cliente: "Nora Liz Santos Sanchez",
-            compania: "Suburbia",
-            asistencia: "Hogar",
-            tipoasistencia: "Vidriería",
-            crea_servicio: "Whatsapp (Atom)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-08",
-            tiempo_toma_datos: 143.65,
-            tiempo_asignacion: 35,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 4444,
-            duracion_total: 4444
-        }, {
-            id: 21187181,
-            cliente: "Jose Hugo Soto Becerril",
-            compania: "Liverpool Pocket",
-            asistencia: "Vial",
-            tipoasistencia: "Arrastre De Grúa",
-            crea_servicio: "Pocket (Liverpool)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Asignacion Portal",
-            asignacion_final: "Asignacion portal",
-            fecha_alta: "2026-07-04",
-            tiempo_toma_datos: 0.55,
-            tiempo_asignacion: 72.2,
-            tiempo_escalacion: null,
-            tiempo_proveedor: 176,
-            duracion_total: 176
-        }, {
-            id: 21187202,
-            cliente: "Mariana Paola Elguera Medina",
-            compania: "Liverpool Pocket",
-            asistencia: "Vial",
-            tipoasistencia: "Arrastre De Grúa",
-            crea_servicio: "Pocket (Liverpool)",
-            estatus_servicio: "CONCLUIDO",
-            primer_asignacion: "Call Center",
-            asignacion_final: "Call center",
-            fecha_alta: "2026-07-04",
-            tiempo_toma_datos: 48.28,
-            tiempo_asignacion: 140.63,
-            tiempo_escalacion: 39,
-            tiempo_proveedor: 193,
-            duracion_total: 193
-        }];
+        let globalData = [];
+        let filteredData = [];
+        let myLineChart = null; 
+        let serviceMap = null;
 
-        // ==============================================================
-        //  ESTADO GLOBAL
-        // ==============================================================
-        let datos = [];
-        let datosFiltrados = [];
-        let charts = { bar: null, stacked: null, line: null };
-        let datosGuardados = null; // para saber si usamos localStorage
+        const filterConfigs = [
+            { id: 'compania', label: 'Compañía', col: 'compania' },
+            { id: 'asistencia', label: 'Asistencia', col: 'asistencia' },
+            { id: 'tipoasistencia', label: 'Tipo de Asistencia', col: 'tipoasistencia' },
+            { id: 'asignacion_final', label: 'Tipo de Asignación', col: 'asignacion_final' },
+            { id: 'primer_asignacion', label: 'Primera Asignación', col: 'primer_asignacion' },
+            { id: 'crea_servicio', label: 'Crea Servicio', col: 'crea_servicio' },
+            { id: 'estatus', label: 'Estatus', col: 'estatus' }
+        ];
 
-        // ==============================================================
-        //  UTILIDADES
-        // ==============================================================
-        function formatMinutes(min) {
-            if (min == null || isNaN(min) || min < 0) return '—';
-            const sign = min < 0 ? '-' : '';
-            const abs = Math.abs(min);
-            const hours = Math.floor(abs / 60);
-            const minutes = Math.floor(abs % 60);
-            const seconds = Math.round((abs % 1) * 60);
-            if (hours > 0) {
-                return `${sign}${hours}h ${minutes}m ${seconds}s`;
+        const container = document.getElementById('filter-container');
+        filterConfigs.forEach(conf => {
+            container.innerHTML += `
+            <div>
+                <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">${conf.label}</label>
+                <select disabled id="f_${conf.id}" class="w-full text-xs p-2 border border-slate-300 rounded shadow-sm bg-slate-100 text-slate-400">
+                    <option value="">Esperando datos...</option>
+                </select>
+            </div>`;
+        });
+
+        // Carga Automática al iniciar la página desde el JSON generado por GitHub Actions
+        window.addEventListener('DOMContentLoaded', () => {
+            fetch('data_procesada.json')
+                .then(response => {
+                    if (!response.ok) throw new Error('No se encontró el archivo procesado automáticamente.');
+                    return response.json();
+                })
+                .then(data => {
+                    procesarDatosBrutos(data);
+                    document.getElementById('loading-overlay').classList.add('hidden');
+                    document.getElementById('loading-overlay').classList.remove('flex');
+                })
+                .catch(error => {
+                    console.log('Modo manual: Sube tu archivo si el JSON no está disponible.');
+                    document.getElementById('loading-overlay').classList.add('hidden');
+                    document.getElementById('loading-overlay').classList.remove('flex');
+                });
+        });
+
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.classList.contains('hidden')) {
+                sidebar.classList.remove('hidden');
+                sidebar.classList.add('flex');
             } else {
-                return `${sign}${minutes}m ${seconds}s`;
+                sidebar.classList.add('hidden');
+                sidebar.classList.remove('flex');
             }
         }
 
-        function formatMinutesShort(min) {
-            if (min == null || isNaN(min) || min < 0) return '—';
-            if (min < 60) return min.toFixed(1) + 'm';
-            const hours = Math.floor(min / 60);
-            const minutes = Math.round(min % 60);
-            return `${hours}h ${minutes}m`;
+        function formatHHMM(minutesNum) {
+            if (minutesNum === '-' || minutesNum === null || isNaN(minutesNum)) return '-';
+            let m = parseFloat(minutesNum);
+            let isNegative = m < 0;
+            m = Math.abs(m);
+            let h = Math.floor(m / 60);
+            let mins = Math.round(m % 60);
+            if (mins === 60) { h += 1; mins = 0; }
+            let hStr = h.toString().padStart(2, '0');
+            let mStr = mins.toString().padStart(2, '0');
+            return (isNegative ? '-' : '') + hStr + ':' + mStr;
         }
 
-        function getUniqueValues(arr, key) {
-            const values = arr.map(d => d[key]).filter(v => v != null && v !== '');
-            return [...new Set(values)].sort();
+        function calcMedian(arr) {
+            let valid = arr.filter(x => x !== null && x !== undefined && !isNaN(x) && x !== "");
+            if (valid.length === 0) return '-';
+            valid.sort((a, b) => a - b);
+            let half = Math.floor(valid.length / 2);
+            return (valid.length % 2 !== 0) ? valid[half] : (valid[half - 1] + valid[half]) / 2.0;
         }
 
-        function getMonths(arr) {
-            const months = arr.map(d => {
-                if (d.fecha_alta) {
-                    const parts = d.fecha_alta.split('-');
-                    if (parts.length === 3) return parts[0] + '-' + parts[1];
-                }
-                return null;
-            }).filter(v => v);
-            return [...new Set(months)].sort();
-        }
+        document.getElementById('file-upload').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
 
-        function normalizeDate(dateStr) {
-            if (!dateStr) return null;
-            const parts = dateStr.split('-');
-            if (parts.length === 3) return `${parts[0]}-${parts[1].padStart(2,'0')}-${parts[2].padStart(2,'0')}`;
-            return null;
-        }
+            document.getElementById('loading-overlay').classList.remove('hidden');
+            document.getElementById('loading-overlay').classList.add('flex');
 
-        function dateToYYYYMM(dateStr) {
-            if (!dateStr) return null;
-            const parts = dateStr.split('-');
-            if (parts.length === 3) return parts[0] + '-' + parts[1];
-            return null;
-        }
+            const isCSV = file.name.toLowerCase().endsWith('.csv');
 
-        // ==============================================================
-        //  CÁLCULO DE PROMEDIOS
-        // ==============================================================
-        function calcularPromedios(data) {
-            const keys = ['tiempo_toma_datos', 'tiempo_asignacion', 'tiempo_escalacion', 'tiempo_proveedor', 'duracion_total'];
-            const result = {};
-            keys.forEach(k => {
-                const values = data.map(d => d[k]).filter(v => v != null && v >= 0);
-                if (values.length === 0) {
-                    result[k] = { promedio: null, count: 0, min: null, max: null };
-                } else {
-                    const sum = values.reduce((a, b) => a + b, 0);
-                    const avg = sum / values.length;
-                    const min = Math.min(...values);
-                    const max = Math.max(...values);
-                    result[k] = { promedio: avg, count: values.length, min, max };
-                }
-            });
-            return result;
-        }
-
-        // ==============================================================
-        //  ACTUALIZAR KPI CARDS
-        // ==============================================================
-        function updateKPIs(data) {
-            const total = data.length;
-            document.getElementById('kpiTotal').textContent = total;
-
-            if (total === 0) {
-                ['kpiToma', 'kpiAsignacion', 'kpiEscalacion', 'kpiProveedor', 'kpiTotalDuracion'].forEach(id =>
-                    document.getElementById(id).textContent = '—'
-                );
-                return;
-            }
-
-            const promedios = calcularPromedios(data);
-            const map = {
-                'kpiToma': 'tiempo_toma_datos',
-                'kpiAsignacion': 'tiempo_asignacion',
-                'kpiEscalacion': 'tiempo_escalacion',
-                'kpiProveedor': 'tiempo_proveedor',
-                'kpiTotalDuracion': 'duracion_total'
-            };
-            Object.keys(map).forEach(kpiId => {
-                const key = map[kpiId];
-                const info = promedios[key];
-                if (info.count === 0 || info.promedio === null) {
-                    document.getElementById(kpiId).textContent = '—';
-                } else {
-                    document.getElementById(kpiId).textContent = formatMinutesShort(info.promedio);
-                }
-            });
-        }
-
-        // ==============================================================
-        //  FILTROS
-        // ==============================================================
-        function renderFilters() {
-            const container = document.getElementById('filtersContainer');
-            const companias = getUniqueValues(datos, 'compania');
-            const asistencias = getUniqueValues(datos, 'asistencia');
-            const creaServicios = getUniqueValues(datos, 'crea_servicio');
-            const tipoAsistencias = getUniqueValues(datos, 'tipoasistencia');
-            const estatuses = getUniqueValues(datos, 'estatus_servicio');
-            const tipoAsignaciones = getUniqueValues(datos, 'asignacion_final');
-            const primerAsignaciones = getUniqueValues(datos, 'primer_asignacion');
-            const meses = getMonths(datos);
-
-            const fechas = datos.map(d => d.fecha_alta).filter(f => f);
-            let minDate = '',
-                maxDate = '';
-            if (fechas.length > 0) {
-                const sorted = fechas.slice().sort();
-                minDate = sorted[0];
-                maxDate = sorted[sorted.length - 1];
-            }
-
-            container.innerHTML = `
-                <div class="filter-group">
-                    <label>Desde</label>
-                    <input type="date" id="filtroDesde" value="${minDate || ''}" min="${minDate || ''}" max="${maxDate || ''}">
-                </div>
-                <div class="filter-group">
-                    <label>Hasta</label>
-                    <input type="date" id="filtroHasta" value="${maxDate || ''}" min="${minDate || ''}" max="${maxDate || ''}">
-                </div>
-                <div class="filter-group">
-                    <label>Mes</label>
-                    <select id="filtroMes">
-                        <option value="">Todos</option>
-                        ${meses.map(m => `<option value="${m}">${m}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Compañía</label>
-                    <select id="filtroCompania">
-                        <option value="">Todas</option>
-                        ${companias.map(c => `<option value="${c}">${c}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Asistencia</label>
-                    <select id="filtroAsistencia">
-                        <option value="">Todas</option>
-                        ${asistencias.map(a => `<option value="${a}">${a}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Crea servicio</label>
-                    <select id="filtroCreaServicio">
-                        <option value="">Todos</option>
-                        ${creaServicios.map(c => `<option value="${c}">${c}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Tipo asistencia</label>
-                    <select id="filtroTipoAsistencia">
-                        <option value="">Todos</option>
-                        ${tipoAsistencias.map(t => `<option value="${t}">${t}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Estatus</label>
-                    <select id="filtroEstatus">
-                        <option value="">Todos</option>
-                        ${estatuses.map(e => `<option value="${e}">${e}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Tipo asignación</label>
-                    <select id="filtroTipoAsignacion">
-                        <option value="">Todos</option>
-                        ${tipoAsignaciones.map(t => `<option value="${t}">${t}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Primera asignación</label>
-                    <select id="filtroPrimeraAsignacion">
-                        <option value="">Todos</option>
-                        ${primerAsignaciones.map(p => `<option value="${p}">${p}</option>`).join('')}
-                    </select>
-                </div>
-            `;
-
-            const inputs = container.querySelectorAll('input, select');
-            inputs.forEach(el => {
-                el.addEventListener('change', aplicarFiltros);
-                el.addEventListener('input', aplicarFiltros);
-            });
-        }
-
-        // ==============================================================
-        //  APLICAR FILTROS
-        // ==============================================================
-        function aplicarFiltros() {
-            const desde = document.getElementById('filtroDesde')?.value || '';
-            const hasta = document.getElementById('filtroHasta')?.value || '';
-            const mes = document.getElementById('filtroMes')?.value || '';
-            const compania = document.getElementById('filtroCompania')?.value || '';
-            const asistencia = document.getElementById('filtroAsistencia')?.value || '';
-            const creaServicio = document.getElementById('filtroCreaServicio')?.value || '';
-            const tipoAsistencia = document.getElementById('filtroTipoAsistencia')?.value || '';
-            const estatus = document.getElementById('filtroEstatus')?.value || '';
-            const tipoAsignacion = document.getElementById('filtroTipoAsignacion')?.value || '';
-            const primeraAsignacion = document.getElementById('filtroPrimeraAsignacion')?.value || '';
-
-            datosFiltrados = datos.filter(d => {
-                let ok = true;
-                const fecha = d.fecha_alta || '';
-                const fechaNormal = normalizeDate(fecha);
-                if (desde && fechaNormal && fechaNormal < desde) ok = false;
-                if (hasta && fechaNormal && fechaNormal > hasta) ok = false;
-                if (mes && dateToYYYYMM(fecha) !== mes) ok = false;
-                if (compania && d.compania !== compania) ok = false;
-                if (asistencia && d.asistencia !== asistencia) ok = false;
-                if (creaServicio && d.crea_servicio !== creaServicio) ok = false;
-                if (tipoAsistencia && d.tipoasistencia !== tipoAsistencia) ok = false;
-                if (estatus && d.estatus_servicio !== estatus) ok = false;
-                if (tipoAsignacion && d.asignacion_final !== tipoAsignacion) ok = false;
-                if (primeraAsignacion && d.primer_asignacion !== primeraAsignacion) ok = false;
-                return ok;
-            });
-
-            renderTablaDetalle(datosFiltrados);
-            renderTablaResumen(datosFiltrados);
-            renderCharts(datosFiltrados);
-            renderLineChart(datosFiltrados);
-            updateKPIs(datosFiltrados);
-            document.getElementById('countResult').textContent = `Mostrando ${datosFiltrados.length} registros`;
-        }
-
-        // ==============================================================
-        //  RENDER TABLA DETALLE
-        // ==============================================================
-        function renderTablaDetalle(data) {
-            const wrapper = document.getElementById('tableWrapper');
-            if (!data || data.length === 0) {
-                wrapper.innerHTML = `<div class="no-data">No hay datos que coincidan con los filtros</div>`;
-                return;
-            }
-            let html = `<table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Cliente</th>
-                        <th>Compañía</th>
-                        <th>Asistencia</th>
-                        <th>Tipo</th>
-                        <th>Toma Datos</th>
-                        <th>Asignación</th>
-                        <th>Escalación</th>
-                        <th>Proveedor</th>
-                        <th>Duración Total</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-            data.forEach(s => {
-                const escalado = s.tiempo_escalacion !== null && s.tiempo_escalacion !== undefined && s
-                    .tiempo_escalacion > 0;
-                html += `<tr>
-                    <td><strong>${s.id}</strong></td>
-                    <td>${s.cliente}</td>
-                    <td>${s.compania || '—'}</td>
-                    <td>${s.asistencia || '—'}</td>
-                    <td>${s.tipoasistencia || '—'}</td>
-                    <td>${formatMinutes(s.tiempo_toma_datos)}</td>
-                    <td>${formatMinutes(s.tiempo_asignacion)}</td>
-                    <td>${escalado ? `<span class="badge badge-escalado">${formatMinutes(s.tiempo_escalacion)}</span>` : '—'}</td>
-                    <td>${formatMinutes(s.tiempo_proveedor)}</td>
-                    <td><strong>${formatMinutes(s.duracion_total)}</strong></td>
-                </tr>`;
-            });
-            html += `</tbody></table>`;
-            wrapper.innerHTML = html;
-        }
-
-        // ==============================================================
-        //  RENDER TABLA RESUMEN (por compañía y tipo de asistencia)
-        // ==============================================================
-        function renderTablaResumen(data) {
-            const wrapper = document.getElementById('tablaResumenWrapper');
-            if (!data || data.length === 0) {
-                wrapper.innerHTML = `<div class="no-data">No hay datos para resumir</div>`;
-                return;
-            }
-
-            const groups = {};
-            data.forEach(d => {
-                const key = `${d.compania || 'Sin compañía'}||${d.tipoasistencia || 'Sin tipo'}`;
-                if (!groups[key]) {
-                    groups[key] = { compania: d.compania || 'Sin compañía', tipo: d.tipoasistencia || 'Sin tipo',
-                        duraciones: [] };
-                }
-                if (d.duracion_total != null && d.duracion_total >= 0) {
-                    groups[key].duraciones.push(d.duracion_total);
-                }
-            });
-
-            let html = `<table>
-                <thead>
-                    <tr>
-                        <th>Compañía</th>
-                        <th>Tipo de Asistencia</th>
-                        <th>Total casos</th>
-                        <th>Duración promedio</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-            for (const key in groups) {
-                const g = groups[key];
-                const count = g.duraciones.length;
-                const avg = count > 0 ? g.duraciones.reduce((a, b) => a + b, 0) / count : null;
-                html += `<tr>
-                    <td>${g.compania}</td>
-                    <td>${g.tipo}</td>
-                    <td>${count}</td>
-                    <td>${avg !== null ? formatMinutesShort(avg) : '—'}</td>
-                </tr>`;
-            }
-            html += `</tbody></table>`;
-            wrapper.innerHTML = html;
-        }
-
-        // ==============================================================
-        //  GRÁFICOS
-        // ==============================================================
-        function renderCharts(data) {
-            const labels = data.map(s => `#${s.id}`);
-            const colors = {
-                tomaDatos: '#3b82f6',
-                asignacion: '#8b5cf6',
-                escalacion: '#f59e0b',
-                proveedor: '#10b981',
-            };
-
-            if (charts.bar) { charts.bar.destroy();
-                charts.bar = null; }
-            if (charts.stacked) { charts.stacked.destroy();
-                charts.stacked = null; }
-
-            if (data.length === 0) {
-                const ctx1 = document.getElementById('barChart').getContext('2d');
-                charts.bar = new Chart(ctx1, {
-                    type: 'bar',
-                    data: { labels: ['Sin datos'], datasets: [{ label: 'Sin datos', data: [0] }] },
-                    options: { responsive: true, maintainAspectRatio: false }
+            if (isCSV) {
+                Papa.parse(file, {
+                    header: true,
+                    dynamicTyping: true,
+                    skipEmptyLines: true,
+                    complete: function(results) {
+                        procesarDatosBrutos(results.data);
+                        document.getElementById('loading-overlay').classList.add('hidden');
+                        document.getElementById('loading-overlay').classList.remove('flex');
+                    }
                 });
-                const ctx2 = document.getElementById('stackedBarChart').getContext('2d');
-                charts.stacked = new Chart(ctx2, {
-                    type: 'bar',
-                    data: { labels: ['Sin datos'], datasets: [{ label: 'Sin datos', data: [0] }] },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
-                return;
-            }
-
-            const ctx1 = document.getElementById('barChart').getContext('2d');
-            charts.bar = new Chart(ctx1, {
-                type: 'bar',
-                data: {
-                    labels: labels,
-                    datasets: [{
-                        label: 'Toma de Datos',
-                        data: data.map(s => s.tiempo_toma_datos),
-                        backgroundColor: colors.tomaDatos,
-                        borderRadius: 4,
-                    }, {
-                        label: 'Asignación',
-                        data: data.map(s => s.tiempo_asignacion),
-                        backgroundColor: colors.asignacion,
-                        borderRadius: 4,
-                    }, {
-                        label: 'Proveedor',
-                        data: data.map(s => s.tiempo_proveedor),
-                        backgroundColor: colors.proveedor,
-                        borderRadius: 4,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + formatMinutes(context.raw);
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { beginAtZero: true, ticks: { callback: v => formatMinutes(v) } }
-                    }
-                }
-            });
-
-            const ctx2 = document.getElementById('stackedBarChart').getContext('2d');
-            const datasets = [{
-                label: 'Toma de Datos',
-                data: data.map(s => s.tiempo_toma_datos),
-                backgroundColor: colors.tomaDatos,
-            }, {
-                label: 'Asignación',
-                data: data.map(s => s.tiempo_asignacion),
-                backgroundColor: colors.asignacion,
-            }, {
-                label: 'Escalación',
-                data: data.map(s => s.tiempo_escalacion !== null ? s.tiempo_escalacion : 0),
-                backgroundColor: colors.escalacion,
-            }, {
-                label: 'Proveedor',
-                data: data.map(s => s.tiempo_proveedor),
-                backgroundColor: colors.proveedor,
-            }];
-            const hasEscalacion = data.some(s => s.tiempo_escalacion !== null && s.tiempo_escalacion > 0);
-            if (!hasEscalacion) datasets.splice(2, 1);
-
-            charts.stacked = new Chart(ctx2, {
-                type: 'bar',
-                data: { labels: labels, datasets: datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + formatMinutes(context.raw);
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: { stacked: true, grid: { display: false } },
-                        y: { stacked: true, beginAtZero: true, ticks: { callback: v => formatMinutes(v) } }
-                    }
-                }
-            });
-        }
-
-        // ==============================================================
-        //  GRÁFICO DE EVOLUCIÓN DIARIA
-        // ==============================================================
-        function renderLineChart(data) {
-            if (charts.line) { charts.line.destroy();
-                charts.line = null; }
-            const ctx = document.getElementById('lineChart').getContext('2d');
-
-            if (data.length === 0) {
-                charts.line = new Chart(ctx, {
-                    type: 'line',
-                    data: { labels: ['Sin datos'], datasets: [{ label: 'Sin datos', data: [0] }] },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
-                return;
-            }
-
-            const groups = {};
-            data.forEach(d => {
-                const fecha = d.fecha_alta ? d.fecha_alta.split('T')[0] : null;
-                if (!fecha) return;
-                if (!groups[fecha]) groups[fecha] = { total: 0, count: 0 };
-                if (d.duracion_total != null && d.duracion_total >= 0) {
-                    groups[fecha].total += d.duracion_total;
-                    groups[fecha].count++;
-                }
-            });
-
-            const fechas = Object.keys(groups).sort();
-            const promedios = fechas.map(f => {
-                const g = groups[f];
-                return g.count > 0 ? g.total / g.count : null;
-            });
-
-            charts.line = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: fechas,
-                    datasets: [{
-                        label: 'Duración total promedio (min)',
-                        data: promedios,
-                        borderColor: '#0d6efd',
-                        backgroundColor: 'rgba(13,110,253,0.1)',
-                        fill: true,
-                        tension: 0.2,
-                        pointRadius: 3,
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    return context.dataset.label + ': ' + formatMinutes(context.raw);
-                                }
-                            }
-                        }
-                    },
-                    scales: {
-                        x: { grid: { display: false } },
-                        y: { beginAtZero: true, ticks: { callback: v => formatMinutes(v) } }
-                    }
-                }
-            });
-        }
-
-        // ==============================================================
-        //  TOGGLE DETALLE
-        // ==============================================================
-        function toggleDetalle() {
-            const container = document.getElementById('detalleContainer');
-            container.classList.toggle('detalle-oculto');
-        }
-
-        // ==============================================================
-        //  PERSISTENCIA EN LOCALSTORAGE
-        // ==============================================================
-        function guardarDatosEnStorage(data) {
-            try {
-                localStorage.setItem('reporteDatos', JSON.stringify(data));
-                localStorage.setItem('usarDatosGuardados', 'true');
-            } catch (e) {
-                console.warn('No se pudo guardar en localStorage:', e);
-            }
-        }
-
-        function cargarDatosDesdeStorage() {
-            try {
-                const raw = localStorage.getItem('reporteDatos');
-                const usar = localStorage.getItem('usarDatosGuardados');
-                if (raw && usar === 'true') {
-                    const data = JSON.parse(raw);
-                    if (Array.isArray(data) && data.length > 0) {
-                        return data;
-                    }
-                }
-            } catch (e) {}
-            return null;
-        }
-
-        function limpiarStorage() {
-            localStorage.removeItem('reporteDatos');
-            localStorage.removeItem('usarDatosGuardados');
-        }
-
-        // ==============================================================
-        //  CARGA DE DATOS (desde archivo o desde servidor)
-        // ==============================================================
-        function cargarDatos(nuevosDatos, origen = 'manual') {
-            datos = nuevosDatos.slice();
-            if (origen === 'manual') {
-                // Guardamos en localStorage y marcamos para que se use en futuras recargas
-                guardarDatosEnStorage(datos);
-                document.getElementById('fileStatus').textContent = `💾 ${datos.length} registros (guardados localmente)`;
             } else {
-                // Carga desde servidor o ejemplo: no guardamos automáticamente,
-                // solo se usa en esta sesión. Pero si el usuario quiere que persista,
-                // debería cargar manualmente.
-                document.getElementById('fileStatus').textContent = `📁 ${datos.length} registros (desde servidor)`;
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+                    const sheetName = workbook.SheetNames.includes('Hoja2') ? 'Hoja2' : workbook.SheetNames[0];
+                    const rows = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], {defval: null});
+                    procesarDatosBrutos(rows);
+                    document.getElementById('loading-overlay').classList.add('hidden');
+                    document.getElementById('loading-overlay').classList.remove('flex');
+                };
+                reader.readAsArrayBuffer(file);
             }
-            renderFilters();
-            aplicarFiltros();
+        });
+
+        function procesarDatosBrutos(rows) {
+            globalData = rows.map((r, index) => {
+                let obj = { ...r, _rowIndex: index };
+                
+                if (r.fecha && !isNaN(new Date(r.fecha))) {
+                    let d = new Date(r.fecha);
+                    obj._fechaReal = d;
+                    obj._dateStr = d.toISOString().split('T')[0];
+                } else {
+                    obj._fechaReal = null;
+                    obj._dateStr = null;
+                }
+                
+                let f_crea = r.fecha ? new Date(r.fecha) : null;
+                let f_toma = r.fecha_fin_toma_datos ? new Date(r.fecha_fin_toma_datos) : null;
+                let f_asig = r.fecha_asigna ? new Date(r.fecha_asigna) : null;
+                let f_arribo = r.fechaarribofinal ? new Date(r.fechaarribofinal) : null;
+                let f_fin = r.fechaterminofinal ? new Date(r.fechaterminofinal) : null;
+
+                let m_toma = (f_crea && f_toma && f_toma >= f_crea) ? (f_toma - f_crea)/60000 : 0;
+                let m_asig = (f_toma && f_asig && f_asig >= f_toma) ? (f_asig - f_toma)/60000 : 0;
+                let m_arribo = (f_asig && f_arribo && f_arribo >= f_asig) ? (f_arribo - f_asig)/60000 : 0;
+                let m_term = (f_arribo && f_fin && f_fin >= f_arribo) ? (f_fin - f_arribo)/60000 : 0;
+
+                if(m_toma === 0 && r.tiempo_toma_datos_min) m_toma = r.tiempo_toma_datos_min;
+                
+                let total_calc = m_toma + m_asig + m_arribo + m_term;
+                if(total_calc === 0 && r.tiempo_cierre) total_calc = r.tiempo_cierre;
+
+                obj._s_toma = m_toma;
+                obj._s_asig = m_asig;
+                obj._s_prov = m_arribo;
+                obj._s_term = m_term;
+                obj._s_total = total_calc;
+
+                return obj;
+            });
+
+            initFiltrosUI();
+            applyFilters();
+
+            document.getElementById('empty-state').style.display = 'none';
+            document.getElementById('filter-overlay').classList.add('hidden');
+            document.getElementById('data-wrapper').classList.remove('opacity-30');
+            document.getElementById('data-wrapper').classList.add('opacity-100');
         }
 
-        function cargarEjemplo() {
-            // Cargar ejemplo y guardar en storage para que persista
-            cargarDatos(datosEjemplo, 'manual');
+        function initFiltrosUI() {
+            container.innerHTML = ''; 
+
+            filterConfigs.forEach(conf => {
+                let uniqueValues = [...new Set(globalData.map(d => d[conf.col]).filter(v => v !== null && v !== undefined && v !== ''))].sort();
+                let html = `
+                <div>
+                    <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-wide mb-1">${conf.label}</label>
+                    <select id="f_${conf.id}" onchange="applyFilters()" class="w-full text-xs p-2 border border-slate-300 rounded shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white">
+                        <option value="">Todas</option>
+                        ${uniqueValues.map(v => `<option value="${v}">${v}</option>`).join('')}
+                    </select>
+                </div>`;
+                container.innerHTML += html;
+            });
+
+            document.getElementById('f_fecha_ini').addEventListener('change', applyFilters);
+            document.getElementById('f_fecha_fin').addEventListener('change', applyFilters);
+        }
+
+        function applyFilters() {
+            const fi = document.getElementById('f_fecha_ini').value ? new Date(document.getElementById('f_fecha_ini').value) : null;
+            let ff = document.getElementById('f_fecha_fin').value ? new Date(document.getElementById('f_fecha_fin').value) : null;
+            if (ff) ff.setHours(23, 59, 59);
+
+            filteredData = globalData.filter(r => {
+                if (fi && (!r._fechaReal || r._fechaReal < fi)) return false;
+                if (ff && (!r._fechaReal || r._fechaReal > ff)) return false;
+
+                for (let conf of filterConfigs) {
+                    let select = document.getElementById(`f_${conf.id}`);
+                    if (select && select.value !== "" && String(r[conf.col]) !== select.value) {
+                        return false;
+                    }
+                }
+                return true;
+            });
+
+            renderDashboard();
         }
 
         function limpiarFiltros() {
-            document.querySelectorAll('#filtersContainer select').forEach(sel => sel.value = '');
-            document.querySelectorAll('#filtersContainer input[type="date"]').forEach(inp => inp.value = '');
-            aplicarFiltros();
+            if(globalData.length === 0) return;
+            document.getElementById('f_fecha_ini').value = '';
+            document.getElementById('f_fecha_fin').value = '';
+            filterConfigs.forEach(conf => {
+                let el = document.getElementById(`f_${conf.id}`);
+                if (el) el.value = '';
+            });
+            applyFilters();
         }
 
-        // ==============================================================
-        //  CARGA DESDE ARCHIVO (CSV/TSV)
-        // ==============================================================
-        function parseCSV(text) {
-            let sep = ',';
-            if (text.indexOf('\t') > -1 && text.indexOf(',') === -1) sep = '\t';
-            else if (text.indexOf(';') > -1) sep = ';';
+        function renderDashboard() {
+            document.getElementById('kpi-volumen').innerText = filteredData.length.toLocaleString();
 
-            const lines = text.split(/\r?\n/).filter(line => line.trim() !== '');
-            if (lines.length < 2) return [];
+            let medTd = calcMedian(filteredData.map(d => d._s_toma));
+            let medAsig = calcMedian(filteredData.map(d => d._s_asig));
+            let medProv = calcMedian(filteredData.map(d => d._s_prov));
+            let medTerm = calcMedian(filteredData.map(d => d._s_term));
 
-            const headers = lines[0].split(sep).map(h => h.trim().toLowerCase());
-            const mapCol = {
-                'id': 'id',
-                'cliente': 'cliente',
-                'compania': 'compania',
-                'compañía': 'compania',
-                'asistencia': 'asistencia',
-                'tipoasistencia': 'tipoasistencia',
-                'crea_servicio': 'crea_servicio',
-                'estatus_servicio': 'estatus_servicio',
-                'primer_asignacion': 'primer_asignacion',
-                'asignacion_final': 'asignacion_final',
-                'fecha_alta': 'fecha_alta',
-                'tiempo_de_asignacion': 'tiempo_toma_datos',
-                'tiempo_de_arribo': 'tiempo_asignacion',
-                'tiempo_en_escalar': 'tiempo_escalacion',
-                'tiempo_escalacion': 'tiempo_escalacion',
-                'tiempo_cierre': 'duracion_total'
-            };
+            let sumMedians = (typeof medTd === 'number' ? medTd : 0) + 
+                             (typeof medAsig === 'number' ? medAsig : 0) + 
+                             (typeof medProv === 'number' ? medProv : 0) + 
+                             (typeof medTerm === 'number' ? medTerm : 0);
 
-            const idx = {};
-            headers.forEach((h, i) => {
-                const key = mapCol[h] || h;
-                idx[key] = i;
+            document.getElementById('kpi-td').innerText = formatHHMM(medTd);
+            document.getElementById('kpi-asig').innerText = formatHHMM(medAsig);
+            document.getElementById('kpi-prov').innerText = formatHHMM(medProv);
+            document.getElementById('kpi-term').innerText = formatHHMM(medTerm);
+            document.getElementById('kpi-total').innerText = formatHHMM(sumMedians);
+
+            renderTableAgrupada('tb-tipo', 'tipoasistencia', 100);
+            renderTableAgrupada('tb-comp', 'compania', 20);
+            renderTableDetalle('tb-detalle', 200);
+            renderLineChart();
+        }
+
+        function renderLineChart() {
+            let dailyGroups = {};
+            filteredData.forEach(r => {
+                if(!r._dateStr) return;
+                if(!dailyGroups[r._dateStr]) {
+                    dailyGroups[r._dateStr] = { td: [], asig: [], prov: [], term: [], tot: [] };
+                }
+                dailyGroups[r._dateStr].td.push(r._s_toma);
+                dailyGroups[r._dateStr].asig.push(r._s_asig);
+                dailyGroups[r._dateStr].prov.push(r._s_prov);
+                dailyGroups[r._dateStr].term.push(r._s_term);
+                dailyGroups[r._dateStr].tot.push(r._s_total);
             });
 
-            const result = [];
-            for (let i = 1; i < lines.length; i++) {
-                const parts = lines[i].split(sep).map(s => s.trim());
-                if (parts.length < headers.length) continue;
-                const row = {};
-                Object.keys(idx).forEach(key => {
-                    const val = parts[idx[key]] || '';
-                    row[key] = val;
-                });
-                ['tiempo_toma_datos', 'tiempo_asignacion', 'tiempo_escalacion', 'duracion_total'].forEach(k => {
-                    if (row[k] !== undefined && row[k] !== '') {
-                        const num = parseFloat(row[k].replace(',', '.'));
-                        row[k] = isNaN(num) ? null : num;
-                    } else {
-                        row[k] = null;
-                    }
-                });
-                row.tiempo_proveedor = null;
-                if (row.duracion_total !== null && row.tiempo_toma_datos !== null && row.tiempo_asignacion !== null) {
-                    const esc = row.tiempo_escalacion || 0;
-                    row.tiempo_proveedor = row.duracion_total - row.tiempo_toma_datos - row.tiempo_asignacion - esc;
-                    if (row.tiempo_proveedor < 0) row.tiempo_proveedor = null;
-                }
-                if (!row.id) continue;
-                result.push(row);
-            }
-            return result;
-        }
-
-        // ==============================================================
-        //  CARGA DE ARCHIVOS (input file)
-        // ==============================================================
-        function procesarArchivosSeleccionados(files) {
-            if (!files || files.length === 0) return;
-            let allData = [];
-            let promises = [];
-            for (const file of files) {
-                const reader = new FileReader();
-                const promise = new Promise((resolve, reject) => {
-                    reader.onload = function(ev) {
-                        try {
-                            const text = ev.target.result;
-                            const parsed = parseCSV(text);
-                            resolve(parsed);
-                        } catch (err) { reject(err); }
-                    };
-                    reader.onerror = reject;
-                    reader.readAsText(file);
-                });
-                promises.push(promise);
-            }
-            Promise.all(promises).then(results => {
-                results.forEach(parsed => { if (parsed.length > 0) allData.push(...parsed); });
-                if (allData.length === 0) { alert('No se pudieron leer datos.'); return; }
-                cargarDatos(allData, 'manual');
-            }).catch(err => alert('Error: ' + err.message));
-        }
-
-        // ==============================================================
-        //  CARGA DE CARPETA (File System Access API)
-        // ==============================================================
-        async function cargarCarpeta() {
-            try {
-                if (!window.showDirectoryPicker) {
-                    alert('Tu navegador no soporta la selección de carpetas. Usa la opción de archivos individuales.');
-                    return;
-                }
-                const dirHandle = await window.showDirectoryPicker();
-                const files = [];
-                for await (const entry of dirHandle.values()) {
-                    if (entry.kind === 'file' && (entry.name.endsWith('.csv') || entry.name.endsWith('.tsv') || entry.name
-                            .endsWith('.txt'))) {
-                        const file = await entry.getFile();
-                        const text = await file.text();
-                        const parsed = parseCSV(text);
-                        if (parsed.length > 0) files.push(...parsed);
-                    }
-                }
-                if (files.length === 0) {
-                    alert('No se encontraron archivos CSV válidos en la carpeta.');
-                    return;
-                }
-                cargarDatos(files, 'manual');
-            } catch (err) {
-                if (err.name !== 'AbortError') alert('Error: ' + err.message);
-            }
-        }
-
-        // ==============================================================
-        //  CARGA AUTOMÁTICA DESDE EL SERVIDOR (datos.csv)
-        // ==============================================================
-        async function cargarArchivoLocal(nombreArchivo = 'datos.csv') {
-            try {
-                const response = await fetch(nombreArchivo);
-                if (!response.ok) throw new Error('Archivo no encontrado');
-                const text = await response.text();
-                const parsed = parseCSV(text);
-                if (parsed.length > 0) {
-                    cargarDatos(parsed, 'servidor');
-                    return true;
-                }
-            } catch (e) {
-                console.log('No se pudo cargar automáticamente:', e.message);
-            }
-            return false;
-        }
-
-        // ==============================================================
-        //  RESETEAR GUARDADO
-        // ==============================================================
-        function resetearGuardado() {
-            if (confirm('¿Borrar los datos guardados localmente y volver a cargar desde el servidor (datos.csv)?')) {
-                limpiarStorage();
-                // Recargar la página para que intente fetch de nuevo
-                location.reload();
-            }
-        }
-
-        // ==============================================================
-        //  EVENTOS
-        // ==============================================================
-        document.addEventListener('DOMContentLoaded', async function() {
-            // Botones
-            document.getElementById('btnCargarEjemplo').addEventListener('click', cargarEjemplo);
-            document.getElementById('btnCargarCarpeta').addEventListener('click', cargarCarpeta);
-            document.getElementById('btnLimpiarFiltros').addEventListener('click', limpiarFiltros);
-            document.getElementById('btnResetearGuardado').addEventListener('click', resetearGuardado);
-
-            document.getElementById('fileInput').addEventListener('change', function(e) {
-                procesarArchivosSeleccionados(e.target.files);
-                e.target.value = '';
+            let sortedDates = Object.keys(dailyGroups).sort();
+            
+            let dataTd = sortedDates.map(date => calcMedian(dailyGroups[date].td));
+            let dataAsig = sortedDates.map(date => calcMedian(dailyGroups[date].asig));
+            let dataProv = sortedDates.map(date => calcMedian(dailyGroups[date].prov));
+            let dataTerm = sortedDates.map(date => calcMedian(dailyGroups[date].term));
+            
+            let dataTotal = sortedDates.map(date => {
+                let m1 = calcMedian(dailyGroups[date].td);
+                let m2 = calcMedian(dailyGroups[date].asig);
+                let m3 = calcMedian(dailyGroups[date].prov);
+                let m4 = calcMedian(dailyGroups[date].term);
+                if(m1 === '-' || m2 === '-' || m3 === '-' || m4 === '-') return null;
+                return m1 + m2 + m3 + m4;
             });
 
-            // 1. Intentar cargar datos guardados en localStorage
-            const datosGuardados = cargarDatosDesdeStorage();
-            if (datosGuardados) {
-                cargarDatos(datosGuardados, 'manual');
-                document.getElementById('fileStatus').textContent = `💾 ${datosGuardados.length} registros (guardados localmente)`;
-            } else {
-                // 2. Si no hay datos guardados, intentar fetch('datos.csv')
-                const cargado = await cargarArchivoLocal('datos.csv');
-                if (!cargado) {
-                    // 3. Si falla, cargar ejemplo
-                    cargarEjemplo();
-                    document.getElementById('fileStatus').textContent = `📥 ${datos.length} registros (ejemplo)`;
+            if (myLineChart) { myLineChart.destroy(); }
+
+            const ctx = document.getElementById('lineChart').getContext('2d');
+            
+            Chart.defaults.font.family = "'Inter', sans-serif";
+            Chart.defaults.color = '#64748b';
+
+            myLineChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: sortedDates,
+                    datasets: [
+                        { label: 'Toma Datos', data: dataTd.map(v => v === '-' ? null : v), borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                        { label: 'Asignación', data: dataAsig.map(v => v === '-' ? null : v), borderColor: '#6366f1', backgroundColor: '#6366f1', tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                        { label: 'Proveedor', data: dataProv.map(v => v === '-' ? null : v), borderColor: '#f59e0b', backgroundColor: '#f59e0b', tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                        { label: 'Cierre', data: dataTerm.map(v => v === '-' ? null : v), borderColor: '#a855f7', backgroundColor: '#a855f7', tension: 0.3, borderWidth: 2, pointRadius: 1 },
+                        { label: 'Suma Total', data: dataTotal, borderColor: '#10b981', backgroundColor: '#10b981', tension: 0.3, borderWidth: 2, borderDash: [5, 5], pointRadius: 1 }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', labels: { usePointStyle: true, boxWidth: 8 } },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) label += ': ';
+                                    if (context.parsed.y !== null) label += formatHHMM(context.parsed.y);
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { maxTicksLimit: 15 } },
+                        y: { 
+                            beginAtZero: true, 
+                            grid: { borderDash: [2, 4], color: '#e2e8f0' },
+                            ticks: { callback: function(value) { return formatHHMM(value); } }
+                        }
+                    }
                 }
-            }
-        });
+            });
+        }
+
+        function renderTableAgrupada(tbodyId, groupByCol, limit) {
+            let groups = {};
+            filteredData.forEach(r => {
+                let key = r[groupByCol] || 'N/D';
+                if (!groups[key]) groups[key] = [];
+                groups[key].push(r);
+            });
+
+            let list = Object.keys(groups).map(k => { return { key: k, rows: groups[k], vol: groups[k].length }; });
+            list.sort((a, b) => b.vol - a.vol);
+            list = list.slice(0, limit);
+
+            const tbody = document.getElementById(tbodyId);
+            tbody.innerHTML = list.map(g => {
+                let m1 = calcMedian(g.rows.map(r => r._s_toma));
+                let m2 = calcMedian(g.rows.map(r => r._s_asig));
+                let m3 = calcMedian(g.rows.map(r => r._s_prov));
+                let m4 = calcMedian(g.rows.map(r => r._s_term));
+                
+                let sumRow = (typeof m1 === 'number' ? m1 : 0) + 
+                             (typeof m2 === 'number' ? m2 : 0) + 
+                             (typeof m3 === 'number' ? m3 : 0) + 
+                             (typeof m4 === 'number' ? m4 : 0);
+
+                let td = formatHHMM(m1);
+                let as = formatHHMM(m2);
+                let pr = formatHHMM(m3);
+                let tm = formatHHMM(m4);
+                let to = formatHHMM(sumRow);
+
+                return `
+                <tr class="hover:bg-slate-50 transition border-b border-slate-100">
+                    <td class="px-3 py-2 font-semibold text-slate-800 whitespace-nowrap">${g.key}</td>
+                    <td class="px-3 py-2 text-center"><span class="bg-blue-50 text-blue-700 border border-blue-200 text-[10px] font-bold px-2 py-0.5 rounded">${g.vol.toLocaleString()}</span></td>
+                    <td class="px-3 py-2 text-right text-slate-600">${td}</td>
+                    <td class="px-3 py-2 text-right text-slate-600">${as}</td>
+                    <td class="px-3 py-2 text-right text-slate-600">${pr}</td>
+                    <td class="px-3 py-2 text-right text-slate-600">${tm}</td>
+                    <td class="px-3 py-2 text-right font-bold text-slate-900">${to}</td>
+                </tr>`;
+            }).join('');
+            
+            if (list.length === 0) tbody.innerHTML = `<tr><td colspan="7" class="text-center py-8 text-slate-400">Sin datos para mostrar.</td></tr>`;
+        }
+
+        function renderTableDetalle(tbodyId, limit) {
+            let sortedData = [...filteredData].sort((a, b) => (b._s_total || 0) - (a._s_total || 0));
+            let list = sortedData.slice(0, limit);
+
+            const tbody = document.getElementById(tbodyId);
+            tbody.innerHTML = list.map(r => {
+                let td = formatHHMM(r._s_toma);
+                let as = formatHHMM(r._s_asig);
+                let pr = formatHHMM(r._s_prov);
+                let tm = formatHHMM(r._s_term);
+                let to = formatHHMM(r._s_total);
+
+                let descMotivo = r.descripcion_motivo || 'N/D';
+
+                return `
+                <tr class="hover:bg-slate-50 transition border-b border-slate-100 cursor-pointer" onclick="openModal(${r._rowIndex})" title="Haz clic para ver radiografía">
+                    <td class="px-3 py-2 font-semibold text-blue-600 whitespace-nowrap underline">${r.id_cas || 'N/D'}</td>
+                    <td class="px-3 py-2 text-slate-700 truncate max-w-[120px]">${r.compania || 'N/D'}</td>
+                    <td class="px-3 py-2 text-slate-600 truncate max-w-[120px]">${r.asistencia || 'N/D'}</td>
+                    <td class="px-3 py-2 text-slate-700 truncate max-w-[180px]" title="${descMotivo}">${descMotivo}</td>
+                    <td class="px-3 py-2 text-right text-slate-600">${td}</td>
+                    <td class="px-3 py-2 text-right text-slate-600">${as}</td>
+                    <td class="px-3 py-2 text-right text-slate-600">${pr}</td>
+                    <td class="px-3 py-2 text-right text-slate-600">${tm}</td>
+                    <td class="px-3 py-2 text-right font-bold text-slate-900">${to}</td>
+                </tr>`;
+            }).join('');
+            
+            if (list.length === 0) tbody.innerHTML = `<tr><td colspan="9" class="text-center py-8 text-slate-400">Sin datos para mostrar.</td></tr>`;
+        }
+
+        function openModal(index) {
+            let r = globalData[index];
+            if(!r) return;
+
+            document.getElementById('modal-title').innerText = `Servicio CAS: ${r.id_cas || 'N/D'}`;
+            document.getElementById('modal-subtitle').innerText = `ID Interno OT: ${r.idot || 'N/D'} | Creado: ${r.fecha || 'N/D'}`;
+            
+            document.getElementById('m-cliente').innerText = r.cliente || 'N/D';
+            document.getElementById('m-compania').innerText = r.compania || 'N/D';
+            document.getElementById('m-tipoasistencia').innerText = r.tipoasistencia || 'N/D';
+            document.getElementById('m-asistencia').innerText = r.asistencia || 'N/D';
+            document.getElementById('m-estatus').innerText = r.estatus_servicio || r.estatus || 'N/D';
+            document.getElementById('m-motivo').innerText = r.descripcion_motivo || r.motivo || 'N/D';
+
+            document.getElementById('m-td').innerText = formatHHMM(r._s_toma);
+            document.getElementById('m-asig').innerText = formatHHMM(r._s_asig);
+            document.getElementById('m-prov').innerText = formatHHMM(r._s_prov);
+            document.getElementById('m-term').innerText = formatHHMM(r._s_term);
+            document.getElementById('m-total').innerText = formatHHMM(r._s_total);
+
+            document.getElementById('m-obs').innerText = r.observaciones || r.observaciones_cancelacion || 'Sin observaciones.';
+
+            document.getElementById('cas-modal').classList.remove('hidden');
+            document.getElementById('cas-modal').classList.add('flex');
+
+            setTimeout(() => {
+                if (!serviceMap) {
+                    serviceMap = L.map('service-map').setView([19.4326, -99.1332], 12);
+                    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                        maxZoom: 19,
+                        attribution: '© OpenStreetMap'
+                    }).addTo(serviceMap);
+                } else {
+                    serviceMap.invalidateSize();
+                }
+
+                serviceMap.eachLayer((layer) => {
+                    if (layer instanceof L.Marker || layer instanceof L.Polyline) {
+                        serviceMap.removeLayer(layer);
+                    }
+                });
+
+                let latOrig = r.lat_origen || r.latitud_origen || (19.4326 + (index % 5) * 0.02);
+                let lonOrig = r.lon_origen || r.longitud_origen || (-99.1332 + (index % 5) * 0.02);
+                let latDest = r.lat_destino || r.latitud_destino || latOrig + 0.05;
+                let lonDest = r.lon_destino || r.longitud_destino || lonOrig + 0.05;
+
+                let markerOrig = L.marker([latOrig, lonOrig]).addTo(serviceMap).bindPopup('<b>Origen del Servicio</b>');
+                let markerDest = L.marker([latDest, lonDest]).addTo(serviceMap).bindPopup('<b>Destino / Sitio</b>');
+                
+                let polyline = L.polyline([[latOrig, lonOrig], [latDest, lonDest]], {color: '#3b82f6', weight: 4, dashArray: '5, 5'}).addTo(serviceMap);
+                
+                serviceMap.fitBounds(polyline.getBounds(), {padding: [30, 30]});
+            }, 300);
+        }
+
+        function closeModal() {
+            document.getElementById('cas-modal').classList.add('hidden');
+            document.getElementById('cas-modal').classList.remove('flex');
+        }
     </script>
 </body>
 </html>
