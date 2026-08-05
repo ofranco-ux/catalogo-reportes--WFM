@@ -12,7 +12,8 @@
         { "nombre": "Perks Up", "url": "https://datastudio.google.com/reporting/a51dc951-2f02-43b3-ab8f-0165ae61b985/page/p_yg2o7u6w1d", "icono": "🎯" },
         { "nombre": "FCR & CSAT", "url": "https://datastudio.google.com/reporting/697c96d0-7d1b-44d4-ae68-deb8eddf9cf7/page/p_9dy8uzr00d", "icono": "⭐" },
         { "nombre": "Llamadas por agente", "url": "https://datastudio.google.com/s/tVTnsp3bJSI", "icono": "📞" },
-        { "nombre": "Reporte de incidencias", "url": "https://docs.google.com/forms/d/1IQlCiCUWeEcNkJ6xlDVlOHP83ZTRNwqX8nNC-2ulu4Y/edit#responses", "icono": "📝" }
+        { "nombre": "Reporte de incidencias", "url": "https://docs.google.com/forms/d/1IQlCiCUWeEcNkJ6xlDVlOHP83ZTRNwqX8nNC-2ulu4Y/edit#responses", "icono": "📝" },
+        { "nombre": "Indicadores retenciones", "url": "https://datastudio.google.com/reporting/e12d9856-0083-40db-bed8-14bc36325213/page/mdc5F", "icono": "📊" }
       ]
     },
     "Servicios": {
@@ -52,7 +53,8 @@
       "descripcion": "Reportes del área de ventas y rendimiento comercial.",
       "reportes": [
         { "nombre": "Ventas por agente", "url": "https://datastudio.google.com/reporting/fc7fd1aa-c7cb-4fb0-ad2c-cf1b4efe7eff/page/p_igtp01pz5d", "icono": "💰" },
-        { "nombre": "Reporte de incidencias", "url": "https://docs.google.com/forms/d/1IQlCiCUWeEcNkJ6xlDVlOHP83ZTRNwqX8nNC-2ulu4Y/edit#responses", "icono": "📝" }
+        { "nombre": "Reporte de incidencias", "url": "https://docs.google.com/forms/d/1IQlCiCUWeEcNkJ6xlDVlOHP83ZTRNwqX8nNC-2ulu4Y/edit#responses", "icono": "📝" },
+        { "nombre": "Reporte de ventas", "url": "https://datastudio.google.com/reporting/e12d9856-0083-40db-bed8-14bc36325213/page/mdc5F", "icono": "📊" }
       ]
     }
   }
