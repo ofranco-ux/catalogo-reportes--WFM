@@ -92,7 +92,8 @@
                     { "nombre": "Llamadas por agente", "url": "https://datastudio.google.com/s/tVTnsp3bJSI", "icono": "📞" },
                     { "nombre": "Tracking Servicios", "url": "Seguimiento Servicios.html", "icono": "📋", "local": true },
                     { "nombre": "Tiempos de servicio", "url": "Tiempos de servicios.html", "icono": "📋", "local": true },
-                    { "nombre": "Tiempos de servicio RT", "url": "Seguimiento Servicios RT.html", "icono": "📋", "local": true }
+                    { "nombre": "Tiempos de servicio RT", "url": "Seguimiento Servicios RT.html", "icono": "📋", "local": true },
+                    { "nombre": "Reporte de incidencias", "url": "https://docs.google.com/forms/d/1IQlCiCUWeEcNkJ6xlDVlOHP83ZTRNwqX8nNC-2ulu4Y/edit#responses", "icono": "📝" }
                 ]
             }
         }
@@ -138,7 +139,6 @@
                 data = fallbackData;
             }
 
-            // ---- CORRECCIÓN: Se asignan las categorías directamente sin aplicar filtros de exclusión ----
             categorias = data.categorias;
             
             renderMenu();
@@ -146,7 +146,6 @@
             
         } catch (error) {
             console.error('Error crítico:', error);
-            // Último recurso: usar fallback aunque haya error
             if (Object.keys(categorias).length === 0) {
                 categorias = fallbackData.categorias;
                 renderMenu();
@@ -197,10 +196,19 @@
 
         const html = data.reportes.map(r => {
             const esLocal = r.local || (r.url && r.url.startsWith('file://'));
+            const esForm = r.url && r.url.includes('docs.google.com/forms');
             const target = esLocal ? '_self' : '_blank';
             const rel = esLocal ? '' : 'rel="noopener noreferrer"';
             const badgeClase = esLocal ? 'local' : '';
-            const badgeTexto = esLocal ? '📂 Local' : '🌐 Looker Studio';
+            
+            // Determinar texto de la etiqueta
+            let badgeTexto = '🌐 Looker Studio';
+            if (esLocal) {
+                badgeTexto = '📂 Local';
+            } else if (esForm) {
+                badgeTexto = '📝 Google Forms';
+            }
+
             const botonClase = esLocal ? 'local' : '';
 
             return `
