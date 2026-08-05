@@ -11,7 +11,8 @@
         { "nombre": "Indicadores por hora", "url": "https://datastudio.google.com/s/kFX5PQJuLdM", "icono": "🕐" },
         { "nombre": "Perks Up", "url": "https://datastudio.google.com/reporting/a51dc951-2f02-43b3-ab8f-0165ae61b985/page/p_yg2o7u6w1d", "icono": "🎯" },
         { "nombre": "FCR & CSAT", "url": "https://datastudio.google.com/reporting/697c96d0-7d1b-44d4-ae68-deb8eddf9cf7/page/p_9dy8uzr00d", "icono": "⭐" },
-        { "nombre": "Llamadas por agente", "url": "https://datastudio.google.com/s/tVTnsp3bJSI", "icono": "📞" }
+        { "nombre": "Llamadas por agente", "url": "https://datastudio.google.com/s/tVTnsp3bJSI", "icono": "📞" },
+        { "nombre": "Reporte de Incidencias", "url": "https://docs.google.com/forms/d/1IQlCiCUWeEcNkJ6xlDVlOHP83ZTRNwqX8nNC-2ulu4Y/edit#responses", "icono": "📝" }
       ]
     },
     "Servicios": {
@@ -27,7 +28,8 @@
         { "nombre": "Rellamado", "url": "https://datastudio.google.com/reporting/671b554b-490e-41fb-a7e1-388b80bd26e7", "icono": "🔄" },
         { "nombre": "Llamadas por agente", "url": "https://datastudio.google.com/s/tVTnsp3bJSI", "icono": "📞" },
         { "nombre": "Tracking Servicios", "url": "Seguimiento Servicios.html", "icono": "📋", "local": true },
-        { "nombre": "Tiempos de servicio", "url": "Tiempos de servicios.html", "icono": "📋", "local": true }
+        { "nombre": "Tiempos de servicio", "url": "Tiempos de servicios.html", "icono": "📋", "local": true },
+        { "nombre": "Reporte de Incidencias", "url": "https://docs.google.com/forms/d/1IQlCiCUWeEcNkJ6xlDVlOHP83ZTRNwqX8nNC-2ulu4Y/edit#responses", "icono": "📝" }
       ]
     },
     "Hexalud": {
@@ -40,14 +42,16 @@
         { "nombre": "Llamadas cortadas", "url": "https://datastudio.google.com/reporting/5caf4a3e-3f04-4f23-a558-11220ee4e875", "icono": "📞" },
         { "nombre": "Indicadores por hora", "url": "https://datastudio.google.com/s/kFX5PQJuLdM", "icono": "🕐" },
         { "nombre": "FCR & CSAT", "url": "https://datastudio.google.com/reporting/697c96d0-7d1b-44d4-ae68-deb8eddf9cf7/page/p_9dy8uzr00d", "icono": "⭐" },
-        { "nombre": "Llamadas por agente", "url": "https://datastudio.google.com/s/tVTnsp3bJSI", "icono": "📞" }
+        { "nombre": "Llamadas por agente", "url": "https://datastudio.google.com/s/tVTnsp3bJSI", "icono": "📞" },
+        { "nombre": "Reporte de Incidencias", "url": "https://docs.google.com/forms/d/1IQlCiCUWeEcNkJ6xlDVlOHP83ZTRNwqX8nNC-2ulu4Y/edit#responses", "icono": "📝" }
       ]
     },
     "Ventas": {
       "icono": "💰",
       "descripcion": "Reportes del área de ventas y rendimiento comercial.",
       "reportes": [
-        { "nombre": "Ventas por agente", "url": "https://datastudio.google.com/reporting/fc7fd1aa-c7cb-4fb0-ad2c-cf1b4efe7eff/page/p_igtp01pz5d", "icono": "💰" }
+        { "nombre": "Ventas por agente", "url": "https://datastudio.google.com/reporting/fc7fd1aa-c7cb-4fb0-ad2c-cf1b4efe7eff/page/p_igtp01pz5d", "icono": "💰" },
+        { "nombre": "RReporte de Incidencias", "url": "https://docs.google.com/forms/d/1IQlCiCUWeEcNkJ6xlDVlOHP83ZTRNwqX8nNC-2ulu4Y/edit#responses", "icono": "📝" }
       ]
     }
   }
