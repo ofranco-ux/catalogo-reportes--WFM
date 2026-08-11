@@ -4,7 +4,7 @@
       "icono": "🛡️",
       "descripcion": "Reportes de gestión de retenciones y métricas asociadas.",
       "reportes": [
-        { "nombre": "Histórico indicadores", "url": "https://datastudio.google.com/reporting/dd6e412f-60c5-4129-af9e-5e8fee95400c", "icono": "📈" },
+        { "nombre": "Indicadores", "url": "https://datastudio.google.com/reporting/156eeb53-9e7d-4791-8614-3ef3691b8d26", "icono": "📈" },
         { "nombre": "Tipificaciones", "url": "https://datastudio.google.com/reporting/53bc61d9-54d9-4433-86ed-32a91243d68a", "icono": "🏷️" },
         { "nombre": "AHT", "url": "https://datastudio.google.com/reporting/f1d96beb-1f1b-4a65-a047-163f63301904", "icono": "⏱️" },
         { "nombre": "Llamadas cortadas", "url": "https://datastudio.google.com/reporting/5caf4a3e-3f04-4f23-a558-11220ee4e875", "icono": "📞" },
