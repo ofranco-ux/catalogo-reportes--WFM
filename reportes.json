@@ -6,7 +6,7 @@
       "reportes": [
         { "nombre": "Indicadores", "url": "https://datastudio.google.com/reporting/156eeb53-9e7d-4791-8614-3ef3691b8d26", "icono": "📈" },
         { "nombre": "Tipificaciones", "url": "https://datastudio.google.com/reporting/f2059077-ac29-4def-87bd-d94346cf08cb", "icono": "🏷️" },
-        { "nombre": "AHT", "url": "https://datastudio.google.com/reporting/f1d96beb-1f1b-4a65-a047-163f63301904", "icono": "⏱️" },
+        { "nombre": "AHT", "url": "https://datastudio.google.com/reporting/e52e48d7-7fa8-4899-a6df-801226b6187c", "icono": "⏱️" },
         { "nombre": "Llamadas cortadas", "url": "https://datastudio.google.com/reporting/5caf4a3e-3f04-4f23-a558-11220ee4e875", "icono": "📞" },
         { "nombre": "Indicadores por hora", "url": "https://datastudio.google.com/s/kFX5PQJuLdM", "icono": "🕐" },
         { "nombre": "Perks Up", "url": "https://datastudio.google.com/reporting/a51dc951-2f02-43b3-ab8f-0165ae61b985/page/p_yg2o7u6w1d", "icono": "🎯" },
