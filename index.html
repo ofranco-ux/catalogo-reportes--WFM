@@ -3,80 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>WFM | Portal de Reportes Promass</title>
+    <title>WFM | Portal de Reportes Grupo Promass</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
+            --bg-dark: #0a0f1d;
+            --card-bg: rgba(18, 26, 47, 0.75);
+            --card-border: rgba(255, 255, 255, 0.08);
             --promass-blue: #003865;
-            --promass-yellow: #EAB308;
-            --bg: #f8fafc;
-            --surface: #ffffff;
-            --border: #e2e8f0;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --hover-bg: #f1f5f9;
+            --promass-cyan: #38bdf8;
+            --promass-gold: #EAB308;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --btn-bg: rgba(255, 255, 255, 0.03);
+            --btn-hover: rgba(56, 189, 248, 0.12);
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg);
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(0, 56, 101, 0.4) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(234, 179, 8, 0.15) 0%, transparent 40%);
+            background-attachment: fixed;
             color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* Top Header */
+        /* Header Ejecutivo */
         header {
-            background: var(--surface);
-            border-bottom: 1px solid var(--border);
-            padding: 16px 32px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+            background: rgba(10, 15, 29, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--card-border);
+            padding: 20px 32px;
+            position: sticky;
+            top: 0;
+            z-index: 50;
         }
 
-        .brand {
+        .header-content {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-container {
             display: flex;
             align-items: center;
             gap: 20px;
         }
 
-        .logo {
-            height: 38px;
+        .svg-logo {
+            height: 44px;
             width: auto;
-            object-fit: contain;
         }
 
-        .divider {
-            width: 1px;
-            height: 28px;
-            background: var(--border);
+        .header-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+            border-left: 1px solid var(--card-border);
+            padding-left: 20px;
         }
 
-        .title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--promass-blue);
-            letter-spacing: -0.01em;
+        .header-title span {
+            color: var(--promass-gold);
         }
 
-        .title span {
-            color: var(--promass-yellow);
-        }
-
-        /* Main Grid */
+        /* Grid Principal */
         main {
-            max-width: 1200px;
-            margin: 40px auto;
+            max-width: 1280px;
+            margin: 48px auto;
             padding: 0 24px;
             width: 100%;
             flex: 1;
@@ -84,166 +94,210 @@
 
         .grid {
             display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 28px;
         }
 
-        .panel {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 24px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        /* Tarjetas de Operación (Glassmorphism) */
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        .panel-header {
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #003865, var(--promass-gold));
+        }
+
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+        }
+
+        .card-header {
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding-bottom: 14px;
-            margin-bottom: 16px;
-            border-bottom: 2px solid var(--promass-blue);
+            gap: 12px;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid var(--card-border);
         }
 
-        .panel-header.hexalud {
-            border-bottom-color: var(--promass-yellow);
+        .card-icon {
+            font-size: 1.5rem;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .panel-title {
-            font-size: 1rem;
+        .card-title {
+            font-size: 1.15rem;
             font-weight: 700;
-            color: var(--promass-blue);
+            color: var(--text-main);
+            letter-spacing: -0.01em;
         }
 
+        /* Lista de Reportes */
         .report-list {
+            list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            gap: 10px;
         }
 
         .report-btn {
             width: 100%;
-            padding: 11px 14px;
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            background: var(--surface);
+            padding: 12px 16px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: var(--btn-bg);
             color: var(--text-main);
-            font-family: inherit;
-            font-size: 0.875rem;
-            font-weight: 500;
+            font-size: 0.925rem;
+            font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            transition: all 0.15s ease;
+            transition: all 0.2s ease;
         }
 
         .report-btn:hover {
-            background: var(--hover-bg);
-            border-color: var(--promass-blue);
-            color: var(--promass-blue);
+            background: var(--btn-hover);
+            border-color: rgba(56, 189, 248, 0.4);
+            color: var(--promass-cyan);
+            transform: translateX(4px);
         }
 
-        .report-label {
+        .report-info {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 10px;
+        }
+
+        .report-icon {
+            font-size: 1rem;
+            opacity: 0.8;
         }
 
         .arrow {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            transition: transform 0.15s ease;
+            font-size: 0.85rem;
+            opacity: 0.4;
+            transition: transform 0.2s ease, opacity 0.2s ease;
         }
 
         .report-btn:hover .arrow {
+            opacity: 1;
             transform: translateX(3px);
-            color: var(--promass-blue);
+            color: var(--promass-cyan);
         }
 
         footer {
             text-align: center;
             padding: 24px;
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border);
-            background: var(--surface);
+            font-size: 0.85rem;
+            color: var(--text-sub);
+            border-top: 1px solid var(--card-border);
             margin-top: auto;
+            background: rgba(10, 15, 29, 0.9);
         }
 
-        @media (max-width: 900px) {
+        @media (max-width: 768px) {
+            .header-title {
+                display: none;
+            }
             .grid {
                 grid-template-columns: 1fr;
-            }
-            header {
-                padding: 16px;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 12px;
-            }
-            .divider {
-                display: none;
             }
         }
     </style>
 </head>
 <body>
 
+    <!-- Header con Logo Oficial SVG Integrado -->
     <header>
-        <div class="brand">
-            <img class="logo" src="https://i.ibb.co/L5B7dKg/logo-promass.png" alt="Grupo Promass" onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ofranco-ux/catalogo-reportes--WFM/main/logo.png';">
-            <div class="divider"></div>
-            <div class="title">Catálogo de <span>Reportes WFM</span></div>
+        <div class="header-content">
+            <div class="brand-container">
+                <svg class="svg-logo" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M48.5 22L72 38.5V22L48.5 22Z" fill="#38bdf8"/>
+                    <path d="M48.5 22L25 38.5H72L48.5 22Z" fill="#38bdf8"/>
+                    <path d="M72 38.5L95.5 55H72V38.5Z" fill="#EAB308"/>
+                    <path d="M25 38.5C25 38.5 25 68 48.5 68C72 68 72 97.5 72 97.5H25" stroke="#38bdf8" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M72 97.5L48.5 114V97.5H72Z" fill="#38bdf8"/>
+                    <path d="M48.5 114L25 97.5H72L48.5 114Z" fill="#38bdf8"/>
+                    <text x="110" y="58" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" fill="#ffffff" letter-spacing="3" transform="rotate(-90 110 58)">GRUPO</text>
+                    <text x="125" y="66" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="48" fill="#ffffff" letter-spacing="-1">PRO</text>
+                    <text x="228" y="66" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="48" fill="#EAB308" letter-spacing="-1">MASS</text>
+                    <text x="126" y="94" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#94a3b8" letter-spacing="0.2">Acelerando el potencial de tu negocio</text>
+                </svg>
+                <div class="header-title">Catálogo de <span>Reportes WFM</span></div>
+            </div>
         </div>
     </header>
 
+    <!-- Contenedor Principal de Tarjetas -->
     <main>
         <div class="grid" id="app-container">
-            <!-- Renderizado dinámico -->
         </div>
     </main>
 
     <footer>
-        &copy; 2026 Grupo Promass — Workforce Management
+        &copy; 2026 Grupo Promass — Workforce Management System
     </footer>
 
     <script>
         const catalogo = [
             {
                 "nombre": "Reportería Servicios",
-                "clase": "",
+                "icono": "⚙️",
                 "reportes": [
-                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxvw5X6dnlMKs793MbaH7DhHJShI_UaT-KpoY750Tdmjz0ynuWeiTUGbgM5_mC9-0vu/exec" },
-                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyg_eGGfy9h_cVQXbYVccR5xVyEtdgcLrDBvw1s2-IS7jaL7IYICCLhJlMfrA6Wa4DM/exec" },
-                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzwyLe7wJYHogvapa1acoHQcZvFhfkFwcZniPn4CBOpVlxXiOEgdfqRvPlusPxic-Y2/exec" },
-                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbx8VMVE3oq4Y4SFHA5281OqthmdWUa178-4YsDbC8b4ZqoL6Kf0_GjWZGxT0__bIsKY4Q/exec" },
-                    { "nombre": "Rellamado", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxabTH7Fy3Xtdbp_rz7UDE8mQ-KT9WBwRGNirISeiDoopXlfrc4yFrOOQAToTg59mA4/exec" },
-                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbye6D2JFZpjm0SdDXJWx2lvvDBHy68lqweC0Dwb_pDktIUGLN9pXAqas36kcq5z4FgY/exec" },
-                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/" }
+                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxvw5X6dnlMKs793MbaH7DhHJShI_UaT-KpoY750Tdmjz0ynuWeiTUGbgM5_mC9-0vu/exec", "ico": "📈" },
+                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyg_eGGfy9h_cVQXbYVccR5xVyEtdgcLrDBvw1s2-IS7jaL7IYICCLhJlMfrA6Wa4DM/exec", "ico": "⏱️" },
+                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzwyLe7wJYHogvapa1acoHQcZvFhfkFwcZniPn4CBOpVlxXiOEgdfqRvPlusPxic-Y2/exec", "ico": "🏷️" },
+                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbx8VMVE3oq4Y4SFHA5281OqthmdWUa178-4YsDbC8b4ZqoL6Kf0_GjWZGxT0__bIsKY4Q/exec", "ico": "📋" },
+                    { "nombre": "Rellamado", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxabTH7Fy3Xtdbp_rz7UDE8mQ-KT9WBwRGNirISeiDoopXlfrc4yFrOOQAToTg59mA4/exec", "ico": "🔄" },
+                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbye6D2JFZpjm0SdDXJWx2lvvDBHy68lqweC0Dwb_pDktIUGLN9pXAqas36kcq5z4FgY/exec", "ico": "📞" },
+                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
                 ]
             },
             {
                 "nombre": "Reportería Retenciones y Experiencias",
-                "clase": "",
+                "icono": "🛡️",
                 "reportes": [
-                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyC-QnyZzMwi5JNghf3jnS66-ZzhLJAxkjD6m6Fp-U6VsBHSVWitp9GrQjqs2jlCts3hw/exec" },
-                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwbsBN-VMxiym7t_zZ67POkq_h4A-IN8MNDfKlOsqSLybo6QGP9DKrfUZubLhtyL2PS/exec" },
-                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbys-6Ji7InYvgGkqiUhMoYxh0xq24_WCeumof6Z14OTZiC9Mz38NE3_2r_VRTkD-xLX/exec" },
-                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxlsyjwF5iuE-jkkvZb-8BYNmKDEUe6agWN2a2bMmFbMPGXv_a7-J-ayA2iBINmwj4Aww/exec" },
-                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbylDqEzlwHW-lrNCaHXjcQ9kAQCVtY9DCVYV_S0Fq-7l2_iiRWkOLf0DIr2eSkChQzA-g/exec" },
-                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/" }
+                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyC-QnyZzMwi5JNghf3jnS66-ZzhLJAxkjD6m6Fp-U6VsBHSVWitp9GrQjqs2jlCts3hw/exec", "ico": "📈" },
+                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwbsBN-VMxiym7t_zZ67POkq_h4A-IN8MNDfKlOsqSLybo6QGP9DKrfUZubLhtyL2PS/exec", "ico": "⏱️" },
+                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbys-6Ji7InYvgGkqiUhMoYxh0xq24_WCeumof6Z14OTZiC9Mz38NE3_2r_VRTkD-xLX/exec", "ico": "🏷️" },
+                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxlsyjwF5iuE-jkkvZb-8BYNmKDEUe6agWN2a2bMmFbMPGXv_a7-J-ayA2iBINmwj4Aww/exec", "ico": "📋" },
+                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbylDqEzlwHW-lrNCaHXjcQ9kAQCVtY9DCVYV_S0Fq-7l2_iiRWkOLf0DIr2eSkChQzA-g/exec", "ico": "📞" },
+                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
                 ]
             },
             {
                 "nombre": "Reportería Hexalud",
-                "clase": "hexalud",
+                "icono": "🩺",
                 "reportes": [
-                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzCLeSWTi6NW7RDNCP9rKG_rNvM-HUwKNUBwBqVQcZHBUN8DGnsduv7cPvf_6H5jEf9NQ/exec" },
-                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyqwSzb-HRi1UGl_Kc0xJyoThqs4Av-rsd9V8YMiH1CMSlXbFTWB-f5piEwkIfzVa_c/exec" },
-                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwZ3sxJOuhK3u5Rcx5oTUFwQpN3odvfM_I_N9r9JrNFop_LcUgmUs3ppPLeSgnPuTBs/exec" },
-                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz2IVH8kP0H3zSLLyFGea5nhzR-x8dzpvDgbNUC3VxSuLwhsbyJBw6i87aOFjfzUXsB/exec" },
-                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz_3p9IArAst7Yop4MBvABfabGTG6cpVpMtG1kw1szoscDgVSZNxHOds0V_s4LiON5WGA/exec" },
-                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/" }
+                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzCLeSWTi6NW7RDNCP9rKG_rNvM-HUwKNUBwBqVQcZHBUN8DGnsduv7cPvf_6H5jEf9NQ/exec", "ico": "📈" },
+                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyqwSzb-HRi1UGl_Kc0xJyoThqs4Av-rsd9V8YMiH1CMSlXbFTWB-f5piEwkIfzVa_c/exec", "ico": "⏱️" },
+                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwZ3sxJOuhK3u5Rcx5oTUFwQpN3odvfM_I_N9r9JrNFop_LcUgmUs3ppPLeSgnPuTBs/exec", "ico": "🏷️" },
+                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz2IVH8kP0H3zSLLyFGea5nhzR-x8dzpvDgbNUC3VxSuLwhsbyJBw6i87aOFjfzUXsB/exec", "ico": "📋" },
+                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz_3p9IArAst7Yop4MBvABfabGTG6cpVpMtG1kw1szoscDgVSZNxHOds0V_s4LiON5WGA/exec", "ico": "📞" },
+                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
                 ]
             }
         ];
@@ -258,21 +312,27 @@
 
             catalogo.forEach(op => {
                 let html = `
-                    <div class="panel">
-                        <div class="panel-header ${op.clase}">
-                            <div class="panel-title">${op.nombre}</div>
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-icon">${op.icono}</div>
+                            <h2 class="card-title">${op.nombre}</h2>
                         </div>
-                        <div class="report-list">`;
+                        <ul class="report-list">`;
                 
                 op.reportes.forEach(rep => {
                     html += `
-                        <button class="report-btn" onclick="abrirReporte('${rep.liga}')">
-                            <span class="report-label">${rep.nombre}</span>
-                            <span class="arrow">➔</span>
-                        </button>`;
+                        <li>
+                            <button class="report-btn" onclick="abrirReporte('${rep.liga}')">
+                                <div class="report-info">
+                                    <span class="report-icon">${rep.ico}</span>
+                                    <span>${rep.nombre}</span>
+                                </div>
+                                <span class="arrow">➔</span>
+                            </button>
+                        </li>`;
                 });
 
-                html += `</div></div>`;
+                html += `</ul></div>`;
                 container.innerHTML += html;
             });
         }
