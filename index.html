@@ -6,353 +6,244 @@
     <title>WFM | Portal de Reportes Promass</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --promass-navy: #003865;
-            --promass-gold: #EAB308;
-            --bg-main: #f8fafc;
-            --bg-card: #ffffff;
-            --border-card: #e2e8f0;
-            --text-primary: #0f172a;
-            --text-secondary: #64748b;
-            --btn-bg: #f8fafc;
-            --btn-hover: #f1f5f9;
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
-            --shadow-hover: 0 12px 24px -4px rgb(0 56 101 / 0.12);
-        }
-
-        [data-theme="dark"] {
-            --bg-main: #0b132b;
-            --bg-card: #1c2541;
-            --border-card: rgba(255, 255, 255, 0.08);
-            --text-primary: #f8fafc;
-            --text-secondary: #94a3b8;
-            --btn-bg: rgba(255, 255, 255, 0.03);
-            --btn-hover: rgba(234, 179, 8, 0.12);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
-            --shadow-hover: 0 12px 24px -4px rgb(0 0 0 / 0.5);
+            --promass-blue: #003865;
+            --promass-yellow: #EAB308;
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --hover-bg: #f1f5f9;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-main);
-            color: var(--text-primary);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
 
-        /* Header Principal */
-        .header {
-            background-color: var(--bg-card);
-            border-bottom: 1px solid var(--border-card);
-            padding: 24px;
-            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
-        }
-
-        .header-container {
-            max-width: 1280px;
-            margin: 0 auto;
+        /* Top Header */
+        header {
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            padding: 16px 32px;
             display: flex;
+            align-items: center;
             justify-content: space-between;
-            align-items: center;
-            gap: 20px;
         }
 
-        .brand-section {
+        .brand {
             display: flex;
             align-items: center;
             gap: 20px;
         }
 
-        .logo-svg {
-            height: 46px;
+        .logo {
+            height: 38px;
             width: auto;
+            object-fit: contain;
         }
 
-        .header-divider {
+        .divider {
             width: 1px;
-            height: 36px;
-            background-color: var(--border-card);
+            height: 28px;
+            background: var(--border);
         }
 
-        .header-title {
-            font-size: 1.35rem;
-            font-weight: 800;
-            letter-spacing: -0.02em;
-            color: var(--text-primary);
+        .title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--promass-blue);
+            letter-spacing: -0.01em;
         }
 
-        .header-title span {
-            color: var(--promass-gold);
+        .title span {
+            color: var(--promass-yellow);
         }
 
-        .theme-toggle {
-            background: var(--btn-bg);
-            border: 1px solid var(--border-card);
-            color: var(--text-primary);
-            padding: 9px 16px;
-            border-radius: 9999px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.875rem;
-            font-weight: 600;
-        }
-
-        .theme-toggle:hover {
-            background: var(--btn-hover);
-            border-color: var(--promass-gold);
-        }
-
-        /* Contenido Principal Grid */
-        .content-section {
-            max-width: 1280px;
+        /* Main Grid */
+        main {
+            max-width: 1200px;
             margin: 40px auto;
             padding: 0 24px;
             width: 100%;
             flex: 1;
         }
 
-        .grid-container {
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
-            gap: 28px;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
         }
 
-        .card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-card);
-            border-radius: 20px;
-            padding: 28px;
-            box-shadow: var(--shadow-md);
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            overflow: hidden;
-            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-        }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, var(--promass-navy), var(--promass-gold));
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-            border-color: rgba(234, 179, 8, 0.4);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding-bottom: 18px;
-            border-bottom: 2px solid var(--border-card);
-            margin-bottom: 20px;
-        }
-
-        .card-icon {
-            width: 44px;
-            height: 44px;
+        .panel {
+            background: var(--surface);
+            border: 1px solid var(--border);
             border-radius: 12px;
-            background: rgba(0, 56, 101, 0.08);
-            color: var(--promass-navy);
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        }
+
+        .panel-header {
             display: flex;
             align-items: center;
-            justify-content: center;
-            font-size: 1.35rem;
+            gap: 10px;
+            padding-bottom: 14px;
+            margin-bottom: 16px;
+            border-bottom: 2px solid var(--promass-blue);
         }
 
-        [data-theme="dark"] .card-icon {
-            background: rgba(234, 179, 8, 0.15);
-            color: var(--promass-gold);
+        .panel-header.hexalud {
+            border-bottom-color: var(--promass-yellow);
         }
 
-        .card-title {
-            font-size: 1.2rem;
+        .panel-title {
+            font-size: 1rem;
             font-weight: 700;
-            color: var(--text-primary);
-            letter-spacing: -0.01em;
+            color: var(--promass-blue);
         }
 
         .report-list {
-            list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 8px;
         }
 
-        .report-item-btn {
+        .report-btn {
             width: 100%;
-            padding: 14px 18px;
-            border-radius: 14px;
-            border: 1px solid var(--border-card);
-            background: var(--btn-bg);
-            color: var(--text-primary);
+            padding: 11px 14px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: var(--surface);
+            color: var(--text-main);
             font-family: inherit;
-            font-size: 0.95rem;
-            font-weight: 600;
+            font-size: 0.875rem;
+            font-weight: 500;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
-            text-align: left;
-            transition: all 0.2s ease;
+            transition: all 0.15s ease;
         }
 
-        .report-item-btn:hover {
-            border-color: var(--promass-gold);
-            background: var(--btn-hover);
-            transform: translateX(4px);
+        .report-btn:hover {
+            background: var(--hover-bg);
+            border-color: var(--promass-blue);
+            color: var(--promass-blue);
         }
 
-        .report-info {
+        .report-label {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 8px;
         }
 
-        .report-icon {
-            font-size: 1.1rem;
+        .arrow {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            transition: transform 0.15s ease;
         }
 
-        .arrow-icon {
-            width: 18px;
-            height: 18px;
-            color: var(--text-secondary);
-            transition: transform 0.2s ease, color 0.2s ease;
+        .report-btn:hover .arrow {
+            transform: translateX(3px);
+            color: var(--promass-blue);
         }
 
-        .report-item-btn:hover .arrow-icon {
-            transform: translateX(4px);
-            color: var(--promass-gold);
-        }
-
-        /* Footer */
-        .footer {
-            background: var(--bg-card);
-            border-top: 1px solid var(--border-card);
-            padding: 24px;
+        footer {
             text-align: center;
-            font-size: 0.875rem;
-            color: var(--text-secondary);
+            padding: 24px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            background: var(--surface);
             margin-top: auto;
         }
 
-        @media (max-width: 768px) {
-            .header-container {
-                flex-direction: column;
-                align-items: flex-start;
-            }
-            .header-divider {
-                display: none;
-            }
-            .brand-section {
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            .grid-container {
+        @media (max-width: 900px) {
+            .grid {
                 grid-template-columns: 1fr;
+            }
+            header {
+                padding: 16px;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 12px;
+            }
+            .divider {
+                display: none;
             }
         }
     </style>
 </head>
-<body data-theme="light">
+<body>
 
-    <!-- Header Principal -->
-    <header class="header">
-        <div class="header-container">
-            <div class="brand-section">
-                <!-- Logo Oficial Grupo Promass -->
-                <svg class="logo-svg" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M48.5 22L72 38.5V22L48.5 22Z" fill="#003865"/>
-                    <path d="M48.5 22L25 38.5H72L48.5 22Z" fill="#003865"/>
-                    <path d="M72 38.5L95.5 55H72V38.5Z" fill="#EAB308"/>
-                    <path d="M25 38.5C25 38.5 25 68 48.5 68C72 68 72 97.5 72 97.5H25" stroke="#003865" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
-                    <path d="M72 97.5L48.5 114V97.5H72Z" fill="#003865"/>
-                    <path d="M48.5 114L25 97.5H72L48.5 114Z" fill="#003865"/>
-                    <text x="110" y="58" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" fill="#003865" letter-spacing="3" transform="rotate(-90 110 58)">GRUPO</text>
-                    <text x="125" y="66" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="48" fill="#003865" letter-spacing="-1">PRO</text>
-                    <text x="228" y="66" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="48" fill="#EAB308" letter-spacing="-1">MASS</text>
-                    <text x="126" y="94" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#003865" letter-spacing="0.2">Acelerando el potencial de tu negocio</text>
-                </svg>
-                <div class="header-divider"></div>
-                <h1 class="header-title">Catálogo de <span>Reportes WFM</span></h1>
-            </div>
-
-            <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
-                <span id="themeIcon">🌙</span>
-                <span id="themeText">Modo Oscuro</span>
-            </button>
+    <header>
+        <div class="brand">
+            <img class="logo" src="https://i.ibb.co/L5B7dKg/logo-promass.png" alt="Grupo Promass" onerror="this.onerror=null; this.src='https://raw.githubusercontent.com/ofranco-ux/catalogo-reportes--WFM/main/logo.png';">
+            <div class="divider"></div>
+            <div class="title">Catálogo de <span>Reportes WFM</span></div>
         </div>
     </header>
 
-    <!-- Contenido Principal Grid -->
-    <main class="content-section">
-        <div class="grid-container" id="app-container">
-            <!-- Las tarjetas se renderizan con JS -->
+    <main>
+        <div class="grid" id="app-container">
+            <!-- Renderizado dinámico -->
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="footer">
-        &copy; 2026 Grupo Promass — Workforce Management System
+    <footer>
+        &copy; 2026 Grupo Promass — Workforce Management
     </footer>
 
     <script>
         const catalogo = [
             {
                 "nombre": "Reportería Servicios",
-                "icono": "⚙️",
+                "clase": "",
                 "reportes": [
-                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxvw5X6dnlMKs793MbaH7DhHJShI_UaT-KpoY750Tdmjz0ynuWeiTUGbgM5_mC9-0vu/exec", "ico": "📈" },
-                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyg_eGGfy9h_cVQXbYVccR5xVyEtdgcLrDBvw1s2-IS7jaL7IYICCLhJlMfrA6Wa4DM/exec", "ico": "⏱️" },
-                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzwyLe7wJYHogvapa1acoHQcZvFhfkFwcZniPn4CBOpVlxXiOEgdfqRvPlusPxic-Y2/exec", "ico": "🏷️" },
-                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbx8VMVE3oq4Y4SFHA5281OqthmdWUa178-4YsDbC8b4ZqoL6Kf0_GjWZGxT0__bIsKY4Q/exec", "ico": "📋" },
-                    { "nombre": "Rellamado", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxabTH7Fy3Xtdbp_rz7UDE8mQ-KT9WBwRGNirISeiDoopXlfrc4yFrOOQAToTg59mA4/exec", "ico": "🔄" },
-                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbye6D2JFZpjm0SdDXJWx2lvvDBHy68lqweC0Dwb_pDktIUGLN9pXAqas36kcq5z4FgY/exec", "ico": "📞" },
-                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
+                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxvw5X6dnlMKs793MbaH7DhHJShI_UaT-KpoY750Tdmjz0ynuWeiTUGbgM5_mC9-0vu/exec" },
+                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyg_eGGfy9h_cVQXbYVccR5xVyEtdgcLrDBvw1s2-IS7jaL7IYICCLhJlMfrA6Wa4DM/exec" },
+                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzwyLe7wJYHogvapa1acoHQcZvFhfkFwcZniPn4CBOpVlxXiOEgdfqRvPlusPxic-Y2/exec" },
+                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbx8VMVE3oq4Y4SFHA5281OqthmdWUa178-4YsDbC8b4ZqoL6Kf0_GjWZGxT0__bIsKY4Q/exec" },
+                    { "nombre": "Rellamado", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxabTH7Fy3Xtdbp_rz7UDE8mQ-KT9WBwRGNirISeiDoopXlfrc4yFrOOQAToTg59mA4/exec" },
+                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbye6D2JFZpjm0SdDXJWx2lvvDBHy68lqweC0Dwb_pDktIUGLN9pXAqas36kcq5z4FgY/exec" },
+                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/" }
                 ]
             },
             {
                 "nombre": "Reportería Retenciones y Experiencias",
-                "icono": "🛡️",
+                "clase": "",
                 "reportes": [
-                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyC-QnyZzMwi5JNghf3jnS66-ZzhLJAxkjD6m6Fp-U6VsBHSVWitp9GrQjqs2jlCts3hw/exec", "ico": "📈" },
-                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwbsBN-VMxiym7t_zZ67POkq_h4A-IN8MNDfKlOsqSLybo6QGP9DKrfUZubLhtyL2PS/exec", "ico": "⏱️" },
-                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbys-6Ji7InYvgGkqiUhMoYxh0xq24_WCeumof6Z14OTZiC9Mz38NE3_2r_VRTkD-xLX/exec", "ico": "🏷️" },
-                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxlsyjwF5iuE-jkkvZb-8BYNmKDEUe6agWN2a2bMmFbMPGXv_a7-J-ayA2iBINmwj4Aww/exec", "ico": "📋" },
-                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbylDqEzlwHW-lrNCaHXjcQ9kAQCVtY9DCVYV_S0Fq-7l2_iiRWkOLf0DIr2eSkChQzA-g/exec", "ico": "📞" },
-                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
+                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyC-QnyZzMwi5JNghf3jnS66-ZzhLJAxkjD6m6Fp-U6VsBHSVWitp9GrQjqs2jlCts3hw/exec" },
+                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwbsBN-VMxiym7t_zZ67POkq_h4A-IN8MNDfKlOsqSLybo6QGP9DKrfUZubLhtyL2PS/exec" },
+                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbys-6Ji7InYvgGkqiUhMoYxh0xq24_WCeumof6Z14OTZiC9Mz38NE3_2r_VRTkD-xLX/exec" },
+                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxlsyjwF5iuE-jkkvZb-8BYNmKDEUe6agWN2a2bMmFbMPGXv_a7-J-ayA2iBINmwj4Aww/exec" },
+                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbylDqEzlwHW-lrNCaHXjcQ9kAQCVtY9DCVYV_S0Fq-7l2_iiRWkOLf0DIr2eSkChQzA-g/exec" },
+                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/" }
                 ]
             },
             {
                 "nombre": "Reportería Hexalud",
-                "icono": "🩺",
+                "clase": "hexalud",
                 "reportes": [
-                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzCLeSWTi6NW7RDNCP9rKG_rNvM-HUwKNUBwBqVQcZHBUN8DGnsduv7cPvf_6H5jEf9NQ/exec", "ico": "📈" },
-                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyqwSzb-HRi1UGl_Kc0xJyoThqs4Av-rsd9V8YMiH1CMSlXbFTWB-f5piEwkIfzVa_c/exec", "ico": "⏱️" },
-                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwZ3sxJOuhK3u5Rcx5oTUFwQpN3odvfM_I_N9r9JrNFop_LcUgmUs3ppPLeSgnPuTBs/exec", "ico": "🏷️" },
-                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz2IVH8kP0H3zSLLyFGea5nhzR-x8dzpvDgbNUC3VxSuLwhsbyJBw6i87aOFjfzUXsB/exec", "ico": "📋" },
-                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz_3p9IArAst7Yop4MBvABfabGTG6cpVpMtG1kw1szoscDgVSZNxHOds0V_s4LiON5WGA/exec", "ico": "📞" },
-                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
+                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzCLeSWTi6NW7RDNCP9rKG_rNvM-HUwKNUBwBqVQcZHBUN8DGnsduv7cPvf_6H5jEf9NQ/exec" },
+                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyqwSzb-HRi1UGl_Kc0xJyoThqs4Av-rsd9V8YMiH1CMSlXbFTWB-f5piEwkIfzVa_c/exec" },
+                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwZ3sxJOuhK3u5Rcx5oTUFwQpN3odvfM_I_N9r9JrNFop_LcUgmUs3ppPLeSgnPuTBs/exec" },
+                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz2IVH8kP0H3zSLLyFGea5nhzR-x8dzpvDgbNUC3VxSuLwhsbyJBw6i87aOFjfzUXsB/exec" },
+                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz_3p9IArAst7Yop4MBvABfabGTG6cpVpMtG1kw1szoscDgVSZNxHOds0V_s4LiON5WGA/exec" },
+                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/" }
                 ]
             }
         ];
@@ -362,55 +253,30 @@
         }
 
         function renderizar() {
-            const contenedor = document.getElementById('app-container');
-            contenedor.innerHTML = '';
+            const container = document.getElementById('app-container');
+            container.innerHTML = '';
 
-            catalogo.forEach(operacion => {
-                let cardHTML = `
-                    <div class="card">
-                        <div class="card-header">
-                            <div class="card-icon">${operacion.icono}</div>
-                            <h2 class="card-title">${operacion.nombre}</h2>
+            catalogo.forEach(op => {
+                let html = `
+                    <div class="panel">
+                        <div class="panel-header ${op.clase}">
+                            <div class="panel-title">${op.nombre}</div>
                         </div>
-                        <ul class="report-list">`;
+                        <div class="report-list">`;
                 
-                operacion.reportes.forEach(reporte => {
-                    cardHTML += `
-                        <li>
-                            <button class="report-item-btn" onclick="abrirReporte('${reporte.liga}')">
-                                <div class="report-info">
-                                    <span class="report-icon">${reporte.ico}</span>
-                                    <span>${reporte.nombre}</span>
-                                </div>
-                                <svg class="arrow-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                                    <polyline points="9 18 15 12 9 6"></polyline>
-                                </svg>
-                            </button>
-                        </li>`;
+                op.reportes.forEach(rep => {
+                    html += `
+                        <button class="report-btn" onclick="abrirReporte('${rep.liga}')">
+                            <span class="report-label">${rep.nombre}</span>
+                            <span class="arrow">➔</span>
+                        </button>`;
                 });
-                
-                cardHTML += `</ul></div>`;
-                contenedor.innerHTML += cardHTML;
+
+                html += `</div></div>`;
+                container.innerHTML += html;
             });
         }
 
-        function toggleTheme() {
-            const body = document.body;
-            const themeBtn = document.getElementById('themeText');
-            const themeIcon = document.getElementById('themeIcon');
-
-            if (body.getAttribute('data-theme') === 'light') {
-                body.setAttribute('data-theme', 'dark');
-                themeBtn.textContent = 'Modo Claro';
-                themeIcon.textContent = '☀️';
-            } else {
-                body.setAttribute('data-theme', 'light');
-                themeBtn.textContent = 'Modo Oscuro';
-                themeIcon.textContent = '🌙';
-            }
-        }
-
-        // Carga inicial
         renderizar();
     </script>
 </body>
