@@ -11,17 +11,15 @@
         :root {
             --promass-navy: #003865;
             --promass-gold: #EAB308;
-            --promass-gold-hover: #CA8A04;
             --bg-main: #f8fafc;
             --bg-card: #ffffff;
             --border-card: #e2e8f0;
             --text-primary: #0f172a;
             --text-secondary: #64748b;
-            --btn-bg: #f1f5f9;
-            --btn-hover: #e2e8f0;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-lg: 0 10px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+            --btn-bg: #f8fafc;
+            --btn-hover: #f1f5f9;
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+            --shadow-hover: 0 12px 24px -4px rgb(0 56 101 / 0.12);
         }
 
         [data-theme="dark"] {
@@ -30,11 +28,10 @@
             --border-card: rgba(255, 255, 255, 0.08);
             --text-primary: #f8fafc;
             --text-secondary: #94a3b8;
-            --btn-bg: rgba(255, 255, 255, 0.05);
-            --btn-hover: rgba(234, 179, 8, 0.15);
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
-            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4);
-            --shadow-lg: 0 10px 25px -5px rgb(0 0 0 / 0.5);
+            --btn-bg: rgba(255, 255, 255, 0.03);
+            --btn-hover: rgba(234, 179, 8, 0.12);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+            --shadow-hover: 0 12px 24px -4px rgb(0 0 0 / 0.5);
         }
 
         * {
@@ -53,43 +50,56 @@
             flex-direction: column;
         }
 
-        /* Top Navigation Header */
-        .top-nav {
+        /* Header Principal */
+        .header {
             background-color: var(--bg-card);
             border-bottom: 1px solid var(--border-card);
-            padding: 16px 24px;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            backdrop-filter: blur(8px);
-            box-shadow: var(--shadow-sm);
+            padding: 24px;
+            box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05);
         }
 
-        .nav-container {
+        .header-container {
             max-width: 1280px;
             margin: 0 auto;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 20px;
         }
 
-        .brand-logo {
+        .brand-section {
             display: flex;
             align-items: center;
-            gap: 12px;
-            text-decoration: none;
+            gap: 20px;
         }
 
         .logo-svg {
-            height: 38px;
+            height: 46px;
             width: auto;
+        }
+
+        .header-divider {
+            width: 1px;
+            height: 36px;
+            background-color: var(--border-card);
+        }
+
+        .header-title {
+            font-size: 1.35rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--text-primary);
+        }
+
+        .header-title span {
+            color: var(--promass-gold);
         }
 
         .theme-toggle {
             background: var(--btn-bg);
             border: 1px solid var(--border-card);
             color: var(--text-primary);
-            padding: 8px 14px;
+            padding: 9px 16px;
             border-radius: 9999px;
             cursor: pointer;
             display: flex;
@@ -101,107 +111,13 @@
 
         .theme-toggle:hover {
             background: var(--btn-hover);
-        }
-
-        /* Main Hero & Search Section */
-        .hero-section {
-            padding: 40px 24px 20px;
-            text-align: center;
-            max-width: 900px;
-            margin: 0 auto;
-            width: 100%;
-        }
-
-        .main-title {
-            font-size: 2.25rem;
-            font-weight: 800;
-            letter-spacing: -0.025em;
-            color: var(--text-primary);
-            margin-bottom: 24px;
-        }
-
-        .main-title span {
-            color: var(--promass-gold);
-        }
-
-        .search-container {
-            position: relative;
-            max-width: 560px;
-            margin: 0 auto;
-        }
-
-        .search-input {
-            width: 100%;
-            padding: 16px 20px 16px 52px;
-            font-size: 1rem;
-            font-family: inherit;
-            border-radius: 16px;
-            border: 2px solid var(--border-card);
-            background: var(--bg-card);
-            color: var(--text-primary);
-            box-shadow: var(--shadow-md);
-            outline: none;
-        }
-
-        .search-input:focus {
-            border-color: var(--promass-gold);
-            box-shadow: 0 0 0 4px rgba(234, 179, 8, 0.2);
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            color: var(--text-secondary);
-        }
-
-        /* Category Filter Tabs */
-        .tabs-container {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-top: 24px;
-            flex-wrap: wrap;
-        }
-
-        .tab-btn {
-            padding: 10px 20px;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
-            border: 1px solid var(--border-card);
-            background: var(--bg-card);
-            color: var(--text-secondary);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .tab-btn:hover {
-            border-color: var(--promass-gold);
-            color: var(--text-primary);
-        }
-
-        .tab-btn.active {
-            background: var(--promass-navy);
-            color: #ffffff;
-            border-color: var(--promass-navy);
-        }
-
-        [data-theme="dark"] .tab-btn.active {
-            background: var(--promass-gold);
-            color: #000000;
             border-color: var(--promass-gold);
         }
 
-        /* Content Grid */
+        /* Contenido Principal Grid */
         .content-section {
             max-width: 1280px;
-            margin: 32px auto 60px;
+            margin: 40px auto;
             padding: 0 24px;
             width: 100%;
             flex: 1;
@@ -209,7 +125,7 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
             gap: 28px;
         }
 
@@ -217,33 +133,50 @@
             background: var(--bg-card);
             border: 1px solid var(--border-card);
             border-radius: 20px;
-            padding: 24px;
+            padding: 28px;
             box-shadow: var(--shadow-md);
             display: flex;
             flex-direction: column;
             position: relative;
             overflow: hidden;
+            transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--promass-navy), var(--promass-gold));
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: rgba(234, 179, 8, 0.4);
         }
 
         .card-header {
             display: flex;
             align-items: center;
             gap: 12px;
-            padding-bottom: 16px;
+            padding-bottom: 18px;
             border-bottom: 2px solid var(--border-card);
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .card-icon {
-            width: 42px;
-            height: 42px;
+            width: 44px;
+            height: 44px;
             border-radius: 12px;
             background: rgba(0, 56, 101, 0.08);
             color: var(--promass-navy);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
+            font-size: 1.35rem;
         }
 
         [data-theme="dark"] .card-icon {
@@ -252,33 +185,35 @@
         }
 
         .card-title {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 700;
             color: var(--text-primary);
+            letter-spacing: -0.01em;
         }
 
         .report-list {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
         }
 
         .report-item-btn {
             width: 100%;
-            padding: 12px 16px;
-            border-radius: 12px;
+            padding: 14px 18px;
+            border-radius: 14px;
             border: 1px solid var(--border-card);
             background: var(--btn-bg);
             color: var(--text-primary);
             font-family: inherit;
-            font-size: 0.925rem;
+            font-size: 0.95rem;
             font-weight: 600;
             display: flex;
             align-items: center;
             justify-content: space-between;
             cursor: pointer;
             text-align: left;
+            transition: all 0.2s ease;
         }
 
         .report-item-btn:hover {
@@ -290,31 +225,23 @@
         .report-info {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .report-icon {
-            font-size: 1rem;
-            opacity: 0.8;
+            font-size: 1.1rem;
         }
 
         .arrow-icon {
-            width: 16px;
-            height: 16px;
+            width: 18px;
+            height: 18px;
             color: var(--text-secondary);
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, color 0.2s ease;
         }
 
         .report-item-btn:hover .arrow-icon {
             transform: translateX(4px);
             color: var(--promass-gold);
-        }
-
-        .no-results {
-            text-align: center;
-            padding: 60px 20px;
-            color: var(--text-secondary);
-            grid-column: 1 / -1;
         }
 
         /* Footer */
@@ -329,83 +256,58 @@
         }
 
         @media (max-width: 768px) {
+            .header-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+            .header-divider {
+                display: none;
+            }
+            .brand-section {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
             .grid-container {
                 grid-template-columns: 1fr;
-            }
-            .main-title {
-                font-size: 1.75rem;
             }
         }
     </style>
 </head>
 <body data-theme="light">
 
-    <!-- Top Navigation -->
-    <nav class="top-nav">
-        <div class="nav-container">
-            <a href="#" class="brand-logo">
+    <!-- Header Principal -->
+    <header class="header">
+        <div class="header-container">
+            <div class="brand-section">
+                <!-- Logo Oficial Grupo Promass -->
                 <svg class="logo-svg" viewBox="0 0 450 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Isotipo S Promass -->
                     <path d="M48.5 22L72 38.5V22L48.5 22Z" fill="#003865"/>
                     <path d="M48.5 22L25 38.5H72L48.5 22Z" fill="#003865"/>
                     <path d="M72 38.5L95.5 55H72V38.5Z" fill="#EAB308"/>
                     <path d="M25 38.5C25 38.5 25 68 48.5 68C72 68 72 97.5 72 97.5H25" stroke="#003865" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
                     <path d="M72 97.5L48.5 114V97.5H72Z" fill="#003865"/>
                     <path d="M48.5 114L25 97.5H72L48.5 114Z" fill="#003865"/>
-                    
-                    <!-- Texto GRUPO -->
                     <text x="110" y="58" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="14" fill="#003865" letter-spacing="3" transform="rotate(-90 110 58)">GRUPO</text>
-                    
-                    <!-- Texto PROMASS -->
                     <text x="125" y="66" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="48" fill="#003865" letter-spacing="-1">PRO</text>
                     <text x="228" y="66" font-family="'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="48" fill="#EAB308" letter-spacing="-1">MASS</text>
-                    
-                    <!-- Eslogan -->
                     <text x="126" y="94" font-family="'Plus Jakarta Sans', sans-serif" font-weight="500" font-size="18" fill="#003865" letter-spacing="0.2">Acelerando el potencial de tu negocio</text>
                 </svg>
-            </a>
+                <div class="header-divider"></div>
+                <h1 class="header-title">Catálogo de <span>Reportes WFM</span></h1>
+            </div>
 
             <button class="theme-toggle" onclick="toggleTheme()" id="themeBtn">
                 <span id="themeIcon">🌙</span>
                 <span id="themeText">Modo Oscuro</span>
             </button>
         </div>
-    </nav>
-
-    <!-- Main Hero -->
-    <header class="hero-section">
-        <h1 class="main-title">Catálogo de <span>Reportes WFM</span></h1>
-
-        <!-- Search Bar -->
-        <div class="search-container">
-            <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg>
-            <input type="text" id="searchInput" class="search-input" onkeyup="filtrarReportes()" placeholder="Buscar por nombre de reporte o categoría...">
-        </div>
-
-        <!-- Filter Tabs -->
-        <div class="tabs-container">
-            <button class="tab-btn active" onclick="filtrarTab('all', this)">
-                <span>🌐</span> Todos
-            </button>
-            <button class="tab-btn" onclick="filtrarTab('Servicios', this)">
-                <span>⚙️</span> Servicios
-            </button>
-            <button class="tab-btn" onclick="filtrarTab('Retenciones', this)">
-                <span>🛡️</span> Retenciones
-            </button>
-            <button class="tab-btn" onclick="filtrarTab('Hexalud', this)">
-                <span>🩺</span> Hexalud
-            </button>
-        </div>
     </header>
 
-    <!-- Content Grid -->
+    <!-- Contenido Principal Grid -->
     <main class="content-section">
         <div class="grid-container" id="app-container">
-            <!-- Las tarjetas se generan dinámicamente con JS -->
+            <!-- Las tarjetas se renderizan con JS -->
         </div>
     </main>
 
@@ -417,7 +319,6 @@
     <script>
         const catalogo = [
             {
-                "id": "Servicios",
                 "nombre": "Reportería Servicios",
                 "icono": "⚙️",
                 "reportes": [
@@ -431,7 +332,6 @@
                 ]
             },
             {
-                "id": "Retenciones",
                 "nombre": "Reportería Retenciones y Experiencias",
                 "icono": "🛡️",
                 "reportes": [
@@ -444,7 +344,6 @@
                 ]
             },
             {
-                "id": "Hexalud",
                 "nombre": "Reportería Hexalud",
                 "icono": "🩺",
                 "reportes": [
@@ -458,26 +357,15 @@
             }
         ];
 
-        let currentTab = 'all';
-
         function abrirReporte(url) {
             window.open(url, '_blank', 'noopener,noreferrer');
         }
 
-        function renderizar(datos) {
+        function renderizar() {
             const contenedor = document.getElementById('app-container');
             contenedor.innerHTML = '';
-            
-            if (datos.length === 0) {
-                contenedor.innerHTML = `
-                    <div class="no-results">
-                        <h3>No se encontraron reportes</h3>
-                        <p>Intenta con otra búsqueda o selecciona otra categoría.</p>
-                    </div>`;
-                return;
-            }
 
-            datos.forEach(operacion => {
+            catalogo.forEach(operacion => {
                 let cardHTML = `
                     <div class="card">
                         <div class="card-header">
@@ -506,29 +394,6 @@
             });
         }
 
-        function filtrarReportes() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            
-            const filtrados = catalogo
-                .filter(op => currentTab === 'all' || op.id === currentTab)
-                .map(operacion => {
-                    const reportesFiltrados = operacion.reportes.filter(r => 
-                        r.nombre.toLowerCase().includes(query) || operacion.nombre.toLowerCase().includes(query)
-                    );
-                    return { ...operacion, reportes: reportesFiltrados };
-                })
-                .filter(operacion => operacion.reportes.length > 0);
-
-            renderizar(filtrados);
-        }
-
-        function filtrarTab(tabId, btnElement) {
-            currentTab = tabId;
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            btnElement.classList.add('active');
-            filtrarReportes();
-        }
-
         function toggleTheme() {
             const body = document.body;
             const themeBtn = document.getElementById('themeText');
@@ -546,7 +411,7 @@
         }
 
         // Carga inicial
-        renderizar(catalogo);
+        renderizar();
     </script>
 </body>
 </html>
