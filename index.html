@@ -3,127 +3,285 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Catálogo de Reportes WFM</title>
+    <title>WFM | Portal de Reportes</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f7f6;
-            color: #333;
-            margin: 0;
-            padding: 40px 20px;
+        :root {
+            --bg-main: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --accent-blue: #38bdf8;
+            --accent-purple: #a855f7;
+            --accent-emerald: #34d399;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --btn-bg: rgba(255, 255, 255, 0.04);
+            --btn-hover: rgba(56, 189, 248, 0.12);
         }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-main);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(56, 189, 248, 0.12) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(168, 85, 247, 0.12) 0px, transparent 50%);
+            background-attachment: fixed;
+            color: var(--text-primary);
+            min-height: 100vh;
+            padding: 40px 20px 80px;
+        }
+
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            max-width: 800px;
+            margin: 0 auto 40px;
         }
+
+        .badge {
+            display: inline-block;
+            padding: 6px 14px;
+            background: rgba(56, 189, 248, 0.1);
+            border: 1px solid rgba(56, 189, 248, 0.25);
+            border-radius: 20px;
+            color: var(--accent-blue);
+            font-size: 0.825rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            text-transform: uppercase;
+        }
+
         .header h1 {
-            color: #2c3e50;
-            font-size: 2.5em;
-            margin-bottom: 10px;
+            font-size: 2.75rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, #ffffff 0%, #cbd5e1 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 12px;
         }
+
+        .header p {
+            color: var(--text-secondary);
+            font-size: 1.05rem;
+        }
+
+        .search-box {
+            max-width: 480px;
+            margin: 30px auto 0;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 14px 20px 14px 48px;
+            background: rgba(15, 23, 42, 0.6);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.25s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-box input:focus {
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 20px rgba(56, 189, 248, 0.15);
+        }
+
+        .search-box::before {
+            content: '🔍';
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1rem;
+            opacity: 0.5;
+        }
+
         .container {
-            max-width: 1100px;
+            max-width: 1200px;
             margin: 0 auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 25px;
+            grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+            gap: 28px;
         }
+
         .card {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            padding: 25px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 28px;
+            backdrop-filter: blur(16px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-blue), var(--accent-purple));
+            opacity: 0.8;
+        }
+
         .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            transform: translateY(-6px);
+            border-color: rgba(255, 255, 255, 0.18);
+            box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
         }
+
         .card h2 {
-            color: #3498db;
-            font-size: 1.4em;
-            border-bottom: 2px solid #ecf0f1;
-            padding-bottom: 10px;
-            margin-top: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
+
         .report-list {
             list-style: none;
-            padding: 0;
-            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
-        .report-list li {
-            margin: 12px 0;
-        }
+
         .report-btn {
             width: 100%;
             text-align: left;
             font-family: inherit;
-            font-size: 1em;
-            color: #2c3e50;
+            font-size: 0.925rem;
+            color: var(--text-primary);
             font-weight: 500;
             display: flex;
             align-items: center;
-            padding: 10px 12px;
-            border-radius: 6px;
-            background-color: #f8f9fa;
-            border: 1px solid #e2e8f0;
+            justify-content: space-between;
+            padding: 12px 16px;
+            border-radius: 12px;
+            background: var(--btn-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             cursor: pointer;
-            transition: background-color 0.2s, color 0.2s;
+            transition: all 0.2s ease;
         }
+
         .report-btn:hover {
-            background-color: #e9ecef;
-            color: #3498db;
+            background: var(--btn-hover);
+            border-color: rgba(56, 189, 248, 0.3);
+            color: var(--accent-blue);
+            transform: translateX(4px);
         }
-        .icon {
-            margin-right: 10px;
-            font-size: 1.2em;
+
+        .report-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .icon-wrapper {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9rem;
+        }
+
+        .arrow-icon {
+            font-size: 0.85rem;
+            opacity: 0.4;
+            transition: transform 0.2s ease, opacity 0.2s ease;
+        }
+
+        .report-btn:hover .arrow-icon {
+            opacity: 1;
+            transform: translateX(3px);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 60px;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .header h1 { font-size: 2rem; }
+            .container { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
     <div class="header">
-        <h1>Catálogo de Reportes WFM</h1>
-        <p>Selecciona una operación para visualizar sus reportes</p>
+        <span class="badge">Workforce Management</span>
+        <h1>Catálogo de Reportes</h1>
+        <p>Acceso centralizado a los paneles operativos en tiempo real</p>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" onkeyup="filtrarReportes()" placeholder="Buscar reporte o categoría...">
+        </div>
     </div>
 
     <div class="container" id="app-container">
+    </div>
+
+    <div class="footer">
+        © WFM Promass — Portal de Inteligencia Operativa
     </div>
 
     <script>
         const catalogo = [
             {
                 "nombre": "Reportería Servicios",
+                "icono": "⚙️",
                 "reportes": [
-                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxvw5X6dnlMKs793MbaH7DhHJShI_UaT-KpoY750Tdmjz0ynuWeiTUGbgM5_mC9-0vu/exec" },
-                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyg_eGGfy9h_cVQXbYVccR5xVyEtdgcLrDBvw1s2-IS7jaL7IYICCLhJlMfrA6Wa4DM/exec" },
-                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzwyLe7wJYHogvapa1acoHQcZvFhfkFwcZniPn4CBOpVlxXiOEgdfqRvPlusPxic-Y2/exec" },
-                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbx8VMVE3oq4Y4SFHA5281OqthmdWUa178-4YsDbC8b4ZqoL6Kf0_GjWZGxT0__bIsKY4Q/exec" },
-                    { "nombre": "Rellamado", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxabTH7Fy3Xtdbp_rz7UDE8mQ-KT9WBwRGNirISeiDoopXlfrc4yFrOOQAToTg59mA4/exec" },
-                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbye6D2JFZpjm0SdDXJWx2lvvDBHy68lqweC0Dwb_pDktIUGLN9pXAqas36kcq5z4FgY/exec" },
-                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/" }
+                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxvw5X6dnlMKs793MbaH7DhHJShI_UaT-KpoY750Tdmjz0ynuWeiTUGbgM5_mC9-0vu/exec", "ico": "📈" },
+                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyg_eGGfy9h_cVQXbYVccR5xVyEtdgcLrDBvw1s2-IS7jaL7IYICCLhJlMfrA6Wa4DM/exec", "ico": "⏱️" },
+                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzwyLe7wJYHogvapa1acoHQcZvFhfkFwcZniPn4CBOpVlxXiOEgdfqRvPlusPxic-Y2/exec", "ico": "🏷️" },
+                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbx8VMVE3oq4Y4SFHA5281OqthmdWUa178-4YsDbC8b4ZqoL6Kf0_GjWZGxT0__bIsKY4Q/exec", "ico": "📋" },
+                    { "nombre": "Rellamado", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxabTH7Fy3Xtdbp_rz7UDE8mQ-KT9WBwRGNirISeiDoopXlfrc4yFrOOQAToTg59mA4/exec", "ico": "🔄" },
+                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbye6D2JFZpjm0SdDXJWx2lvvDBHy68lqweC0Dwb_pDktIUGLN9pXAqas36kcq5z4FgY/exec", "ico": "📞" },
+                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
                 ]
             },
             {
                 "nombre": "Reportería Retenciones y Experiencias",
+                "icono": "🛡️",
                 "reportes": [
-                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyC-QnyZzMwi5JNghf3jnS66-ZzhLJAxkjD6m6Fp-U6VsBHSVWitp9GrQjqs2jlCts3hw/exec" },
-                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwbsBN-VMxiym7t_zZ67POkq_h4A-IN8MNDfKlOsqSLybo6QGP9DKrfUZubLhtyL2PS/exec" },
-                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbys-6Ji7InYvgGkqiUhMoYxh0xq24_WCeumof6Z14OTZiC9Mz38NE3_2r_VRTkD-xLX/exec" },
-                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxlsyjwF5iuE-jkkvZb-8BYNmKDEUe6agWN2a2bMmFbMPGXv_a7-J-ayA2iBINmwj4Aww/exec" },
-                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbylDqEzlwHW-lrNCaHXjcQ9kAQCVtY9DCVYV_S0Fq-7l2_iiRWkOLf0DIr2eSkChQzA-g/exec" },
-                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/" }
+                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyC-QnyZzMwi5JNghf3jnS66-ZzhLJAxkjD6m6Fp-U6VsBHSVWitp9GrQjqs2jlCts3hw/exec", "ico": "📈" },
+                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwbsBN-VMxiym7t_zZ67POkq_h4A-IN8MNDfKlOsqSLybo6QGP9DKrfUZubLhtyL2PS/exec", "ico": "⏱️" },
+                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbys-6Ji7InYvgGkqiUhMoYxh0xq24_WCeumof6Z14OTZiC9Mz38NE3_2r_VRTkD-xLX/exec", "ico": "🏷️" },
+                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxlsyjwF5iuE-jkkvZb-8BYNmKDEUe6agWN2a2bMmFbMPGXv_a7-J-ayA2iBINmwj4Aww/exec", "ico": "📋" },
+                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbylDqEzlwHW-lrNCaHXjcQ9kAQCVtY9DCVYV_S0Fq-7l2_iiRWkOLf0DIr2eSkChQzA-g/exec", "ico": "📞" },
+                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
                 ]
             },
             {
                 "nombre": "Reportería Hexalud",
+                "icono": "🩺",
                 "reportes": [
-                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzCLeSWTi6NW7RDNCP9rKG_rNvM-HUwKNUBwBqVQcZHBUN8DGnsduv7cPvf_6H5jEf9NQ/exec" },
-                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyqwSzb-HRi1UGl_Kc0xJyoThqs4Av-rsd9V8YMiH1CMSlXbFTWB-f5piEwkIfzVa_c/exec" },
-                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwZ3sxJOuhK3u5Rcx5oTUFwQpN3odvfM_I_N9r9JrNFop_LcUgmUs3ppPLeSgnPuTBs/exec" },
-                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz2IVH8kP0H3zSLLyFGea5nhzR-x8dzpvDgbNUC3VxSuLwhsbyJBw6i87aOFjfzUXsB/exec" },
-                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz_3p9IArAst7Yop4MBvABfabGTG6cpVpMtG1kw1szoscDgVSZNxHOds0V_s4LiON5WGA/exec" },
-                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/" }
+                    { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzCLeSWTi6NW7RDNCP9rKG_rNvM-HUwKNUBwBqVQcZHBUN8DGnsduv7cPvf_6H5jEf9NQ/exec", "ico": "📈" },
+                    { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyqwSzb-HRi1UGl_Kc0xJyoThqs4Av-rsd9V8YMiH1CMSlXbFTWB-f5piEwkIfzVa_c/exec", "ico": "⏱️" },
+                    { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwZ3sxJOuhK3u5Rcx5oTUFwQpN3odvfM_I_N9r9JrNFop_LcUgmUs3ppPLeSgnPuTBs/exec", "ico": "🏷️" },
+                    { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz2IVH8kP0H3zSLLyFGea5nhzR-x8dzpvDgbNUC3VxSuLwhsbyJBw6i87aOFjfzUXsB/exec", "ico": "📋" },
+                    { "nombre": "Llamadas por agente", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz_3p9IArAst7Yop4MBvABfabGTG6cpVpMtG1kw1szoscDgVSZNxHOds0V_s4LiON5WGA/exec", "ico": "📞" },
+                    { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
                 ]
             }
         ];
@@ -132,24 +290,49 @@
             window.open(url, '_blank', 'noopener,noreferrer');
         }
 
-        const contenedor = document.getElementById('app-container');
-        
-        catalogo.forEach(operacion => {
-            let cardHTML = `<div class="card">
-                                <h2>📁 ${operacion.nombre}</h2>
-                                <ul class="report-list">`;
+        function renderizar(datos) {
+            const contenedor = document.getElementById('app-container');
+            contenedor.innerHTML = '';
             
-            operacion.reportes.forEach(reporte => {
-                cardHTML += `<li>
-                                <button class="report-btn" onclick="abrirReporte('${reporte.liga}')">
-                                    <span class="icon">📊</span> ${reporte.nombre}
-                                </button>
-                             </li>`;
+            datos.forEach(operacion => {
+                let cardHTML = `
+                    <div class="card">
+                        <h2><span>${operacion.icono}</span> ${operacion.nombre}</h2>
+                        <ul class="report-list">`;
+                
+                operacion.reportes.forEach(reporte => {
+                    cardHTML += `
+                        <li>
+                            <button class="report-btn" onclick="abrirReporte('${reporte.liga}')">
+                                <div class="report-info">
+                                    <span class="icon-wrapper">${reporte.ico}</span>
+                                    <span>${reporte.nombre}</span>
+                                </div>
+                                <span class="arrow-icon">➔</span>
+                            </button>
+                        </li>`;
+                });
+                
+                cardHTML += `</ul></div>`;
+                contenedor.innerHTML += cardHTML;
             });
+        }
+
+        function filtrarReportes() {
+            const query = document.getElementById('searchInput').value.toLowerCase();
             
-            cardHTML += `</ul></div>`;
-            contenedor.innerHTML += cardHTML;
-        });
+            const filtrados = catalogo.map(operacion => {
+                const reportesFiltrados = operacion.reportes.filter(r => 
+                    r.nombre.toLowerCase().includes(query) || operacion.nombre.toLowerCase().includes(query)
+                );
+                return { ...operacion, reportes: reportesFiltrados };
+            }).filter(operacion => operacion.reportes.length > 0);
+
+            renderizar(filtrados);
+        }
+
+        // Carga inicial
+        renderizar(catalogo);
     </script>
 </body>
 </html>
