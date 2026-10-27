@@ -162,7 +162,7 @@
           <input id="report-search" type="search" placeholder="Buscar un reporte..." autocomplete="off" aria-label="Buscar reporte o área">
         </label>
       </div>
-      <div class="content-meta"><span id="results-count" aria-live="polite"><strong>19</strong> reportes disponibles</span><span>Los reportes se abren en una pestaña nueva ↗</span></div>
+      <div class="content-meta"><span id="results-count" aria-live="polite"><strong>22</strong> reportes disponibles</span><span>Los reportes se abren en una pestaña nueva ↗</span></div>
       <div class="area-grid" id="app-container"></div>
       <div class="empty-state" id="empty-state"><strong>No encontramos reportes</strong>Prueba con otro nombre o selecciona otra área.</div>
     </section>
@@ -176,113 +176,40 @@ const catalogo = [
     "nombre": "Reportería Servicios",
     "icono": "⚙️",
     "reportes": [
-      {
-        "nombre": "Indicadores",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxvw5X6dnlMKs793MbaH7DhHJShI_UaT-KpoY750Tdmjz0ynuWeiTUGbgM5_mC9-0vu/exec",
-        "ico": "📈"
-      },
-      {
-        "nombre": "AHT",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyg_eGGfy9h_cVQXbYVccR5xVyEtdgcLrDBvw1s2-IS7jaL7IYICCLhJlMfrA6Wa4DM/exec",
-        "ico": "⏱️"
-      },
-      {
-        "nombre": "Tipificaciones",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzwyLe7wJYHogvapa1acoHQcZvFhfkFwcZniPn4CBOpVlxXiOEgdfqRvPlusPxic-Y2/exec",
-        "ico": "🏷️"
-      },
-      {
-        "nombre": "Auxiliares",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbx8VMVE3oq4Y4SFHA5281OqthmdWUa178-4YsDbC8b4ZqoL6Kf0_GjWZGxT0__bIsKY4Q/exec",
-        "ico": "📋"
-      },
-      {
-        "nombre": "Rellamado",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxabTH7Fy3Xtdbp_rz7UDE8mQ-KT9WBwRGNirISeiDoopXlfrc4yFrOOQAToTg59mA4/exec",
-        "ico": "🔄"
-      },
-      {
-        "nombre": "Llamadas por agente",
-        "liga": "https://script.google.com/macros/s/AKfycbye6D2JFZpjm0SdDXJWx2lvvDBHy68lqweC0Dwb_pDktIUGLN9pXAqas36kcq5z4FgY/exec",
-        "ico": "📞"
-      },
-      {
-        "nombre": "HeadCount",
-        "liga": "https://wfmpromass2026.pythonanywhere.com/",
-        "ico": "👥"
-      }
+      { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxvw5X6dnlMKs793MbaH7DhHJShI_UaT-KpoY750Tdmjz0ynuWeiTUGbgM5_mC9-0vu/exec", "ico": "📈" },
+      { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyg_eGGfy9h_cVQXbYVccR5xVyEtdgcLrDBvw1s2-IS7jaL7IYICCLhJlMfrA6Wa4DM/exec", "ico": "⏱️" },
+      { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzwyLe7wJYHogvapa1acoHQcZvFhfkFwcZniPn4CBOpVlxXiOEgdfqRvPlusPxic-Y2/exec", "ico": "🏷️" },
+      { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbx8VMVE3oq4Y4SFHA5281OqthmdWUa178-4YsDbC8b4ZqoL6Kf0_GjWZGxT0__bIsKY4Q/exec", "ico": "📋" },
+      { "nombre": "Rellamado", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxabTH7Fy3Xtdbp_rz7UDE8mQ-KT9WBwRGNirISeiDoopXlfrc4yFrOOQAToTg59mA4/exec", "ico": "🔄" },
+      { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbye6D2JFZpjm0SdDXJWx2lvvDBHy68lqweC0Dwb_pDktIUGLN9pXAqas36kcq5z4FgY/exec", "ico": "📞" },
+      { "nombre": "Llamadas cortadas", "liga": "https://script.google.com/macros/s/AKfycbyFAI-CPxjWKxR9pWDIkjV0jY3opZ324TFM2In5L7C0D1l6wHQziPcQuC472uRfhmtRhQ/exec", "ico": "✂️" },
+      { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
     ]
   },
   {
     "nombre": "Reportería Retenciones y Experiencias",
     "icono": "🛡️",
     "reportes": [
-      {
-        "nombre": "Indicadores",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyC-QnyZzMwi5JNghf3jnS66-ZzhLJAxkjD6m6Fp-U6VsBHSVWitp9GrQjqs2jlCts3hw/exec",
-        "ico": "📈"
-      },
-      {
-        "nombre": "AHT",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwbsBN-VMxiym7t_zZ67POkq_h4A-IN8MNDfKlOsqSLybo6QGP9DKrfUZubLhtyL2PS/exec",
-        "ico": "⏱️"
-      },
-      {
-        "nombre": "Tipificaciones",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbys-6Ji7InYvgGkqiUhMoYxh0xq24_WCeumof6Z14OTZiC9Mz38NE3_2r_VRTkD-xLX/exec",
-        "ico": "🏷️"
-      },
-      {
-        "nombre": "Auxiliares",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxlsyjwF5iuE-jkkvZb-8BYNmKDEUe6agWN2a2bMmFbMPGXv_a7-J-ayA2iBINmwj4Aww/exec",
-        "ico": "📋"
-      },
-      {
-        "nombre": "Llamadas por agente",
-        "liga": "https://script.google.com/macros/s/AKfycbylDqEzlwHW-lrNCaHXjcQ9kAQCVtY9DCVYV_S0Fq-7l2_iiRWkOLf0DIr2eSkChQzA-g/exec",
-        "ico": "📞"
-      },
-      {
-        "nombre": "HeadCount",
-        "liga": "https://wfmpromass2026.pythonanywhere.com/",
-        "ico": "👥"
-      }
+      { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyC-QnyZzMwi5JNghf3jnS66-ZzhLJAxkjD6m6Fp-U6VsBHSVWitp9GrQjqs2jlCts3hw/exec", "ico": "📈" },
+      { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwbsBN-VMxiym7t_zZ67POkq_h4A-IN8MNDfKlOsqSLybo6QGP9DKrfUZubLhtyL2PS/exec", "ico": "⏱️" },
+      { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbys-6Ji7InYvgGkqiUhMoYxh0xq24_WCeumof6Z14OTZiC9Mz38NE3_2r_VRTkD-xLX/exec", "ico": "🏷️" },
+      { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbxlsyjwF5iuE-jkkvZb-8BYNmKDEUe6agWN2a2bMmFbMPGXv_a7-J-ayA2iBINmwj4Aww/exec", "ico": "📋" },
+      { "nombre": "Llamadas por agente", "liga": "https://script.google.com/macros/s/AKfycbylDqEzlwHW-lrNCaHXjcQ9kAQCVtY9DCVYV_S0Fq-7l2_iiRWkOLf0DIr2eSkChQzA-g/exec", "ico": "📞" },
+      { "nombre": "Llamadas cortadas", "liga": "https://script.google.com/macros/s/AKfycbx9YK6obPMUcJ-aBcFDfLi2Ztt9OvemF6HULQrpcvYzcW59Bdp0oM5aXADydKWux4_ozg/exec", "ico": "✂️" },
+      { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
     ]
   },
   {
     "nombre": "Reportería Hexalud",
     "icono": "🩺",
     "reportes": [
-      {
-        "nombre": "Indicadores",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzCLeSWTi6NW7RDNCP9rKG_rNvM-HUwKNUBwBqVQcZHBUN8DGnsduv7cPvf_6H5jEf9NQ/exec",
-        "ico": "📈"
-      },
-      {
-        "nombre": "AHT",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyqwSzb-HRi1UGl_Kc0xJyoThqs4Av-rsd9V8YMiH1CMSlXbFTWB-f5piEwkIfzVa_c/exec",
-        "ico": "⏱️"
-      },
-      {
-        "nombre": "Tipificaciones",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwZ3sxJOuhK3u5Rcx5oTUFwQpN3odvfM_I_N9r9JrNFop_LcUgmUs3ppPLeSgnPuTBs/exec",
-        "ico": "🏷️"
-      },
-      {
-        "nombre": "Auxiliares",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz2IVH8kP0H3zSLLyFGea5nhzR-x8dzpvDgbNUC3VxSuLwhsbyJBw6i87aOFjfzUXsB/exec",
-        "ico": "📋"
-      },
-      {
-        "nombre": "Llamadas por agente",
-        "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz_3p9IArAst7Yop4MBvABfabGTG6cpVpMtG1kw1szoscDgVSZNxHOds0V_s4LiON5WGA/exec",
-        "ico": "📞"
-      },
-      {
-        "nombre": "HeadCount",
-        "liga": "https://wfmpromass2026.pythonanywhere.com/",
-        "ico": "👥"
-      }
+      { "nombre": "Indicadores", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbzCLeSWTi6NW7RDNCP9rKG_rNvM-HUwKNUBwBqVQcZHBUN8DGnsduv7cPvf_6H5jEf9NQ/exec", "ico": "📈" },
+      { "nombre": "AHT", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbyqwSzb-HRi1UGl_Kc0xJyoThqs4Av-rsd9V8YMiH1CMSlXbFTWB-f5piEwkIfzVa_c/exec", "ico": "⏱️" },
+      { "nombre": "Tipificaciones", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbwZ3sxJOuhK3u5Rcx5oTUFwQpN3odvfM_I_N9r9JrNFop_LcUgmUs3ppPLeSgnPuTBs/exec", "ico": "🏷️" },
+      { "nombre": "Auxiliares", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz2IVH8kP0H3zSLLyFGea5nhzR-x8dzpvDgbNUC3VxSuLwhsbyJBw6i87aOFjfzUXsB/exec", "ico": "📋" },
+      { "nombre": "Llamadas por agente", "liga": "https://script.google.com/a/macros/gpmass.com/s/AKfycbz_3p9IArAst7Yop4MBvABfabGTG6cpVpMtG1kw1szoscDgVSZNxHOds0V_s4LiON5WGA/exec", "ico": "📞" },
+      { "nombre": "Llamadas cortadas", "liga": "https://script.google.com/macros/s/AKfycbzecMas7GVsp6-yfrL7_p4mtUxexS2K1354xOZHZl-qaUBQ4Dc8Lhv8iOvhDkbmaG68sQ/exec", "ico": "✂️" },
+      { "nombre": "HeadCount", "liga": "https://wfmpromass2026.pythonanywhere.com/", "ico": "👥" }
     ]
   }
 ];
